@@ -1,0 +1,9 @@
+{
+    "name": "gift-registry",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start:frontend": "cd frontend; npm run start",
+        "start:backend": "cd backend; npm run start"
+    }
+}
