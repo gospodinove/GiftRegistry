@@ -50,7 +50,7 @@ export default function Login() {
         console.log('Register error')
       }
     },
-    [email, password]
+    [email, password, navigate, dispatch]
   )
 
   return (

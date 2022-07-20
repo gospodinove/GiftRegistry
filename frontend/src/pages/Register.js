@@ -56,7 +56,7 @@ export default function Register() {
         console.log('Register error')
       }
     },
-    [firstName, lastName, email, password]
+    [firstName, lastName, email, password, navigate, dispatch]
   )
 
   return (

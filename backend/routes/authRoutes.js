@@ -106,4 +106,8 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.get('/session-user', (req, res) => {
+  res.json(req.session.user)
+})
+
 module.exports = router
