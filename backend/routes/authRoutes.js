@@ -56,4 +56,54 @@ router.post('/register', async (req, res) => {
   }
 })
 
+router.post('/login', async (req, res) => {
+  const db = req.app.locals.db
+
+  try {
+    const schema = {
+      email: 'required|email',
+      password: 'required'
+    }
+
+    await validate(req.body, schema, validationMessages)
+
+    try {
+      const user = await db
+        .collection('users')
+        .findOne({ email: req.body.email })
+
+      if (!user) {
+        sendErrorResponse(res, 500, 'field-error', [
+          { message: 'Email is not registered', field: 'email' }
+        ])
+        return
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        req.body.password,
+        user.password
+      )
+
+      if (!isPasswordValid) {
+        sendErrorResponse(res, 500, 'field-error', [
+          { field: 'password', message: 'Wrong password' }
+        ])
+        return
+      }
+
+      replaceId(user)
+
+      delete user.password
+
+      req.session.user = user
+
+      res.json({ success: true, user })
+    } catch (err) {
+      sendErrorResponse(res, 500, 'general', 'Could not login')
+    }
+  } catch (errors) {
+    sendErrorResponse(res, 500, 'field-error', errors)
+  }
+})
+
 module.exports = router
