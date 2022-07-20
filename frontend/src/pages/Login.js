@@ -3,20 +3,22 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
 
   const [errors, setErrors] = React.useState({})
 
-  const [isLoading, setIsLoading] = React.useState(true)
-
   const onSubmit = React.useCallback(
     async e => {
       e.preventDefault()
 
-      setIsLoading(true)
       setErrors({})
 
       try {
@@ -41,13 +43,11 @@ export default function Login() {
           }
         }
 
-        // TODO: store user in redux
-        console.log(response.user)
+        dispatch({ type: 'auth/setUser', payload: response.user })
+        navigate('/')
       } catch {
         // TODO: show toast
         console.log('Register error')
-      } finally {
-        setIsLoading(false)
       }
     },
     [email, password]
@@ -90,12 +90,7 @@ export default function Login() {
             required
           />
 
-          <Button
-            variant="contained"
-            type="submit"
-            size="large"
-            loading={isLoading}
-          >
+          <Button variant="contained" type="submit" size="large">
             Submit
           </Button>
         </Stack>
