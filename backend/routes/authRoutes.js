@@ -28,10 +28,9 @@ router.post('/register', async (req, res) => {
         .findOne({ email: req.body.email })
 
       if (registeredUser) {
-        res.json({
-          success: false,
-          errors: [{ field: 'email', message: 'Email is taken' }]
-        })
+        sendErrorResponse(res, 500, 'field-error', [
+          { field: 'email', message: 'Email is taken' }
+        ])
         return
       }
 

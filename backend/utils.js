@@ -8,20 +8,15 @@ module.exports.replaceId = function (entity) {
   return entity
 }
 
-module.exports.sendErrorResponse = function (
-  res,
-  status,
-  messageType,
-  messages
-) {
+module.exports.sendErrorResponse = function (res, status, errorType, errors) {
   res.status(status).json({
     success: false,
     code: status,
-    messageType: messageType,
-    messages:
-      messageType === 'field-error'
-        ? parseValidationErrorMessages(messages)
-        : messages
+    errorType: errorType,
+    errors:
+      errorType === 'field-error'
+        ? parseValidationErrorMessages(errors)
+        : errors
   })
 }
 
