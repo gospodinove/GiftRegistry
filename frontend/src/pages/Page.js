@@ -1,3 +1,5 @@
+import ProductForm from '../components/ProductForm'
+
 export default function Page() {
-  return <h1>Page</h1>
+  return <ProductForm />
 }
