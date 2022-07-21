@@ -1,3 +1,5 @@
+import AddList from '../components/AddList'
+
 export default function Page() {
-  return <h1>Page</h1>
+  return <AddList />
 }
