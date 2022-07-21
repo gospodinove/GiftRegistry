@@ -9,8 +9,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
 import { Box } from '@mui/system'
 import { api } from '../utils/api'
+import { useDispatch } from 'react-redux'
 
 function AddList() {
+  const dispatch = useDispatch()
+
   const [open, setOpen] = React.useState(false)
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
@@ -61,6 +64,8 @@ function AddList() {
               return
           }
         }
+
+        dispatch({ type: 'lists/add', payload: response.list })
 
         handleClose()
       } catch {
