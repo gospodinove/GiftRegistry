@@ -8,10 +8,12 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
 import { Box } from '@mui/system'
+import { api } from '../utils/api'
 
 function AddList() {
   const [open, setOpen] = React.useState(false)
   const [type, setType] = React.useState('Birthday')
+  const [name, setName] = React.useState('')
 
   const listTypes = [
     'Birthday',
@@ -33,9 +35,19 @@ function AddList() {
     setType(event.target.value)
   }, [])
 
-  const onSubmit = useCallback(async e => {
-    e.preventDefault()
-  }, [])
+  const onSubmit = useCallback(
+    async e => {
+      e.preventDefault()
+
+      const data = {
+        type,
+        name
+      }
+
+      const response = await api('lists', 'post', data)
+    },
+    [name, type]
+  )
 
   return (
     <div>
@@ -73,6 +85,8 @@ function AddList() {
               margin="normal"
               id="name"
               label="List name"
+              value={name}
+              onChange={e => setName(e.target.value)}
               fullWidth
               variant="outlined"
             />
