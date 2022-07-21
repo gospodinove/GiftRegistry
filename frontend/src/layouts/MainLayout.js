@@ -5,9 +5,12 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 export default function MainLayout() {
   const navigate = useNavigate()
+
+  const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -17,12 +20,16 @@ export default function MainLayout() {
             Gift Registry
           </Typography>
 
-          <Button color="inherit" onClick={() => navigate('login')}>
-            Login
-          </Button>
-          <Button color="inherit" onClick={() => navigate('register')}>
-            Register
-          </Button>
+          {!isAuthenticated ? (
+            <>
+              <Button color="inherit" onClick={() => navigate('login')}>
+                Login
+              </Button>
+              <Button color="inherit" onClick={() => navigate('register')}>
+                Register
+              </Button>
+            </>
+          ) : null}
         </Toolbar>
       </AppBar>
 

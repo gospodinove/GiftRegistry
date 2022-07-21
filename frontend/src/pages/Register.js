@@ -3,8 +3,13 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 export default function Register() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const [firstName, setFirstName] = React.useState('')
   const [lastName, setLastName] = React.useState('')
   const [email, setEmail] = React.useState('')
@@ -44,14 +49,14 @@ export default function Register() {
           }
         }
 
-        // TODO: store user in redux
-        console.log(response.user)
+        dispatch({ type: 'auth/setUser', payload: response.user })
+        navigate('/')
       } catch {
         // TODO: show toast
         console.log('Register error')
       }
     },
-    [firstName, lastName, email, password]
+    [firstName, lastName, email, password, navigate, dispatch]
   )
 
   return (
