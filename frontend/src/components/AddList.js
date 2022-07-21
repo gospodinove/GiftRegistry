@@ -14,6 +14,7 @@ function AddList() {
   const [open, setOpen] = React.useState(false)
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
+  const [errors, setErrors] = React.useState({})
 
   const listTypes = [
     'Birthday',
@@ -39,12 +40,33 @@ function AddList() {
     async e => {
       e.preventDefault()
 
+      setErrors({})
+
       const data = {
         type,
         name
       }
+      try {
+        const response = await api('lists', 'post', data)
 
-      const response = await api('lists', 'post', data)
+        if (!response.success) {
+          switch (response.errorType) {
+            case 'field-error':
+              setErrors(response.errors)
+              return
+            case 'general':
+              //TODO: TOAST
+              return
+            default:
+              return
+          }
+        }
+
+        handleClose()
+      } catch {
+        //TODO: TOAST
+        console.log('error')
+      }
     },
     [name, type]
   )
@@ -80,6 +102,8 @@ function AddList() {
               ))}
             </TextField>
             <TextField
+              error={errors.name !== undefined}
+              helperText={errors.name}
               autoFocus
               required
               margin="normal"
@@ -93,9 +117,7 @@ function AddList() {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose} type="submit">
-              Create List
-            </Button>
+            <Button type="submit">Create List</Button>
           </DialogActions>
         </Box>
       </Dialog>
