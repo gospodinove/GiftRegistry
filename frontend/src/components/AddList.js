@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { api } from '../utils/api'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
@@ -6,10 +8,12 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
 import Icon from '@mui/material/Icon'
-import { Box } from '@mui/system'
-import { api } from '../utils/api'
-import { useDispatch } from 'react-redux'
+import Box from '@mui/material/Box'
+import { Grid, Stack } from '@mui/material'
+import GiftListItem from './GiftListItem'
 
 function AddList() {
   const dispatch = useDispatch()
@@ -38,6 +42,16 @@ function AddList() {
   const handleChange = useCallback(event => {
     setType(event.target.value)
   }, [])
+
+  const lists = useSelector(state => state.lists)
+
+  // const lists = [
+  //   { name: 'My birthday list', type: 'Birthday' },
+  //   { name: 'My wedding list', type: 'Wedding' },
+  //   { name: 'My graduation list', type: 'Graduation/Prom' },
+  //   { name: 'My Christmas list', type: 'Christmas' },
+  //   { name: 'My custom list', type: 'Other' }
+  // ]
 
   const onSubmit = useCallback(
     async e => {
@@ -73,60 +87,81 @@ function AddList() {
         console.log('error')
       }
     },
-    [name, type]
+    [name, type, dispatch, handleClose]
   )
 
+  const onListClick = useCallback(list => console.log(list.id), [])
+
   return (
-    <div>
-      <Button
-        sx={{ mt: 3.5 }}
-        variant="outlined"
-        onClick={handleClickOpen}
-        startIcon={<Icon color="primary">add_circle</Icon>}
-      >
-        CREATE NEW LIST
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <Box component="form" onSubmit={onSubmit}>
-          <DialogTitle>Your new list</DialogTitle>
-          <DialogContent>
-            <TextField
-              select
-              margin="normal"
-              id="name"
-              label="List type"
-              value={type}
-              onChange={handleChange}
-              fullWidth
-              variant="outlined"
-            >
-              {listTypes.map(option => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              error={errors.name !== undefined}
-              helperText={errors.name}
-              autoFocus
-              required
-              margin="normal"
-              id="name"
-              label="List name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              fullWidth
-              variant="outlined"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Create List</Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
-    </div>
+    <Box sx={{ width: '100%' }}>
+      <Grid container>
+        <Grid item xs={3}>
+          <Button
+            sx={{
+              mt: 3.5,
+              mr: 2.5,
+              width: 'fit-content',
+              height: 'fit-content'
+            }}
+            variant="outlined"
+            fullWidth
+            onClick={handleClickOpen}
+            startIcon={<Icon color="primary">add_circle</Icon>}
+          >
+            CREATE NEW LIST
+          </Button>
+
+          <Box sx={{ maxHeight: '80vh', overflow: 'auto' }}>
+            {lists.map(list => (
+              <ListItem key={list.id} component="div" disablePadding>
+                <GiftListItem list={list} action={onListClick} />
+              </ListItem>
+            ))}
+          </Box>
+          <Dialog open={open} onClose={handleClose}>
+            <Box component="form" onSubmit={onSubmit}>
+              <DialogTitle>Your new list</DialogTitle>
+              <DialogContent>
+                <TextField
+                  select
+                  margin="normal"
+                  id="name"
+                  label="List type"
+                  value={type}
+                  onChange={handleChange}
+                  fullWidth
+                  variant="outlined"
+                >
+                  {listTypes.map(option => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  error={errors.name !== undefined}
+                  helperText={errors.name}
+                  autoFocus
+                  required
+                  margin="normal"
+                  id="name"
+                  label="List name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  fullWidth
+                  variant="outlined"
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button type="submit">Create List</Button>
+              </DialogActions>
+            </Box>
+          </Dialog>
+        </Grid>
+        <Grid item xs={9} sx={{ backgroundColor: 'blue' }}></Grid>
+      </Grid>
+    </Box>
   )
 }
 

@@ -33,7 +33,7 @@ export default function MainLayout() {
         </Toolbar>
       </AppBar>
 
-      <Box component="main" sx={{ p: 3, pt: 0 }}>
+      <Box component="main" sx={{ pl: 3, pr: 3, pt: 0 }}>
         <Outlet />
       </Box>
     </Box>
