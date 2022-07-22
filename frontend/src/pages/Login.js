@@ -34,8 +34,10 @@ export default function Login() {
               return
 
             case 'general':
-              // TODO: show toast
-              console.log(response.errors)
+              dispatch({
+                type: 'toast/show',
+                payload: { type: 'error', message: response.errors }
+              })
               return
 
             default:
@@ -46,8 +48,10 @@ export default function Login() {
         dispatch({ type: 'auth/setUser', payload: response.user })
         navigate('/')
       } catch {
-        // TODO: show toast
-        console.log('Register error')
+        dispatch({
+          type: 'toast/show',
+          payload: { type: 'error', message: 'Could not login' }
+        })
       }
     },
     [email, password, navigate, dispatch]

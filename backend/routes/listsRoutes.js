@@ -31,7 +31,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 
       res.json({ success: true, list })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not register user')
+      sendErrorResponse(res, 500, 'general', 'Could not create list')
     }
   } catch (errors) {
     sendErrorResponse(res, 500, 'field-error', errors)
