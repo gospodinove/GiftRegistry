@@ -37,7 +37,7 @@ function GiftListItem({ list, action }) {
   return (
     <ListItemButton component="button" onClick={() => action(list)}>
       <ListItemText primary={list.name} secondary={secondary} />
-      <ListItemIcon>{getIcon()}</ListItemIcon>
+      <ListItemIcon sx={{ minWidth: '0px' }}>{getIcon()}</ListItemIcon>
     </ListItemButton>
   )
 }
