@@ -5,6 +5,7 @@ const { extend } = require('indicative/validator')
 const { replaceId, sendErrorResponse } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
+const { FindCursor } = require('mongodb')
 
 const router = express.Router()
 
@@ -35,6 +36,19 @@ router.post('/', isAuthenticated, async (req, res) => {
     }
   } catch (errors) {
     sendErrorResponse(res, 500, 'field-error', errors)
+  }
+})
+
+router.get('/', isAuthenticated, async (req, res) => {
+  const db = req.app.locals.db
+  const userId = req.session.user.id
+
+  try {
+    const lists = await db.collection('lists').find({ users: userId })
+
+    res.json({ success: true, lists })
+  } catch {
+    sendErrorResponse(res, 500, 'field-error', 'No lists from this user')
   }
 })
 
