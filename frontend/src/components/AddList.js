@@ -72,7 +72,10 @@ function AddList() {
               setErrors(response.errors)
               return
             case 'general':
-              //TODO: TOAST
+              dispatch({
+                type: 'toast/show',
+                payload: { type: 'error', message: response.errors }
+              })
               return
             default:
               return
@@ -83,8 +86,10 @@ function AddList() {
 
         handleClose()
       } catch {
-        //TODO: TOAST
-        console.log('error')
+        dispatch({
+          type: 'toast/show',
+          payload: { type: 'error', message: 'Could not create list' }
+        })
       }
     },
     [name, type, dispatch, handleClose]

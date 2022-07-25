@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { authSlice } from './authSlice'
 import { listsSlice } from './listsSlice'
+import { toastSlice } from './toastSlice'
 
 export const slices = {
   auth: authSlice,
-  lists: listsSlice
+  lists: listsSlice,
+  toast: toastSlice
 }
 
 const reducers = Object.values(slices).reduce((acc, slice) => {
