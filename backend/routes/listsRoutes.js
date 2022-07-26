@@ -5,7 +5,6 @@ const { extend } = require('indicative/validator')
 const { replaceId, sendErrorResponse } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
-const { FindCursor } = require('mongodb')
 
 const router = express.Router()
 

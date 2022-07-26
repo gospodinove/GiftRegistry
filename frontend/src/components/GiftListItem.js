@@ -9,35 +9,35 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import ParkIcon from '@mui/icons-material/Park'
 import AnimationIcon from '@mui/icons-material/Animation'
 
-function GiftListItem({ list, action }) {
-  const getIcon = () => {
-    switch (list.type) {
-      case 'Birthday':
-        return <CakeIcon />
+const getIcon = type => {
+  switch (type) {
+    case 'Birthday':
+      return <CakeIcon />
 
-      case 'Wedding':
-        return <FavoriteIcon />
+    case 'Wedding':
+      return <FavoriteIcon />
 
-      case 'Graduation/Prom':
-        return <SchoolIcon />
+    case 'Graduation/Prom':
+      return <SchoolIcon />
 
-      case 'Christmas':
-        return <ParkIcon />
+    case 'Christmas':
+      return <ParkIcon />
 
-      case 'Other':
-        return <AnimationIcon />
+    case 'Other':
+      return <AnimationIcon />
 
-      default:
-        break
-    }
+    default:
+      break
   }
+}
 
+function GiftListItem({ list, onClick }) {
   const secondary = list.type !== 'Other' ? list.type : 'Custom'
 
   return (
-    <ListItemButton component="button" onClick={() => action(list)}>
+    <ListItemButton component="button" onClick={() => onClick(list)}>
       <ListItemText primary={list.name} secondary={secondary} />
-      <ListItemIcon sx={{ minWidth: '0px' }}>{getIcon()}</ListItemIcon>
+      <ListItemIcon sx={{ minWidth: '0px' }}>{getIcon(list.type)}</ListItemIcon>
     </ListItemButton>
   )
 }

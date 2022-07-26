@@ -7,7 +7,7 @@ import { api } from '../utils/api'
 const GiftLists = () => {
   const lists = useSelector(state => state.lists)
 
-  var listsSortedByDate = useMemo(
+  const listsSortedByDate = useMemo(
     () =>
       [...lists].sort(
         (objA, objB) => new Date(objB.date) - new Date(objA.date)
@@ -50,10 +50,10 @@ const GiftLists = () => {
   const onListClick = useCallback(list => console.log(list.id), [])
 
   return (
-    <Box sx={{ maxHeight: '80vh', overflow: 'auto' }}>
+    <Box sx={{ height: '80vh', overflow: 'auto' }}>
       {listsSortedByDate.map(list => (
         <ListItem key={list.id} component="div" disablePadding>
-          <GiftListItem list={list} action={onListClick} />
+          <GiftListItem list={list} onClick={onListClick} />
         </ListItem>
       ))}
     </Box>
