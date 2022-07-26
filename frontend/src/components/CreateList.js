@@ -33,6 +33,7 @@ function CreateList() {
 
   const handleClose = useCallback(() => {
     setOpen(false)
+    setName('')
   }, [])
 
   const handleChange = useCallback(event => {
@@ -98,7 +99,7 @@ function CreateList() {
         CREATE NEW LIST
       </Button>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
         <Box component="form" onSubmit={onSubmit}>
           <DialogTitle>Your new list</DialogTitle>
           <DialogContent>
