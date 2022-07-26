@@ -16,7 +16,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 
   try {
     const schema = {
-      type: 'required',
+      type: 'required|string|max:30',
       name: 'required|string'
     }
 

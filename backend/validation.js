@@ -29,5 +29,7 @@ module.exports.validationMessages = {
   email: 'Enter valid email address',
   password: 'Min 8 characters (capital & lowercase letter, special character)',
   before: 'This date is too late',
-  after: 'This date is too early'
+  after: 'This date is too early',
+  max: 'Max number of characters: {{args}}',
+  min: 'Min number of characters: {{args}}'
 }
