@@ -4,7 +4,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
-import Page from './pages/Page'
+import Home from './pages/Home'
 import Register from './pages/Register'
 import { api } from './utils/api'
 import { isEmptyObject } from './utils/objects'
@@ -29,7 +29,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route path="/" element={<Page />} />
+        <Route path="/" element={<Home />} />
 
         {/* Auth */}
         <Route path="login" element={<Login />} />

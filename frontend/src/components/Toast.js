@@ -7,7 +7,10 @@ const Toast = () => {
 
   const data = useSelector(state => state.toast)
 
-  const handleClose = useCallback(() => dispatch({ type: 'toast/hide' }))
+  const handleClose = useCallback(
+    () => dispatch({ type: 'toast/hide' }),
+    [dispatch]
+  )
 
   return (
     <Snackbar

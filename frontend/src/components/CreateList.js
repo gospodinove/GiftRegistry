@@ -1,4 +1,6 @@
 import React, { useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { api } from '../utils/api'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
@@ -7,11 +9,9 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
-import { Box } from '@mui/system'
-import { api } from '../utils/api'
-import { useDispatch } from 'react-redux'
+import Box from '@mui/material/Box'
 
-function AddList() {
+function CreateList() {
   const dispatch = useDispatch()
 
   const [open, setOpen] = React.useState(false)
@@ -68,7 +68,7 @@ function AddList() {
           }
         }
 
-        dispatch({ type: 'lists/add', payload: response.list })
+        dispatch({ type: 'lists/add', payload: [response.list] })
 
         handleClose()
       } catch {
@@ -78,19 +78,26 @@ function AddList() {
         })
       }
     },
-    [name, type]
+    [name, type, dispatch, handleClose]
   )
 
   return (
-    <div>
+    <>
       <Button
-        sx={{ mt: 3.5 }}
+        sx={{
+          mt: 3.5,
+          mr: 2.5,
+          width: 'fit-content',
+          height: 'fit-content'
+        }}
         variant="outlined"
+        fullWidth
         onClick={handleClickOpen}
         startIcon={<Icon color="primary">add_circle</Icon>}
       >
         CREATE NEW LIST
       </Button>
+
       <Dialog open={open} onClose={handleClose}>
         <Box component="form" onSubmit={onSubmit}>
           <DialogTitle>Your new list</DialogTitle>
@@ -131,8 +138,8 @@ function AddList() {
           </DialogActions>
         </Box>
       </Dialog>
-    </div>
+    </>
   )
 }
 
-export default AddList
+export default CreateList

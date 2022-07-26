@@ -70,7 +70,7 @@ export default function MainLayout() {
         </List>
       </Box>
     ),
-    [handleDrawerItemClick]
+    [handleDrawerItemClick, handleDrawerToggle, isAuthenticated]
   )
 
   const container = window !== undefined ? window.document.body : undefined
