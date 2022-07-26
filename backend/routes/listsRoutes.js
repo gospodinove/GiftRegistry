@@ -25,6 +25,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 
     try {
       list.users = [req.session.user.id]
+      list.date = new Date()
 
       await db.collection('lists').insertOne(list)
 

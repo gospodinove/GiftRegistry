@@ -1,11 +1,19 @@
 import { Box, ListItem } from '@mui/material'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import GiftListItem from './GiftListItem'
 import { api } from '../utils/api'
 
 const GiftLists = () => {
   const lists = useSelector(state => state.lists)
+
+  var listsSortedByDate = useMemo(
+    () =>
+      [...lists].sort(
+        (objA, objB) => new Date(objB.date) - new Date(objA.date)
+      ),
+    [lists]
+  )
 
   const dispatch = useDispatch()
 
@@ -43,7 +51,7 @@ const GiftLists = () => {
 
   return (
     <Box sx={{ maxHeight: '80vh', overflow: 'auto' }}>
-      {lists.map(list => (
+      {listsSortedByDate.map(list => (
         <ListItem key={list.id} component="div" disablePadding>
           <GiftListItem list={list} action={onListClick} />
         </ListItem>
