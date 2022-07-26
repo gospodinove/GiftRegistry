@@ -45,6 +45,8 @@ function CreateList() {
     setType(event.target.value)
 
     setCustomType('Custom')
+
+    setErrors({})
   }, [])
 
   const onSubmit = useCallback(
