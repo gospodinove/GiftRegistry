@@ -33,7 +33,11 @@ function CreateList() {
 
   const handleClose = useCallback(() => {
     setOpen(false)
-    setName('')
+
+    setTimeout(() => {
+      setName('')
+      setType('Birthday')
+    }, 100)
   }, [])
 
   const handleChange = useCallback(event => {
