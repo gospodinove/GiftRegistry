@@ -1,10 +1,14 @@
 {
-    "name": "gift-registry",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "install": "(cd frontend; npm install) && (cd backend; npm install)",
-        "start:frontend": "cd frontend; npm run start",
-        "start:backend": "cd backend; npm run start"
-    }
+  "name": "gift-registry",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "install": "(cd frontend; npm install) && (cd backend; npm install)",
+    "start:frontend": "cd frontend; npm run start",
+    "start:backend": "cd backend; npm run start",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "8.0.1"
+  }
 }
