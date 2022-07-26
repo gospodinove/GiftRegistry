@@ -11,6 +11,14 @@ import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
 import Box from '@mui/material/Box'
 
+const listTypes = [
+  'Birthday',
+  'Wedding',
+  'Graduation/Prom',
+  'Christmas',
+  'Custom'
+]
+
 function CreateList() {
   const dispatch = useDispatch()
 
@@ -18,14 +26,7 @@ function CreateList() {
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
   const [errors, setErrors] = React.useState({})
-
-  const listTypes = [
-    'Birthday',
-    'Wedding',
-    'Graduation/Prom',
-    'Christmas',
-    'Other'
-  ]
+  const [customType, setCustomType] = React.useState('Custom')
 
   const handleClickOpen = useCallback(() => {
     setOpen(true)
@@ -33,10 +34,17 @@ function CreateList() {
 
   const handleClose = useCallback(() => {
     setOpen(false)
+
+    setTimeout(() => {
+      setName('')
+      setType('Birthday')
+    }, 100)
   }, [])
 
-  const handleChange = useCallback(event => {
+  const handleTypeChange = useCallback(event => {
     setType(event.target.value)
+
+    setCustomType('Custom')
   }, [])
 
   const onSubmit = useCallback(
@@ -46,7 +54,7 @@ function CreateList() {
       setErrors({})
 
       const data = {
-        type,
+        type: type === 'Custom' ? customType : type,
         name
       }
       try {
@@ -98,17 +106,17 @@ function CreateList() {
         CREATE NEW LIST
       </Button>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
         <Box component="form" onSubmit={onSubmit}>
           <DialogTitle>Your new list</DialogTitle>
           <DialogContent>
             <TextField
               select
               margin="normal"
-              id="name"
+              id="type"
               label="List type"
               value={type}
-              onChange={handleChange}
+              onChange={handleTypeChange}
               fullWidth
               variant="outlined"
             >
@@ -118,6 +126,21 @@ function CreateList() {
                 </MenuItem>
               ))}
             </TextField>
+            {type === 'Custom' ? (
+              <TextField
+                error={errors.type !== undefined}
+                helperText={errors.type}
+                autoFocus
+                required
+                margin="normal"
+                id="custom-type"
+                label="List type name"
+                value={customType}
+                onChange={e => setCustomType(e.target.value)}
+                fullWidth
+                variant="outlined"
+              />
+            ) : null}
             <TextField
               error={errors.name !== undefined}
               helperText={errors.name}
