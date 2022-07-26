@@ -68,7 +68,7 @@ function CreateList() {
           }
         }
 
-        dispatch({ type: 'lists/add', payload: response.list })
+        dispatch({ type: 'lists/add', payload: [response.list] })
 
         handleClose()
       } catch {

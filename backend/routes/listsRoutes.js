@@ -44,11 +44,11 @@ router.get('/', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id
 
   try {
-    const lists = await db.collection('lists').find({ users: userId })
+    const lists = await db.collection('lists').find({ users: userId }).toArray()
 
-    res.json({ success: true, lists })
+    res.json({ success: true, lists: lists.map(list => replaceId(list)) })
   } catch {
-    sendErrorResponse(res, 500, 'field-error', 'No lists from this user')
+    sendErrorResponse(res, 500, 'general', 'No lists from this user')
   }
 })
 
