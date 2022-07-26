@@ -25,6 +25,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 
     try {
       list.users = [req.session.user.id]
+      list.date = new Date()
 
       await db.collection('lists').insertOne(list)
 
@@ -39,6 +40,19 @@ router.post('/', isAuthenticated, async (req, res) => {
   }
 })
 
+router.get('/', isAuthenticated, async (req, res) => {
+  const db = req.app.locals.db
+  const userId = req.session.user.id
+
+  try {
+    const lists = await db.collection('lists').find({ users: userId }).toArray()
+
+    res.json({ success: true, lists: lists.map(list => replaceId(list)) })
+  } catch {
+    sendErrorResponse(res, 500, 'general', 'No lists from this user')
+  }
+})
+
 router.get('/:id/items', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
 
@@ -48,12 +62,12 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
       users: req.session.user.id
     })
 
-    replaceId(list)
-
     if (!list) {
       sendErrorResponse(res, 404, 'general', 'Could not find your list')
       return
     }
+
+    replaceId(list)
 
     const items = await db
       .collection('listItems')

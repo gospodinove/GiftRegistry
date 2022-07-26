@@ -18,6 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
+import { navbarHeight } from '../constants'
 
 const authNavItems = [
   { title: 'login', route: 'login' },
@@ -76,9 +77,9 @@ export default function MainLayout() {
   const container = window !== undefined ? window.document.body : undefined
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed">
-        <Toolbar>
+    <Box sx={{ flexGrow: 1, height: '100%' }}>
+      <AppBar position="fixed" sx={{ height: `${navbarHeight}px` }}>
+        <Toolbar sx={{ height: `${navbarHeight}px` }}>
           <Typography
             variant="h6"
             component="div"
@@ -144,8 +145,8 @@ export default function MainLayout() {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ p: 3, pt: 0 }}>
-        <Toolbar />
+      <Box component="main" sx={{ p: 3, pt: 0, pb: 0, height: '100%' }}>
+        <Toolbar sx={{ height: `${navbarHeight}px` }} />
         <Outlet />
       </Box>
 
