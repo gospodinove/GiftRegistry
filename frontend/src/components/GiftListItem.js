@@ -23,11 +23,8 @@ const getIcon = type => {
     case 'Christmas':
       return <ParkIcon />
 
-    case 'Other':
-      return <AnimationIcon />
-
     default:
-      break
+      return <AnimationIcon />
   }
 }
 
