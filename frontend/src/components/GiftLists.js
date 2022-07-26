@@ -50,7 +50,7 @@ const GiftLists = () => {
   const onListClick = useCallback(list => console.log(list.id), [])
 
   return (
-    <Box sx={{ height: '80vh', overflow: 'auto' }}>
+    <Box sx={{ overflow: 'auto' }}>
       {listsSortedByDate.map(list => (
         <ListItem key={list.id} component="div" disablePadding>
           <GiftListItem list={list} onClick={onListClick} />
