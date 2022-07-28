@@ -41,13 +41,16 @@ function CreateList() {
     }, 100)
   }, [])
 
-  const handleTypeChange = useCallback(e => {
-    setType(e.target.value)
+  const handleTypeChange = useCallback(
+    e => {
+      setType(e.target.value)
 
-    setCustomType('Custom')
+      setCustomType('Custom')
 
-    setErrors({})
-  }, [])
+      setErrors({ ...errors, custom: undefined })
+    },
+    [errors]
+  )
 
   const onSubmit = useCallback(
     async e => {
