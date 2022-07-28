@@ -1,15 +1,8 @@
-import {
-  Box,
-  Checkbox,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography
-} from '@mui/material'
+import { Box, List, Typography } from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
+import RegistryItem from './RegistryItem'
 
 const GiftListItems = ({ listId }) => {
   const dispatch = useDispatch()
@@ -55,6 +48,11 @@ const GiftListItems = ({ listId }) => {
     fetchItems()
   }, [fetchItems])
 
+  const handleItemToggle = useCallback(id => {
+    // TODO: update object
+    console.log(id)
+  }, [])
+
   return items ? (
     <Box>
       {/* TODO: Create ListDetailsSummary component */}
@@ -62,23 +60,7 @@ const GiftListItems = ({ listId }) => {
 
       <List>
         {items.map(item => (
-          // TODO: display the article link
-          <ListItem key={item.id}>
-            <ListItemIcon>
-              <Checkbox
-                edge="start"
-                checked={false}
-                tabIndex={-1}
-                disableRipple
-                inputProps={{ 'aria-labelledby': item.id }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              id={item.id}
-              primary={item.title}
-              secondary={item.description}
-            />
-          </ListItem>
+          <RegistryItem key={item.id} data={item} onToggle={handleItemToggle} />
         ))}
       </List>
     </Box>
