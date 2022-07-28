@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { api } from '../utils/api'
-import { clearError } from '../Utils'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
@@ -42,16 +41,13 @@ function CreateList() {
     }, 100)
   }, [])
 
-  const handleTypeChange = useCallback(
-    e => {
-      setType(e.target.value)
+  const handleTypeChange = useCallback(e => {
+    setType(e.target.value)
 
-      setCustomType('Custom')
+    setCustomType('Custom')
 
-      clearError(errors, setErrors)
-    },
-    [errors]
-  )
+    setErrors({})
+  }, [])
 
   const onSubmit = useCallback(
     async e => {
@@ -144,7 +140,7 @@ function CreateList() {
                 value={customType}
                 onChange={e => {
                   setCustomType(e.target.value)
-                  clearError(errors, setErrors)
+                  setErrors({ ...errors, custom: undefined })
                 }}
                 fullWidth
                 variant="outlined"
@@ -161,7 +157,7 @@ function CreateList() {
               value={name}
               onChange={e => {
                 setName(e.target.value)
-                clearError(errors, setErrors)
+                setErrors({ ...errors, name: undefined })
               }}
               fullWidth
               variant="outlined"

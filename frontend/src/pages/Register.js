@@ -5,7 +5,6 @@ import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { clearError } from '../Utils'
 
 export default function Register() {
   const dispatch = useDispatch()
@@ -83,7 +82,7 @@ export default function Register() {
             value={firstName}
             onChange={e => {
               setFirstName(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, firstName: undefined })
             }}
             error={errors.firstName !== undefined}
             helperText={errors.firstName}
@@ -97,7 +96,7 @@ export default function Register() {
             value={lastName}
             onChange={e => {
               setLastName(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, lastName: undefined })
             }}
             error={errors.lastName !== undefined}
             helperText={errors.lastName}
@@ -113,7 +112,7 @@ export default function Register() {
             value={email}
             onChange={e => {
               setEmail(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, email: undefined })
             }}
             error={errors.email !== undefined}
             helperText={errors.email}
@@ -129,7 +128,7 @@ export default function Register() {
             value={password}
             onChange={e => {
               setPassword(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, password: undefined })
             }}
             error={errors.password !== undefined}
             helperText={errors.password}

@@ -5,7 +5,6 @@ import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { clearError } from '../Utils'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -78,7 +77,7 @@ export default function Login() {
             value={email}
             onChange={e => {
               setEmail(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, email: undefined })
             }}
             error={errors.email !== undefined}
             helperText={errors.email}
@@ -94,7 +93,7 @@ export default function Login() {
             value={password}
             onChange={e => {
               setPassword(e.target.value)
-              clearError(errors, setErrors)
+              setErrors({ ...errors, password: undefined })
             }}
             error={errors.password !== undefined}
             helperText={errors.password}
