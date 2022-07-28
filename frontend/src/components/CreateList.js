@@ -86,7 +86,7 @@ function CreateList() {
         })
       }
     },
-    [name, type, dispatch, handleClose]
+    [name, type, customType, dispatch, handleClose]
   )
 
   return (

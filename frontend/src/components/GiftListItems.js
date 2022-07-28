@@ -1,9 +1,21 @@
+import {
+  Box,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography
+} from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 
 const GiftListItems = ({ listId }) => {
   const dispatch = useDispatch()
+
+  const listData = useSelector(state => state.lists.find(l => l.id === listId))
+  const items = useSelector(state => state.listItems[listId])
 
   const fetchItems = useCallback(async () => {
     try {
@@ -43,7 +55,34 @@ const GiftListItems = ({ listId }) => {
     fetchItems()
   }, [fetchItems])
 
-  return <div></div>
+  return items ? (
+    <Box>
+      {/* TODO: Create ListDetailsSummary component */}
+      <Typography variant="h5">{listData.name}</Typography>
+
+      <List>
+        {items.map(item => (
+          // TODO: display the article link
+          <ListItem key={item.id}>
+            <ListItemIcon>
+              <Checkbox
+                edge="start"
+                checked={false}
+                tabIndex={-1}
+                disableRipple
+                inputProps={{ 'aria-labelledby': item.id }}
+              />
+            </ListItemIcon>
+            <ListItemText
+              id={item.id}
+              primary={item.title}
+              secondary={item.description}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  ) : null
 }
 
 export default GiftListItems
