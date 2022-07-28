@@ -1,5 +1,5 @@
-import { Box, List, ListItem } from '@mui/material'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import { Box, List } from '@mui/material'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import GiftListItem from './GiftListItem'
 import { api } from '../utils/api'
@@ -7,6 +7,8 @@ import { api } from '../utils/api'
 const GiftLists = ({ onListClick }) => {
   const lists = useSelector(state => state.lists)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+
+  const [selectedListId, setSelectedListId] = useState()
 
   const listsSortedByDate = useMemo(
     () =>
@@ -52,15 +54,24 @@ const GiftLists = ({ onListClick }) => {
     getLists()
   }, [getLists])
 
-  const handeOnListClick = useCallback(list => onListClick(list), [onListClick])
+  const handleListClick = useCallback(
+    list => {
+      setSelectedListId(list.id)
+      onListClick(list)
+    },
+    [onListClick, setSelectedListId]
+  )
 
   return (
     <Box sx={{ overflow: 'auto' }}>
       <List>
         {listsSortedByDate.map(list => (
-          <ListItem key={list.id} component="div" disablePadding>
-            <GiftListItem list={list} onClick={handeOnListClick} />
-          </ListItem>
+          <GiftListItem
+            key={list.id}
+            list={list}
+            isSelected={selectedListId === list.id}
+            onClick={handleListClick}
+          />
         ))}
       </List>
     </Box>
