@@ -46,7 +46,7 @@ const GiftLists = ({ onListClick }) => {
         payload: { type: 'error', message: 'No lists from this user' }
       })
     }
-  }, [dispatch])
+  }, [dispatch, isAuthenticated])
 
   useEffect(() => {
     getLists()

@@ -93,8 +93,6 @@ function CreateList() {
     <>
       <Button
         sx={{
-          mt: 3.5,
-          mr: 2.5,
           width: 'fit-content',
           height: 'fit-content'
         }}

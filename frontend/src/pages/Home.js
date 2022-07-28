@@ -27,12 +27,12 @@ export default function Home() {
         pt: navbarHeight + 'px'
       }}
     >
-      <Grid container sx={{ height: '100%' }}>
+      <Grid container sx={{ height: '100%', mt: 3 }}>
         <Grid item xs={3}>
           {isAuthenticated ? <CreateList /> : null}
           <GiftLists onListClick={onListClick} />
         </Grid>
-        <Grid item xs={9} sx={{ backgroundColor: 'blue' }}>
+        <Grid item xs={9}>
           <GiftListItems listId={selectedListId} />
         </Grid>
       </Grid>

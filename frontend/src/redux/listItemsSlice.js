@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 // list id => array of items
 const initialState = {}
 
-export const listsSlice = createSlice({
+export const listItemsSlice = createSlice({
   name: 'listItems',
   initialState,
   reducers: {
