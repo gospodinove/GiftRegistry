@@ -1,12 +1,21 @@
 import { Box, Grid } from '@mui/material'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import CreateList from '../components/CreateList'
+import GiftListItems from '../components/GiftListItems'
 import GiftLists from '../components/GiftLists'
 import { navbarHeight } from '../constants'
 import './Home.css'
 
 export default function Home() {
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+
+  const [selectedListId, setSelectedListId] = useState()
+
+  const onListClick = useCallback(
+    list => setSelectedListId(list.id),
+    [setSelectedListId]
+  )
 
   return (
     <Box
@@ -21,9 +30,11 @@ export default function Home() {
       <Grid container sx={{ height: '100%' }}>
         <Grid item xs={3}>
           {isAuthenticated ? <CreateList /> : null}
-          <GiftLists />
+          <GiftLists onListClick={onListClick} />
         </Grid>
-        <Grid item xs={9} sx={{ backgroundColor: 'blue' }}></Grid>
+        <Grid item xs={9} sx={{ backgroundColor: 'blue' }}>
+          <GiftListItems listId={selectedListId} />
+        </Grid>
       </Grid>
     </Box>
   )
