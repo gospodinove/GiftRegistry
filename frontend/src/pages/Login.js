@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useCallback } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button, Stack, Typography } from '@mui/material'
@@ -14,6 +14,28 @@ export default function Login() {
   const [password, setPassword] = React.useState('')
 
   const [errors, setErrors] = React.useState({})
+
+  const handleEmailChange = useCallback(
+    e => {
+      setEmail(e.target.value)
+
+      if (errors.email !== undefined) {
+        setErrors({ ...errors, email: undefined })
+      }
+    },
+    [errors]
+  )
+
+  const handlePasswordChange = useCallback(
+    e => {
+      setPassword(e.target.value)
+
+      if (errors.password !== undefined) {
+        setErrors({ ...errors, password: undefined })
+      }
+    },
+    [errors]
+  )
 
   const onSubmit = React.useCallback(
     async e => {
@@ -75,7 +97,7 @@ export default function Login() {
             variant="outlined"
             fullWidth
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             error={errors.email !== undefined}
             helperText={errors.email}
             required
@@ -88,7 +110,7 @@ export default function Login() {
             variant="outlined"
             fullWidth
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             error={errors.password !== undefined}
             helperText={errors.password}
             required

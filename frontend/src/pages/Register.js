@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useCallback } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button, Stack, Typography } from '@mui/material'
@@ -16,6 +16,50 @@ export default function Register() {
   const [password, setPassword] = React.useState('')
 
   const [errors, setErrors] = React.useState({})
+
+  const handleEmailChange = useCallback(
+    e => {
+      setEmail(e.target.value)
+
+      if (errors.email !== undefined) {
+        setErrors({ ...errors, email: undefined })
+      }
+    },
+    [errors]
+  )
+
+  const handlePasswordChange = useCallback(
+    e => {
+      setPassword(e.target.value)
+
+      if (errors.password !== undefined) {
+        setErrors({ ...errors, password: undefined })
+      }
+    },
+    [errors]
+  )
+
+  const handleFirstNameChange = useCallback(
+    e => {
+      setFirstName(e.target.value)
+
+      if (errors.firstName !== undefined) {
+        setErrors({ ...errors, firstName: undefined })
+      }
+    },
+    [errors]
+  )
+
+  const handleLastNameChange = useCallback(
+    e => {
+      setLastName(e.target.value)
+
+      if (errors.lastName !== undefined) {
+        setErrors({ ...errors, lastName: undefined })
+      }
+    },
+    [errors]
+  )
 
   const onSubmit = React.useCallback(
     async e => {
@@ -80,7 +124,7 @@ export default function Register() {
             variant="outlined"
             fullWidth
             value={firstName}
-            onChange={e => setFirstName(e.target.value)}
+            onChange={handleFirstNameChange}
             error={errors.firstName !== undefined}
             helperText={errors.firstName}
             required
@@ -91,7 +135,7 @@ export default function Register() {
             variant="outlined"
             fullWidth
             value={lastName}
-            onChange={e => setLastName(e.target.value)}
+            onChange={handleLastNameChange}
             error={errors.lastName !== undefined}
             helperText={errors.lastName}
             required
@@ -104,7 +148,7 @@ export default function Register() {
             variant="outlined"
             fullWidth
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             error={errors.email !== undefined}
             helperText={errors.email}
             required
@@ -117,7 +161,7 @@ export default function Register() {
             variant="outlined"
             fullWidth
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             error={errors.password !== undefined}
             helperText={errors.password}
             required
