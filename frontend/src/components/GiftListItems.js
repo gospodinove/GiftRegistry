@@ -12,7 +12,7 @@ const GiftListItems = ({ listId }) => {
 
   const fetchItems = useCallback(async () => {
     try {
-      if (!listId) {
+      if (!listId || items !== undefined) {
         return
       }
 
