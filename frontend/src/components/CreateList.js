@@ -86,15 +86,13 @@ function CreateList() {
         })
       }
     },
-    [name, type, dispatch, handleClose]
+    [name, type, customType, dispatch, handleClose]
   )
 
   return (
     <>
       <Button
         sx={{
-          mt: 3.5,
-          mr: 2.5,
           width: 'fit-content',
           height: 'fit-content'
         }}
