@@ -20,6 +20,7 @@ export default function Register() {
   const handleEmailChange = useCallback(
     e => {
       setEmail(e.target.value)
+
       if (errors.email !== undefined) {
         setErrors({ ...errors, email: undefined })
       }
@@ -30,6 +31,7 @@ export default function Register() {
   const handlePasswordChange = useCallback(
     e => {
       setPassword(e.target.value)
+
       if (errors.password !== undefined) {
         setErrors({ ...errors, password: undefined })
       }
@@ -40,6 +42,7 @@ export default function Register() {
   const handleFirstNameChange = useCallback(
     e => {
       setFirstName(e.target.value)
+
       if (errors.firstName !== undefined) {
         setErrors({ ...errors, firstName: undefined })
       }
@@ -50,6 +53,7 @@ export default function Register() {
   const handleLastNameChange = useCallback(
     e => {
       setLastName(e.target.value)
+
       if (errors.lastName !== undefined) {
         setErrors({ ...errors, lastName: undefined })
       }

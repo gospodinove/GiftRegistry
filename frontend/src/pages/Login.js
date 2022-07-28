@@ -18,6 +18,7 @@ export default function Login() {
   const handleEmailChange = useCallback(
     e => {
       setEmail(e.target.value)
+
       if (errors.email !== undefined) {
         setErrors({ ...errors, email: undefined })
       }
@@ -28,6 +29,7 @@ export default function Login() {
   const handlePasswordChange = useCallback(
     e => {
       setPassword(e.target.value)
+
       if (errors.password !== undefined) {
         setErrors({ ...errors, password: undefined })
       }

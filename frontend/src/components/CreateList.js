@@ -55,6 +55,7 @@ function CreateList() {
   const handleCustomTypeChange = useCallback(
     e => {
       setCustomType(e.target.value)
+
       if (errors.type !== undefined) {
         setErrors({ ...errors, type: undefined })
       }
@@ -65,6 +66,7 @@ function CreateList() {
   const handleNameChange = useCallback(
     e => {
       setName(e.target.value)
+
       if (errors.name !== undefined) {
         setErrors({ ...errors, name: undefined })
       }
