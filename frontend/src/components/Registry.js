@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 
-const GiftListItems = ({ listId }) => {
+const Registry = ({ listId }) => {
   const dispatch = useDispatch()
 
   const listData = useSelector(state => state.lists.find(l => l.id === listId))
@@ -76,4 +76,4 @@ const GiftListItems = ({ listId }) => {
   )
 }
 
-export default GiftListItems
+export default Registry

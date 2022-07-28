@@ -19,7 +19,7 @@ const listTypes = [
   'Custom'
 ]
 
-function CreateList() {
+function CreateRegistry() {
   const dispatch = useDispatch()
 
   const [open, setOpen] = React.useState(false)
@@ -190,4 +190,4 @@ function CreateList() {
   )
 }
 
-export default CreateList
+export default CreateRegistry

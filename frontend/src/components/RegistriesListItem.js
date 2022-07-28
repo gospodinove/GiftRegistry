@@ -28,7 +28,7 @@ const getIcon = type => {
   }
 }
 
-function GiftListItem({ list, isSelected, onClick }) {
+function RegistriesListItem({ list, isSelected, onClick }) {
   const secondary = list.type !== 'Other' ? list.type : 'Custom'
 
   return (
@@ -47,4 +47,4 @@ function GiftListItem({ list, isSelected, onClick }) {
   )
 }
 
-export default GiftListItem
+export default RegistriesListItem
