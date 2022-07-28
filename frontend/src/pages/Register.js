@@ -15,10 +15,7 @@ export default function Register() {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
 
-  const [errors, setErrors] = React.useState({
-    email: 'aaa',
-    password: 'bbb'
-  })
+  const [errors, setErrors] = React.useState({})
 
   const handleEmailChange = useCallback(
     e => {
