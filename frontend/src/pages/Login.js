@@ -5,6 +5,7 @@ import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { clearError } from '../Utils'
 
 export default function Login() {
   const dispatch = useDispatch()
@@ -75,7 +76,10 @@ export default function Login() {
             variant="outlined"
             fullWidth
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => {
+              setEmail(e.target.value)
+              clearError(errors, setErrors)
+            }}
             error={errors.email !== undefined}
             helperText={errors.email}
             required
@@ -88,7 +92,10 @@ export default function Login() {
             variant="outlined"
             fullWidth
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={e => {
+              setPassword(e.target.value)
+              clearError(errors, setErrors)
+            }}
             error={errors.password !== undefined}
             helperText={errors.password}
             required
