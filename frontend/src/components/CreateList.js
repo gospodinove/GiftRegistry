@@ -52,6 +52,26 @@ function CreateList() {
     [errors]
   )
 
+  const handleCustomTypeChange = useCallback(
+    e => {
+      setCustomType(e.target.value)
+      if (errors.type !== undefined) {
+        setErrors({ ...errors, type: undefined })
+      }
+    },
+    [errors]
+  )
+
+  const handleNameChange = useCallback(
+    e => {
+      setName(e.target.value)
+      if (errors.name !== undefined) {
+        setErrors({ ...errors, name: undefined })
+      }
+    },
+    [errors]
+  )
+
   const onSubmit = useCallback(
     async e => {
       e.preventDefault()
@@ -141,10 +161,7 @@ function CreateList() {
                 id="custom-type"
                 label="List type name"
                 value={customType}
-                onChange={e => {
-                  setCustomType(e.target.value)
-                  setErrors({ ...errors, type: undefined })
-                }}
+                onChange={handleCustomTypeChange}
                 fullWidth
                 variant="outlined"
               />
@@ -158,10 +175,7 @@ function CreateList() {
               id="name"
               label="List name"
               value={name}
-              onChange={e => {
-                setName(e.target.value)
-                setErrors({ ...errors, name: undefined })
-              }}
+              onChange={handleNameChange}
               fullWidth
               variant="outlined"
             />
