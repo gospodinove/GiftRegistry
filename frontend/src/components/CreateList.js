@@ -47,7 +47,9 @@ function CreateList() {
 
       setCustomType('Custom')
 
-      setErrors({ ...errors, custom: undefined })
+      console.log(errors)
+
+      setErrors({ ...errors, type: undefined })
     },
     [errors]
   )
@@ -143,7 +145,7 @@ function CreateList() {
                 value={customType}
                 onChange={e => {
                   setCustomType(e.target.value)
-                  setErrors({ ...errors, custom: undefined })
+                  setErrors({ ...errors, type: undefined })
                 }}
                 fullWidth
                 variant="outlined"
