@@ -47,8 +47,6 @@ function CreateList() {
 
       setCustomType('Custom')
 
-      console.log(errors)
-
       setErrors({ ...errors, type: undefined })
     },
     [errors]
