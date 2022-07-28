@@ -64,7 +64,16 @@ const GiftListItems = ({ listId }) => {
         ))}
       </List>
     </Box>
-  ) : null
+  ) : (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="100%"
+    >
+      <Typography variant="h5">No selected list</Typography>
+    </Box>
+  )
 }
 
 export default GiftListItems
