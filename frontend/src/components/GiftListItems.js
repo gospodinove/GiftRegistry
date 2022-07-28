@@ -11,11 +11,11 @@ const GiftListItems = ({ listId }) => {
   const items = useSelector(state => state.listItems[listId])
 
   const fetchItems = useCallback(async () => {
-    try {
-      if (!listId || items !== undefined) {
-        return
-      }
+    if (!listId || items !== undefined) {
+      return
+    }
 
+    try {
       const response = await api('lists/' + listId + '/items')
 
       if (!response.success) {
@@ -42,7 +42,7 @@ const GiftListItems = ({ listId }) => {
         }
       })
     }
-  }, [listId, dispatch])
+  }, [listId, items, dispatch])
 
   useEffect(() => {
     fetchItems()
