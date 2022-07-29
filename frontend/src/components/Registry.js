@@ -1,8 +1,10 @@
-import { Box, List, Typography } from '@mui/material'
+import { Box, Button, List, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
+import AddIcon from '@mui/icons-material/Add'
+import ShareIcon from '@mui/icons-material/Share'
 
 const Registry = ({ listId }) => {
   const dispatch = useDispatch()
@@ -53,26 +55,59 @@ const Registry = ({ listId }) => {
     console.log(id)
   }, [])
 
-  return items ? (
-    <Box>
-      {/* TODO: Create ListDetailsSummary component */}
-      <Typography variant="h5">{listData.name}</Typography>
+  const handleAddButtonClick = useCallback(() => {}, [])
 
-      <List>
-        {items.map(item => (
-          <RegistryItem key={item.id} data={item} onToggle={handleItemToggle} />
-        ))}
-      </List>
-    </Box>
-  ) : (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="100%"
-    >
-      <Typography variant="h5">No selected list</Typography>
-    </Box>
+  const handleShareButtonClick = useCallback(() => {}, [])
+
+  return (
+    <>
+      {listData ? (
+        // TODO: Create ListDetailsSummary component
+        <>
+          <Typography variant="h5">{listData.name}</Typography>
+
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddButtonClick}
+            >
+              Add
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<ShareIcon />}
+              onClick={handleShareButtonClick}
+            >
+              Share
+            </Button>
+          </Stack>
+        </>
+      ) : null}
+
+      {items ? (
+        <Box>
+          <List>
+            {items.map(item => (
+              <RegistryItem
+                key={item.id}
+                data={item}
+                onToggle={handleItemToggle}
+              />
+            ))}
+          </List>
+        </Box>
+      ) : (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+        >
+          <Typography variant="h5">No selected list</Typography>
+        </Box>
+      )}
+    </>
   )
 }
 

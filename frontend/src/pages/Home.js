@@ -27,7 +27,7 @@ export default function Home() {
         pt: navbarHeight + 'px'
       }}
     >
-      <Grid container sx={{ height: '100%', mt: 3 }}>
+      <Grid container sx={{ height: '100%', pt: 3 }} spacing={2}>
         <Grid item xs={3}>
           {isAuthenticated ? <CreateRegistry /> : null}
           <RegistriesList onListClick={onListClick} />
