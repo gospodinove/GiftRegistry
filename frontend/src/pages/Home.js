@@ -27,12 +27,32 @@ export default function Home() {
         pt: navbarHeight + 'px'
       }}
     >
-      <Grid container sx={{ height: '100%', mt: 3 }}>
-        <Grid item xs={3}>
+      <Grid
+        container
+        sx={{
+          height: '100%',
+          pt: 3
+        }}
+      >
+        <Grid
+          item
+          xs={3}
+          sx={{
+            height: '100%',
+            overflow: 'auto'
+          }}
+        >
           {isAuthenticated ? <CreateRegistry /> : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
-        <Grid item xs={9}>
+        <Grid
+          item
+          xs={9}
+          sx={{
+            height: '100%',
+            overflow: 'auto'
+          }}
+        >
           <Registry listId={selectedListId} />
         </Grid>
       </Grid>
