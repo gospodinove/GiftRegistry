@@ -19,6 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
 import { navbarHeight } from '../constants'
+import Modals from '../components/Modals'
 
 const authNavItems = [
   { title: 'login', route: 'login' },
@@ -151,6 +152,7 @@ export default function MainLayout() {
       </Box>
 
       <Toast />
+      <Modals />
     </Box>
   )
 }
