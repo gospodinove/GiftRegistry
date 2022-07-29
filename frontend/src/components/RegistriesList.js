@@ -1,10 +1,10 @@
 import { Box, List } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import GiftListItem from './GiftListItem'
+import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 
-const GiftLists = ({ onListClick }) => {
+const RegistriesList = ({ onListClick }) => {
   const lists = useSelector(state => state.lists)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
@@ -66,7 +66,7 @@ const GiftLists = ({ onListClick }) => {
     <Box sx={{ overflow: 'auto' }}>
       <List>
         {listsSortedByDate.map(list => (
-          <GiftListItem
+          <RegistriesListItem
             key={list.id}
             list={list}
             isSelected={selectedListId === list.id}
@@ -78,4 +78,4 @@ const GiftLists = ({ onListClick }) => {
   )
 }
 
-export default GiftLists
+export default RegistriesList

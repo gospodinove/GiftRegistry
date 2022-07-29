@@ -1,9 +1,9 @@
 import { Box, Grid } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
-import CreateList from '../components/CreateList'
-import GiftListItems from '../components/GiftListItems'
-import GiftLists from '../components/GiftLists'
+import CreateRegistry from '../components/CreateRegistry'
+import RegistriesList from '../components/RegistriesList'
+import Registry from '../components/Registry'
 import { navbarHeight } from '../constants'
 import './Home.css'
 
@@ -29,11 +29,11 @@ export default function Home() {
     >
       <Grid container sx={{ height: '100%', mt: 3 }}>
         <Grid item xs={3}>
-          {isAuthenticated ? <CreateList /> : null}
-          <GiftLists onListClick={onListClick} />
+          {isAuthenticated ? <CreateRegistry /> : null}
+          <RegistriesList onListClick={onListClick} />
         </Grid>
         <Grid item xs={9}>
-          <GiftListItems listId={selectedListId} />
+          <Registry listId={selectedListId} />
         </Grid>
       </Grid>
     </Box>
