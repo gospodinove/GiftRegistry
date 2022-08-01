@@ -47,4 +47,4 @@ function RegistriesListItem({ list, isSelected, onClick }) {
   )
 }
 
-export default RegistriesListItem
+export default React.memo(RegistriesListItem)

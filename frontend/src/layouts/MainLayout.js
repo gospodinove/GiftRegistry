@@ -25,7 +25,7 @@ const authNavItems = [
   { title: 'register', route: 'register' }
 ]
 
-export default function MainLayout() {
+function MainLayout() {
   const navigate = useNavigate()
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
@@ -154,3 +154,5 @@ export default function MainLayout() {
     </Box>
   )
 }
+
+export default React.memo(MainLayout)

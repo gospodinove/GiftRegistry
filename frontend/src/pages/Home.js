@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Grid } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -7,7 +8,7 @@ import Registry from '../components/Registry'
 import { navbarHeight } from '../constants'
 import './Home.css'
 
-export default function Home() {
+function Home() {
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedListId, setSelectedListId] = useState()
@@ -59,3 +60,5 @@ export default function Home() {
     </Box>
   )
 }
+
+export default React.memo(Home)

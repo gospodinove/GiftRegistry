@@ -6,7 +6,7 @@ import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-export default function Register() {
+function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -175,3 +175,5 @@ export default function Register() {
     </Box>
   )
 }
+
+export default React.memo(Register)

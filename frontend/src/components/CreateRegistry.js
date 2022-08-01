@@ -190,4 +190,4 @@ function CreateRegistry() {
   )
 }
 
-export default CreateRegistry
+export default React.memo(CreateRegistry)
