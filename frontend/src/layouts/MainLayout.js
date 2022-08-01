@@ -18,7 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
-import { navbarHeight } from '../constants'
+import { styles } from '../styles/MainLayoutStyles'
 
 const authNavItems = [
   { title: 'login', route: 'login' },
@@ -46,7 +46,7 @@ function MainLayout() {
 
   const drawer = React.useCallback(
     () => (
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
           <IconButton onClick={handleDrawerToggle}>
             <CloseIcon />
@@ -61,7 +61,7 @@ function MainLayout() {
                 <ListItem key={item.title} disablePadding>
                   <ListItemButton
                     onClick={() => handleDrawerItemClick(item.route)}
-                    sx={{ textAlign: 'center' }}
+                    sx={styles.listItemButton}
                   >
                     <ListItemText primary={item.title.toUpperCase()} />
                   </ListItemButton>
@@ -74,25 +74,26 @@ function MainLayout() {
     [handleDrawerItemClick, handleDrawerToggle, isAuthenticated]
   )
 
-  const container = window !== undefined ? window.document.body : undefined
+  const container = React.useMemo(
+    () => (window !== undefined ? window.document.body : undefined),
+    []
+  )
+
+  const handleClick = React.useCallback(() => navigate('/'), [navigate])
+  const handleButtonClick = React.useCallback(
+    item => navigate(item.route),
+    [navigate]
+  )
 
   return (
-    <Box sx={{ flexGrow: 1, height: '100%' }}>
-      <AppBar position="fixed" sx={{ height: `${navbarHeight}px` }}>
-        <Toolbar sx={{ height: `${navbarHeight}px` }}>
+    <Box sx={styles.box1}>
+      <AppBar position="fixed" sx={styles.appBar}>
+        <Toolbar sx={styles.toolbar1}>
           <Typography
             variant="h6"
             component="div"
-            sx={{
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => navigate('/')}
+            sx={styles.typography}
+            onClick={handleClick}
           >
             Gift Registry
           </Typography>
@@ -106,7 +107,7 @@ function MainLayout() {
               <Button
                 key={item.title}
                 color="inherit"
-                onClick={() => navigate(item.route)}
+                onClick={handleButtonClick(item)}
               >
                 {item.title}
               </Button>
@@ -118,7 +119,7 @@ function MainLayout() {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ display: { sm: 'none' } }}
+            sx={styles.iconButton}
           >
             <MenuIcon />
           </IconButton>
@@ -133,20 +134,14 @@ function MainLayout() {
           open={isDrawerOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              height: '100%'
-            }
-          }}
+          sx={styles.drawer}
         >
           {drawer()}
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ p: 3, pt: 0, pb: 0, height: '100%' }}>
-        <Toolbar sx={{ height: `${navbarHeight}px` }} />
+      <Box component="main" sx={styles.box2}>
+        <Toolbar sx={styles.toolbar2} />
         <Outlet />
       </Box>
 

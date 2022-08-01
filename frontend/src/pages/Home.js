@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import CreateRegistry from '../components/CreateRegistry'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
-import { navbarHeight } from '../constants'
+import { styles } from '../styles/HomeStyles'
 import './Home.css'
 
 function Home() {
@@ -19,41 +19,13 @@ function Home() {
   )
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        boxSizing: 'border-box',
-        height: '100%',
-        mt: `-${navbarHeight}px`,
-        pt: navbarHeight + 'px'
-      }}
-    >
-      <Grid
-        container
-        sx={{
-          height: '100%',
-          pt: 3
-        }}
-      >
-        <Grid
-          item
-          xs={3}
-          sx={{
-            height: '100%',
-            overflow: 'auto'
-          }}
-        >
+    <Box sx={styles.box}>
+      <Grid container sx={styles.container}>
+        <Grid item xs={3} sx={styles.gridItemXs3}>
           {isAuthenticated ? <CreateRegistry /> : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
-        <Grid
-          item
-          xs={9}
-          sx={{
-            height: '100%',
-            overflow: 'auto'
-          }}
-        >
+        <Grid item xs={9} sx={styles.gridItemXs9}>
           <Registry listId={selectedListId} />
         </Grid>
       </Grid>

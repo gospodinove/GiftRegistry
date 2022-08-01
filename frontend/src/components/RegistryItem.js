@@ -1,5 +1,6 @@
 import { Checkbox, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import React, { useCallback, useState } from 'react'
+// import { styles } from '../styles/RegistryItemStyles'
 
 // TODO: display the article link
 const RegistryItem = ({ data, onToggle }) => {
