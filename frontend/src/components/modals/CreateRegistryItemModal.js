@@ -17,6 +17,7 @@ function CreateRegistryItemModal({ open, onClose }) {
 
   const [name, setName] = React.useState('')
   const [price, setPrice] = React.useState(0)
+  const [description, setDescription] = React.useState('')
   const [link, setLink] = React.useState('')
   const [errors, setErrors] = React.useState({})
 
@@ -30,6 +31,7 @@ function CreateRegistryItemModal({ open, onClose }) {
       setErrors({})
       setLink('')
       setPrice(0)
+      setDescription('')
     }, 100)
   }, [onClose])
 
@@ -55,6 +57,14 @@ function CreateRegistryItemModal({ open, onClose }) {
     [errors]
   )
 
+  const handleDescriptionChange = useCallback(e => {
+    setDescription(e.target.value)
+
+    if (errors.description !== undefined) {
+      setErrors({ ...errors, description: undefined })
+    }
+  })
+
   const handleLinkChange = useCallback(
     e => {
       setLink(e.target.value)
@@ -75,6 +85,7 @@ function CreateRegistryItemModal({ open, onClose }) {
       const data = {
         name,
         price,
+        description,
         link
       }
 
@@ -114,13 +125,22 @@ function CreateRegistryItemModal({ open, onClose }) {
         })
       }
     },
-    [name, dispatch, handleClose, initialData?.registryId, price, link]
+    [
+      name,
+      price,
+      link,
+      description,
+      dispatch,
+      handleClose,
+      initialData?.registryId
+    ]
   )
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <Box component="form" onSubmit={onSubmit}>
         <DialogTitle>New product to your registry</DialogTitle>
+
         <DialogContent>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={9}>
@@ -138,6 +158,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 variant="outlined"
               />
             </Grid>
+
             <Grid item xs={12} sm={3}>
               <TextField
                 error={errors.price !== undefined}
@@ -157,6 +178,23 @@ function CreateRegistryItemModal({ open, onClose }) {
                 }}
               />
             </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                error={errors.description !== undefined}
+                helperText={errors.description}
+                margin="normal"
+                id="name"
+                label="Description"
+                value={description}
+                onChange={handleDescriptionChange}
+                fullWidth
+                variant="outlined"
+                multiline
+                maxRows={4}
+              />
+            </Grid>
+
             <Grid item xs={12}>
               <TextField
                 error={errors.link !== undefined}
@@ -172,6 +210,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             </Grid>
           </Grid>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button type="submit">Add product</Button>

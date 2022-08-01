@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react'
 
 // TODO: display the article link
 const RegistryItem = ({ data, onToggle }) => {
-  const [isChecked, setIsChecked] = useState(data.taken)
+  const [isChecked, setIsChecked] = useState(data.takenBy !== null)
 
   const handleClick = useCallback(() => {
     onToggle(data.id)
@@ -14,7 +14,6 @@ const RegistryItem = ({ data, onToggle }) => {
     <ListItem>
       <ListItemIcon>
         <Checkbox
-          edge="start"
           checked={isChecked}
           tabIndex={-1}
           disableRipple
