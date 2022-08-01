@@ -55,7 +55,16 @@ const Registry = ({ listId }) => {
     console.log(id)
   }, [])
 
-  const handleAddButtonClick = useCallback(() => {}, [])
+  const handleAddButtonClick = useCallback(() => {
+    if (!listData?.id) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: { name: 'createRegistryItem', data: { registryId: listData.id } }
+    })
+  }, [dispatch, listData?.id])
 
   const handleShareButtonClick = useCallback(() => {}, [])
 
