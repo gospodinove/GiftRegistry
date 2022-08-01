@@ -79,7 +79,7 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
 router.post('/:id/items', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
 
-  const item = { ...req.body, linkId: req.params.id }
+  const item = { ...req.body, listId: req.params.id, takenBy: undefined }
 
   try {
     const schema = {
