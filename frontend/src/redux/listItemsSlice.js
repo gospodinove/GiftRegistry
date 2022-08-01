@@ -7,8 +7,14 @@ export const listItemsSlice = createSlice({
   name: 'listItems',
   initialState,
   reducers: {
-    add: (state, action) => {
+    set: (state, action) => {
       state[action.payload.listId] = action.payload.items
+    },
+    add: (state, action) => {
+      state[action.payload.listId] = [
+        ...state[action.payload.listId],
+        action.payload.item
+      ]
     },
     clear: () => initialState
   }

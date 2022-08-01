@@ -101,9 +101,10 @@ function CreateRegistryItemModal({ open, onClose }) {
           }
         }
 
-        console.log(response.item)
-
-        // dispatch({ type: 'listItems/add', payload: [response.list] })
+        dispatch({
+          type: 'listItems/add',
+          payload: { listId: initialData.registryId, item: response.item }
+        })
 
         handleClose()
       } catch {

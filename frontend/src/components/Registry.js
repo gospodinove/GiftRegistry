@@ -32,7 +32,7 @@ const Registry = ({ listId }) => {
       }
 
       dispatch({
-        type: 'listItems/add',
+        type: 'listItems/set',
         payload: { listId, items: response.items }
       })
     } catch {

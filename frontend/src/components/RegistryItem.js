@@ -24,7 +24,7 @@ const RegistryItem = ({ data, onToggle }) => {
       </ListItemIcon>
       <ListItemText
         id={data.id}
-        primary={data.title}
+        primary={data.name}
         secondary={data.description}
       />
     </ListItem>
