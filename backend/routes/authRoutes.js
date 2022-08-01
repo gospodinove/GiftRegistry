@@ -1,6 +1,6 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
-const { validate } = require('indicative/validator')
+const { validateAll } = require('indicative/validator')
 const { extend } = require('indicative/validator')
 const { replaceId, sendErrorResponse } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
       password: 'required|password'
     }
 
-    await validate(req.body, schema, validationMessages)
+    await validateAll(req.body, schema, validationMessages)
 
     try {
       const registeredUser = await db
@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => {
       password: 'required'
     }
 
-    await validate(req.body, schema, validationMessages)
+    await validateAll(req.body, schema, validationMessages)
 
     try {
       const user = await db
