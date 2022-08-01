@@ -80,10 +80,10 @@ function MainLayout() {
   )
 
   const handleClick = React.useCallback(() => navigate('/'), [navigate])
-  const handleButtonClick = React.useCallback(
-    item => navigate(item.route),
-    [navigate]
-  )
+  const handleButtonClick = e => {
+    const route = e.target.getAttribute('data-id')
+    navigate(route)
+  }
 
   return (
     <Box sx={styles.box1}>
@@ -107,7 +107,8 @@ function MainLayout() {
               <Button
                 key={item.title}
                 color="inherit"
-                onClick={handleButtonClick(item)}
+                data-id={item.route}
+                onClick={handleButtonClick}
               >
                 {item.title}
               </Button>
