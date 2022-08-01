@@ -80,7 +80,7 @@ function CreateRegistryItemModal({ open, onClose }) {
 
       try {
         const response = await api(
-          'lists/' + initialData + '/items',
+          'lists/' + initialData.registryId + '/items',
           'post',
           data
         )
@@ -101,17 +101,19 @@ function CreateRegistryItemModal({ open, onClose }) {
           }
         }
 
-        dispatch({ type: 'listItems/add', payload: [response.list] })
+        console.log(response.item)
+
+        // dispatch({ type: 'listItems/add', payload: [response.list] })
 
         handleClose()
       } catch {
         dispatch({
           type: 'toast/show',
-          payload: { type: 'error', message: 'Could not create product' }
+          payload: { type: 'error', message: 'Could not add product' }
         })
       }
     },
-    [name, dispatch, handleClose]
+    [name, dispatch, handleClose, initialData?.registryId, price, link]
   )
 
   return (
@@ -158,7 +160,6 @@ function CreateRegistryItemModal({ open, onClose }) {
               <TextField
                 error={errors.link !== undefined}
                 helperText={errors.link}
-                required
                 margin="normal"
                 id="name"
                 label="Link"
@@ -172,7 +173,7 @@ function CreateRegistryItemModal({ open, onClose }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create product</Button>
+          <Button type="submit">Add product</Button>
         </DialogActions>
       </Box>
     </Dialog>

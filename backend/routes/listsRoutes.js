@@ -1,15 +1,11 @@
 const express = require('express')
-const bcrypt = require('bcrypt')
-const { validate } = require('indicative/validator')
-const { extend } = require('indicative/validator')
+const { validateAll } = require('indicative/validator')
 const { replaceId, sendErrorResponse } = require('../utils')
-const { passwordValidator, validationMessages } = require('../validation')
+const { validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
 
 const router = express.Router()
-
-extend('password', passwordValidator)
 
 router.post('/', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
@@ -21,7 +17,7 @@ router.post('/', isAuthenticated, async (req, res) => {
       name: 'required|string'
     }
 
-    await validate(list, schema, validationMessages)
+    await validateAll(list, schema, validationMessages)
 
     try {
       list.users = [req.session.user.id]
@@ -75,8 +71,36 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
       .toArray()
 
     res.json({ success: true, items: items.map(item => replaceId(item)) })
-  } catch (errors) {
+  } catch {
     sendErrorResponse(res, 500, 'general', 'Could not fetch your list items')
+  }
+})
+
+router.post('/:id/items', isAuthenticated, async (req, res) => {
+  const db = req.app.locals.db
+
+  const item = req.body
+
+  try {
+    const schema = {
+      name: 'required|string',
+      price: 'required|number|above:0',
+      link: 'url'
+    }
+
+    await validateAll(item, schema, validationMessages)
+
+    try {
+      await db.collection('listItems').insertOne(item)
+
+      replaceId(item)
+
+      res.json({ success: true, item })
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not add product')
+    }
+  } catch (errors) {
+    sendErrorResponse(res, 500, 'field-error', errors)
   }
 })
 

@@ -31,5 +31,7 @@ module.exports.validationMessages = {
   before: 'This date is too late',
   after: 'This date is too early',
   max: 'Max number of characters: {{args}}',
-  min: 'Min number of characters: {{args}}'
+  min: 'Min number of characters: {{args}}',
+  url: 'This is not a valid link',
+  above: 'Enter more than {{args}}'
 }
