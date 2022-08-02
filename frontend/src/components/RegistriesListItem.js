@@ -41,7 +41,7 @@ function RegistriesListItem({ list, isSelected, onClick }) {
         onClick={handleClick}
       >
         <ListItemText primary={list.name} secondary={list.type} />
-        <ListItemIcon>{getIcon(list.type)}</ListItemIcon>
+        {getIcon(list.type)}
       </ListItemButton>
     </ListItem>
   )
