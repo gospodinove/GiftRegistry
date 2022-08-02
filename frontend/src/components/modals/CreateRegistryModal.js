@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 
-const listTypes = [
+const registryTypes = [
   'Birthday',
   'Wedding',
   'Graduation/Prom',
@@ -79,7 +79,7 @@ function CreateRegistryModal({ open, onClose }) {
         name
       }
       try {
-        const response = await api('lists', 'post', data)
+        const response = await api('registries', 'post', data)
 
         if (!response.success) {
           switch (response.errorType) {
@@ -97,13 +97,13 @@ function CreateRegistryModal({ open, onClose }) {
           }
         }
 
-        dispatch({ type: 'lists/add', payload: [response.list] })
+        dispatch({ type: 'registries/add', payload: [response.registry] })
 
         handleClose()
       } catch {
         dispatch({
           type: 'toast/show',
-          payload: { type: 'error', message: 'Could not create list' }
+          payload: { type: 'error', message: 'Could not create registry' }
         })
       }
     },
@@ -113,19 +113,19 @@ function CreateRegistryModal({ open, onClose }) {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <Box component="form" onSubmit={onSubmit}>
-        <DialogTitle>Your new list</DialogTitle>
+        <DialogTitle>New registry</DialogTitle>
         <DialogContent>
           <TextField
             select
             margin="normal"
             id="type"
-            label="List type"
+            label="Type"
             value={type}
             onChange={handleTypeChange}
             fullWidth
             variant="outlined"
           >
-            {listTypes.map(option => (
+            {registryTypes.map(option => (
               <MenuItem key={option} value={option}>
                 {option}
               </MenuItem>
@@ -139,7 +139,7 @@ function CreateRegistryModal({ open, onClose }) {
               required
               margin="normal"
               id="custom-type"
-              label="List type name"
+              label="Type name"
               value={customType}
               onChange={handleCustomTypeChange}
               fullWidth
@@ -153,7 +153,7 @@ function CreateRegistryModal({ open, onClose }) {
             required
             margin="normal"
             id="name"
-            label="List name"
+            label="Name"
             value={name}
             onChange={handleNameChange}
             fullWidth
@@ -162,7 +162,7 @@ function CreateRegistryModal({ open, onClose }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create List</Button>
+          <Button type="submit">Create Registry</Button>
         </DialogActions>
       </Box>
     </Dialog>

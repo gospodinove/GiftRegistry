@@ -6,19 +6,21 @@ import RegistryItem from './RegistryItem'
 import AddIcon from '@mui/icons-material/Add'
 import ShareIcon from '@mui/icons-material/Share'
 
-const Registry = ({ listId }) => {
+const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const listData = useSelector(state => state.lists.find(l => l.id === listId))
-  const items = useSelector(state => state.listItems[listId])
+  const registryData = useSelector(state =>
+    state.registries.find(registry => registry.id === registryId)
+  )
+  const items = useSelector(state => state.registryItems[registryId])
 
   const fetchItems = useCallback(async () => {
-    if (!listId || items !== undefined) {
+    if (!registryId || items !== undefined) {
       return
     }
 
     try {
-      const response = await api('lists/' + listId + '/items')
+      const response = await api('registries/' + registryId + '/items')
 
       if (!response.success) {
         dispatch({
@@ -32,19 +34,19 @@ const Registry = ({ listId }) => {
       }
 
       dispatch({
-        type: 'listItems/set',
-        payload: { listId, items: response.items }
+        type: 'registryItems/set',
+        payload: { registryId, items: response.items }
       })
     } catch {
       dispatch({
         type: 'toast/show',
         payload: {
           type: 'error',
-          message: 'Could not fetch your list items'
+          message: 'Could not fetch your registry items'
         }
       })
     }
-  }, [listId, items, dispatch])
+  }, [registryId, items, dispatch])
 
   useEffect(() => {
     fetchItems()
@@ -56,24 +58,27 @@ const Registry = ({ listId }) => {
   }, [])
 
   const handleAddButtonClick = useCallback(() => {
-    if (!listData?.id) {
+    if (!registryData?.id) {
       return
     }
 
     dispatch({
       type: 'modals/show',
-      payload: { name: 'createRegistryItem', data: { registryId: listData.id } }
+      payload: {
+        name: 'createRegistryItem',
+        data: { registryId: registryData.id }
+      }
     })
-  }, [dispatch, listData?.id])
+  }, [dispatch, registryData?.id])
 
   const handleShareButtonClick = useCallback(() => {}, [])
 
   return (
     <>
-      {listData ? (
-        // TODO: Create ListDetailsSummary component
+      {registryData ? (
+        /* TODO: Create RegistryDetailsSummary component */
         <>
-          <Typography variant="h5">{listData.name}</Typography>
+          <Typography variant="h5">{registryData.name}</Typography>
 
           <Stack direction="row" spacing={1}>
             <Button

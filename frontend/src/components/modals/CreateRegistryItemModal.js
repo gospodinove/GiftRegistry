@@ -92,7 +92,7 @@ function CreateRegistryItemModal({ open, onClose }) {
 
       try {
         const response = await api(
-          'lists/' + initialData.registryId + '/items',
+          'registries/' + initialData.registryId + '/items',
           'post',
           data
         )
@@ -114,8 +114,8 @@ function CreateRegistryItemModal({ open, onClose }) {
         }
 
         dispatch({
-          type: 'listItems/add',
-          payload: { listId: initialData.registryId, item: response.item }
+          type: 'registryItems/add',
+          payload: { registryId: initialData.registryId, item: response.item }
         })
 
         handleClose()
