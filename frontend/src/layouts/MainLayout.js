@@ -18,7 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
-import { navbarHeight } from '../constants'
+import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
 
 const authNavItems = [
@@ -26,7 +26,7 @@ const authNavItems = [
   { title: 'register', route: 'register' }
 ]
 
-export default function MainLayout() {
+function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -76,7 +76,7 @@ export default function MainLayout() {
 
   const drawer = React.useCallback(
     () => (
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
           <IconButton onClick={handleDrawerToggle}>
             <CloseIcon />
@@ -90,7 +90,7 @@ export default function MainLayout() {
             <ListItem key="logout" disablePadding>
               <ListItemButton
                 onClick={handleLogoutClick}
-                sx={{ textAlign: 'center' }}
+                sx={styles.listItemButton}
               >
                 <ListItemText primary="Log out" />
               </ListItemButton>
@@ -100,7 +100,7 @@ export default function MainLayout() {
               <ListItem key={item.title} disablePadding>
                 <ListItemButton
                   onClick={() => handleDrawerItemClick(item.route)}
-                  sx={{ textAlign: 'center' }}
+                  sx={styles.listItemButton}
                 >
                   <ListItemText primary={item.title.toUpperCase()} />
                 </ListItemButton>
@@ -118,25 +118,29 @@ export default function MainLayout() {
     ]
   )
 
-  const container = window !== undefined ? window.document.body : undefined
+  const container = React.useMemo(
+    () => (window !== undefined ? window.document.body : undefined),
+    []
+  )
+
+  const handleHomeClick = React.useCallback(() => navigate('/'), [navigate])
+  const handleAuthItemClick = React.useCallback(
+    e => {
+      const route = e.target.getAttribute('data-route')
+      navigate(route)
+    },
+    [navigate]
+  )
 
   return (
-    <Box sx={{ flexGrow: 1, height: '100%' }}>
-      <AppBar position="fixed" sx={{ height: `${navbarHeight}px` }}>
-        <Toolbar sx={{ height: `${navbarHeight}px` }}>
+    <Box sx={styles.rootBox}>
+      <AppBar position="fixed" sx={styles.appBar}>
+        <Toolbar sx={styles.toolbar}>
           <Typography
             variant="h6"
             component="div"
-            sx={{
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => navigate('/')}
+            sx={styles.typography}
+            onClick={handleHomeClick}
           >
             Gift Registry
           </Typography>
@@ -155,7 +159,8 @@ export default function MainLayout() {
                 <Button
                   key={item.title}
                   color="inherit"
-                  onClick={() => navigate(item.route)}
+                  data-route={item.route}
+                  onClick={handleAuthItemClick}
                 >
                   {item.title}
                 </Button>
@@ -168,7 +173,7 @@ export default function MainLayout() {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ display: { sm: 'none' } }}
+            sx={styles.iconButton}
           >
             <MenuIcon />
           </IconButton>
@@ -183,20 +188,14 @@ export default function MainLayout() {
           open={isDrawerOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              height: '100%'
-            }
-          }}
+          sx={styles.drawer}
         >
           {drawer()}
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ p: 3, pt: 0, pb: 0, height: '100%' }}>
-        <Toolbar sx={{ height: `${navbarHeight}px` }} />
+      <Box component="main" sx={styles.mainBox}>
+        <Toolbar sx={styles.toolbar} />
         <Outlet />
       </Box>
 
@@ -204,3 +203,5 @@ export default function MainLayout() {
     </Box>
   )
 }
+
+export default React.memo(MainLayout)

@@ -76,4 +76,4 @@ const RegistriesList = ({ onListClick }) => {
   )
 }
 
-export default RegistriesList
+export default React.memo(RegistriesList)

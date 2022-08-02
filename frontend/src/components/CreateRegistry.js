@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
 import Box from '@mui/material/Box'
+import { styles } from './CreateRegistry.styles'
 
 const listTypes = [
   'Birthday',
@@ -119,10 +120,7 @@ function CreateRegistry() {
   return (
     <>
       <Button
-        sx={{
-          width: 'fit-content',
-          height: 'fit-content'
-        }}
+        sx={styles.button}
         variant="outlined"
         fullWidth
         onClick={handleClickOpen}
@@ -190,4 +188,4 @@ function CreateRegistry() {
   )
 }
 
-export default CreateRegistry
+export default React.memo(CreateRegistry)

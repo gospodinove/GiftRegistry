@@ -6,7 +6,7 @@ import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-export default function Login() {
+function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -124,3 +124,5 @@ export default function Login() {
     </Box>
   )
 }
+
+export default React.memo(Login)

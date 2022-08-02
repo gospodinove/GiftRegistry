@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -29,22 +29,22 @@ const getIcon = type => {
 }
 
 function RegistriesListItem({ list, isSelected, onClick }) {
-  const secondary = list.type !== 'Other' ? list.type : 'Custom'
+  const handleClick = useCallback(() => {
+    onClick(list)
+  }, [list, onClick])
 
   return (
     <ListItem component="div" disablePadding>
       <ListItemButton
         component="button"
         selected={isSelected}
-        onClick={() => onClick(list)}
+        onClick={handleClick}
       >
-        <ListItemText primary={list.name} secondary={secondary} />
-        <ListItemIcon sx={{ minWidth: '0px' }}>
-          {getIcon(list.type)}
-        </ListItemIcon>
+        <ListItemText primary={list.name} secondary={list.type} />
+        <ListItemIcon>{getIcon(list.type)}</ListItemIcon>
       </ListItemButton>
     </ListItem>
   )
 }
 
-export default RegistriesListItem
+export default React.memo(RegistriesListItem)

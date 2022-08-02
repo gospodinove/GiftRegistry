@@ -76,4 +76,4 @@ const Registry = ({ listId }) => {
   )
 }
 
-export default Registry
+export default React.memo(Registry)
