@@ -1,6 +1,7 @@
 import { Alert, Snackbar } from '@mui/material'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { styles } from './Toast.styles'
 
 const Toast = () => {
   const dispatch = useDispatch()
@@ -19,11 +20,11 @@ const Toast = () => {
       autoHideDuration={6000}
       onClose={handleClose}
     >
-      <Alert severity={data.type} sx={{ width: '100%' }} onClose={handleClose}>
+      <Alert severity={data.type} sx={styles.alert} onClose={handleClose}>
         {data.message}
       </Alert>
     </Snackbar>
   )
 }
 
-export default Toast
+export default React.memo(Toast)

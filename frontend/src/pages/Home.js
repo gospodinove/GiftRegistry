@@ -1,13 +1,14 @@
+import React from 'react'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
-import { navbarHeight } from '../constants'
+import { styles } from './Home.styles'
 import AddIcon from '@mui/icons-material/Add'
 import './Home.css'
 
-export default function Home() {
+function Home() {
   const dispatch = useDispatch()
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
@@ -26,30 +27,12 @@ export default function Home() {
   )
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        boxSizing: 'border-box',
-        height: '100%',
-        mt: `-${navbarHeight}px`,
-        pt: navbarHeight + 'px'
-      }}
-    >
-      <Grid container sx={{ height: '100%', pt: 3 }} spacing={2}>
-        <Grid
-          item
-          xs={3}
-          sx={{
-            height: '100%',
-            overflow: 'auto'
-          }}
-        >
+    <Box sx={styles.box}>
+      <Grid container sx={styles.gridContainer} spacing={2}>
+        <Grid item xs={3} sx={styles.gridItem}>
           {isAuthenticated ? (
             <Button
-              sx={{
-                width: 'fit-content',
-                height: 'fit-content'
-              }}
+              sx={styles.button}
               variant="outlined"
               fullWidth
               onClick={handleCreateRegistryButtonClick}
@@ -60,14 +43,7 @@ export default function Home() {
           ) : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
-        <Grid
-          item
-          xs={9}
-          sx={{
-            height: '100%',
-            overflow: 'auto'
-          }}
-        >
+        <Grid item xs={9} sx={styles.gridItem}>
           {selectedListId ? (
             <Registry listId={selectedListId} />
           ) : (
@@ -85,3 +61,5 @@ export default function Home() {
     </Box>
   )
 }
+
+export default React.memo(Home)

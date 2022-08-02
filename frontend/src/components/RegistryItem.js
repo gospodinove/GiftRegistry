@@ -30,4 +30,4 @@ const RegistryItem = ({ data, onToggle }) => {
   )
 }
 
-export default RegistryItem
+export default React.memo(RegistryItem)

@@ -169,4 +169,4 @@ function CreateRegistryModal({ open, onClose }) {
   )
 }
 
-export default CreateRegistryModal
+export default React.memo(CreateRegistryModal)
