@@ -63,7 +63,7 @@ export default function Home() {
               alignItems="center"
               height="100%"
             >
-              <Typography variant="h5">No selected list</Typography>
+              <Typography variant="h5">No registry selected</Typography>
             </Box>
           )}
         </Grid>
