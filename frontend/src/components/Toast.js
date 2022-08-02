@@ -1,7 +1,7 @@
 import { Alert, Snackbar } from '@mui/material'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { styles } from '../styles/ToastStyles'
+import { styles } from './Toast.styles'
 
 const Toast = () => {
   const dispatch = useDispatch()

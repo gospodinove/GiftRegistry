@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
-// import { styles } from '../styles/RegistryStyles'
+// import { styles } from './Registry.styles'
 
 const Registry = ({ listId }) => {
   const dispatch = useDispatch()

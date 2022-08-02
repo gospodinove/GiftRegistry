@@ -8,7 +8,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import ParkIcon from '@mui/icons-material/Park'
 import AnimationIcon from '@mui/icons-material/Animation'
 import { ListItem } from '@mui/material'
-// import { styles } from '../styles/RegistriesListItemStyles'
+// import { styles } from './RegistriesListItem.styles'
 
 const getIcon = type => {
   switch (type) {

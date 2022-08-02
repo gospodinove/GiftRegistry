@@ -18,7 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
-import { styles } from '../styles/MainLayoutStyles'
+import { styles } from './MainLayout.styles'
 
 const authNavItems = [
   { title: 'login', route: 'login' },

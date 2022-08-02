@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import CreateRegistry from '../components/CreateRegistry'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
-import { styles } from '../styles/HomeStyles'
+import { styles } from './Home.styles'
 import './Home.css'
 
 function Home() {

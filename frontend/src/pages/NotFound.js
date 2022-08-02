@@ -1,5 +1,5 @@
 import React from 'react'
-// import { styles } from '../styles/NotFoundStyles'
+// import { styles } from './NotFound.styles'
 
 function NotFound() {
   return <h1>404</h1>

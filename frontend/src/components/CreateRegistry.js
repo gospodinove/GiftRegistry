@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Icon from '@mui/material/Icon'
 import Box from '@mui/material/Box'
-import { styles } from '../styles/CreateRegistryStyles'
+import { styles } from './CreateRegistry.styles'
 
 const listTypes = [
   'Birthday',
