@@ -110,4 +110,25 @@ router.get('/session-user', (req, res) => {
   res.json(req.session.user)
 })
 
+router.get('/logout', (req, res) => {
+  try {
+    const user = req.session.user
+
+    if (user) {
+      req.session.destroy(err => {
+        if (err) {
+          throw err
+        }
+
+        res.clearCookie(process.env.SESSION_NAME)
+        res.json({ success: true })
+      })
+    } else {
+      sendErrorResponse(res, 500, 'general', 'Could not logout')
+    }
+  } catch {
+    sendErrorResponse(res, 500, 'general', 'Could not logout')
+  }
+})
+
 module.exports = router

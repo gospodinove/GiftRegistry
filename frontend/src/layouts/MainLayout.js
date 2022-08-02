@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Divider,
   Drawer,
@@ -20,6 +20,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Toast from '../components/Toast'
 import { navbarHeight } from '../constants'
 import Modals from '../components/Modals'
+import { api } from '../utils/api'
 
 const authNavItems = [
   { title: 'login', route: 'login' },
@@ -28,6 +29,7 @@ const authNavItems = [
 
 export default function MainLayout() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
@@ -45,6 +47,34 @@ export default function MainLayout() {
     [handleDrawerToggle, navigate]
   )
 
+  const handleLogoutClick = React.useCallback(async () => {
+    try {
+      const response = await api('auth/logout')
+
+      if (!response.success) {
+        dispatch({
+          type: 'toast/show',
+          payload: { type: 'error', message: 'Could not log out' }
+        })
+        return
+      }
+
+      dispatch({ type: 'auth/clear' })
+      dispatch({ type: 'lists/clear' })
+      dispatch({ type: 'listItems/clear' })
+
+      dispatch({
+        type: 'toast/show',
+        payload: { type: 'success', message: 'Logged out!' }
+      })
+    } catch {
+      dispatch({
+        type: 'toast/show',
+        payload: { type: 'error', message: 'Could not log out' }
+      })
+    }
+  }, [dispatch])
+
   const drawer = React.useCallback(
     () => (
       <Box sx={{ textAlign: 'center' }}>
@@ -57,22 +87,36 @@ export default function MainLayout() {
         <Divider />
 
         <List>
-          {!isAuthenticated
-            ? authNavItems.map(item => (
-                <ListItem key={item.title} disablePadding>
-                  <ListItemButton
-                    onClick={() => handleDrawerItemClick(item.route)}
-                    sx={{ textAlign: 'center' }}
-                  >
-                    <ListItemText primary={item.title.toUpperCase()} />
-                  </ListItemButton>
-                </ListItem>
-              ))
-            : null}
+          {isAuthenticated ? (
+            <ListItem key="logout" disablePadding>
+              <ListItemButton
+                onClick={handleLogoutClick}
+                sx={{ textAlign: 'center' }}
+              >
+                <ListItemText primary="Log out" />
+              </ListItemButton>
+            </ListItem>
+          ) : (
+            authNavItems.map(item => (
+              <ListItem key={item.title} disablePadding>
+                <ListItemButton
+                  onClick={() => handleDrawerItemClick(item.route)}
+                  sx={{ textAlign: 'center' }}
+                >
+                  <ListItemText primary={item.title.toUpperCase()} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          )}
         </List>
       </Box>
     ),
-    [handleDrawerItemClick, handleDrawerToggle, isAuthenticated]
+    [
+      handleDrawerItemClick,
+      handleDrawerToggle,
+      isAuthenticated,
+      handleLogoutClick
+    ]
   )
 
   const container = window !== undefined ? window.document.body : undefined
@@ -100,18 +144,24 @@ export default function MainLayout() {
 
           <Box
             sx={{
-              display: isAuthenticated ? 'none' : { xs: 'none', sm: 'block' }
+              display: { xs: 'none', sm: 'block' }
             }}
           >
-            {authNavItems.map(item => (
-              <Button
-                key={item.title}
-                color="inherit"
-                onClick={() => navigate(item.route)}
-              >
-                {item.title}
+            {isAuthenticated ? (
+              <Button key="logout" color="inherit" onClick={handleLogoutClick}>
+                Log out
               </Button>
-            ))}
+            ) : (
+              authNavItems.map(item => (
+                <Button
+                  key={item.title}
+                  color="inherit"
+                  onClick={() => navigate(item.route)}
+                >
+                  {item.title}
+                </Button>
+              ))
+            )}
           </Box>
 
           <IconButton

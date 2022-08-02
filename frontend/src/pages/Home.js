@@ -36,7 +36,14 @@ export default function Home() {
       }}
     >
       <Grid container sx={{ height: '100%', pt: 3 }} spacing={2}>
-        <Grid item xs={3}>
+        <Grid
+          item
+          xs={3}
+          sx={{
+            height: '100%',
+            overflow: 'auto'
+          }}
+        >
           {isAuthenticated ? (
             <Button
               sx={{
@@ -53,7 +60,14 @@ export default function Home() {
           ) : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
-        <Grid item xs={9}>
+        <Grid
+          item
+          xs={9}
+          sx={{
+            height: '100%',
+            overflow: 'auto'
+          }}
+        >
           {selectedListId ? (
             <Registry listId={selectedListId} />
           ) : (

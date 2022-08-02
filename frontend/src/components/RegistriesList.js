@@ -1,4 +1,4 @@
-import { Box, List } from '@mui/material'
+import { List } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
@@ -63,18 +63,16 @@ const RegistriesList = ({ onListClick }) => {
   )
 
   return (
-    <Box sx={{ overflow: 'auto' }}>
-      <List>
-        {listsSortedByDate.map(list => (
-          <RegistriesListItem
-            key={list.id}
-            list={list}
-            isSelected={selectedListId === list.id}
-            onClick={handleListClick}
-          />
-        ))}
-      </List>
-    </Box>
+    <List>
+      {listsSortedByDate.map(list => (
+        <RegistriesListItem
+          key={list.id}
+          list={list}
+          isSelected={selectedListId === list.id}
+          onClick={handleListClick}
+        />
+      ))}
+    </List>
   )
 }
 
