@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { api } from '../utils/api'
+import { api } from '../../utils/api'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
@@ -8,9 +8,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
-import Icon from '@mui/material/Icon'
 import Box from '@mui/material/Box'
-import { styles } from './CreateRegistry.styles'
 
 const registryTypes = [
   'Birthday',
@@ -20,27 +18,22 @@ const registryTypes = [
   'Custom'
 ]
 
-function CreateRegistry() {
+function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const [open, setOpen] = React.useState(false)
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
   const [errors, setErrors] = React.useState({})
   const [customType, setCustomType] = React.useState('Custom')
 
-  const handleClickOpen = useCallback(() => {
-    setOpen(true)
-  }, [])
-
   const handleClose = useCallback(() => {
-    setOpen(false)
+    onClose()
 
     setTimeout(() => {
       setName('')
       setType('Birthday')
     }, 100)
-  }, [])
+  }, [onClose])
 
   const handleTypeChange = useCallback(
     e => {
@@ -118,74 +111,62 @@ function CreateRegistry() {
   )
 
   return (
-    <>
-      <Button
-        sx={styles.button}
-        variant="outlined"
-        fullWidth
-        onClick={handleClickOpen}
-        startIcon={<Icon color="primary">add_circle</Icon>}
-      >
-        CREATE NEW LIST
-      </Button>
-
-      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-        <Box component="form" onSubmit={onSubmit}>
-          <DialogTitle>Your new list</DialogTitle>
-          <DialogContent>
+    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+      <Box component="form" onSubmit={onSubmit}>
+        <DialogTitle>New registry</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            margin="normal"
+            id="type"
+            label="type"
+            value={type}
+            onChange={handleTypeChange}
+            fullWidth
+            variant="outlined"
+          >
+            {registryTypes.map(option => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+          {type === 'Custom' ? (
             <TextField
-              select
-              margin="normal"
-              id="type"
-              label="List type"
-              value={type}
-              onChange={handleTypeChange}
-              fullWidth
-              variant="outlined"
-            >
-              {registryTypes.map(option => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-            {type === 'Custom' ? (
-              <TextField
-                error={errors.type !== undefined}
-                helperText={errors.type}
-                autoFocus
-                required
-                margin="normal"
-                id="custom-type"
-                label="List type name"
-                value={customType}
-                onChange={handleCustomTypeChange}
-                fullWidth
-                variant="outlined"
-              />
-            ) : null}
-            <TextField
-              error={errors.name !== undefined}
-              helperText={errors.name}
+              error={errors.type !== undefined}
+              helperText={errors.type}
               autoFocus
               required
               margin="normal"
-              id="name"
-              label="List name"
-              value={name}
-              onChange={handleNameChange}
+              id="custom-type"
+              label="List type name"
+              value={customType}
+              onChange={handleCustomTypeChange}
               fullWidth
               variant="outlined"
             />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Create List</Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
-    </>
+          ) : null}
+          <TextField
+            error={errors.name !== undefined}
+            helperText={errors.name}
+            autoFocus
+            required
+            margin="normal"
+            id="name"
+            label="List name"
+            value={name}
+            onChange={handleNameChange}
+            fullWidth
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit">Create List</Button>
+        </DialogActions>
+      </Box>
+    </Dialog>
   )
 }
 
-export default React.memo(CreateRegistry)
+export default React.memo(CreateRegistryModal)

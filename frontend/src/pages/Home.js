@@ -1,17 +1,25 @@
 import React from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
-import CreateRegistry from '../components/CreateRegistry'
+import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
+import AddIcon from '@mui/icons-material/Add'
 import './Home.css'
 
 function Home() {
+  const dispatch = useDispatch()
+
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedListId, setSelectedListId] = useState()
+
+  const handleCreateRegistryButtonClick = useCallback(
+    () =>
+      dispatch({ type: 'modals/show', payload: { name: 'createRegistry' } }),
+    [dispatch]
+  )
 
   const onListClick = useCallback(
     list => setSelectedListId(list.id),
@@ -20,13 +28,34 @@ function Home() {
 
   return (
     <Box sx={styles.box}>
-      <Grid container sx={styles.gridContainer}>
+      <Grid container sx={styles.gridContainer} spacing={2}>
         <Grid item xs={3} sx={styles.gridItem}>
-          {isAuthenticated ? <CreateRegistry /> : null}
+          {isAuthenticated ? (
+            <Button
+              sx={styles.button}
+              variant="outlined"
+              fullWidth
+              onClick={handleCreateRegistryButtonClick}
+              startIcon={<AddIcon />}
+            >
+              Create new list
+            </Button>
+          ) : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
-          <Registry listId={selectedListId} />
+          {selectedListId ? (
+            <Registry listId={selectedListId} />
+          ) : (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100%"
+            >
+              <Typography variant="h5">No registry selected</Typography>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Box>

@@ -1,8 +1,10 @@
-import { Box, List, Typography } from '@mui/material'
+import { Box, Button, List, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
+import AddIcon from '@mui/icons-material/Add'
+import ShareIcon from '@mui/icons-material/Share'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -32,7 +34,7 @@ const Registry = ({ registryId }) => {
       }
 
       dispatch({
-        type: 'registryItems/add',
+        type: 'registryItems/set',
         payload: { registryId, items: response.items }
       })
     } catch {
@@ -55,26 +57,62 @@ const Registry = ({ registryId }) => {
     console.log(id)
   }, [])
 
-  return items ? (
-    <Box>
-      {/* TODO: Create RegistryDetailsSummary component */}
-      <Typography variant="h5">{registryData.name}</Typography>
+  const handleAddButtonClick = useCallback(() => {
+    if (!registryData?.id) {
+      return
+    }
 
-      <List>
-        {items.map(item => (
-          <RegistryItem key={item.id} data={item} onToggle={handleItemToggle} />
-        ))}
-      </List>
-    </Box>
-  ) : (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="100%"
-    >
-      <Typography variant="h5">No selected list</Typography>
-    </Box>
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'createRegistryItem',
+        data: { registryId: registryData.id }
+      }
+    })
+  }, [dispatch, registryData?.id])
+
+  const handleShareButtonClick = useCallback(() => {}, [])
+
+  return (
+    <>
+      {registryData ? (
+        /* TODO: Create RegistryDetailsSummary component */
+        <>
+          <Typography variant="h5">{registryData.name}</Typography>
+
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddButtonClick}
+            >
+              Add
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<ShareIcon />}
+              onClick={handleShareButtonClick}
+            >
+              Share
+            </Button>
+          </Stack>
+        </>
+      ) : null}
+
+      {items ? (
+        <Box>
+          <List>
+            {items.map(item => (
+              <RegistryItem
+                key={item.id}
+                data={item}
+                onToggle={handleItemToggle}
+              />
+            ))}
+          </List>
+        </Box>
+      ) : null}
+    </>
   )
 }
 
