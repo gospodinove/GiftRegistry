@@ -82,14 +82,14 @@ function MainLayout() {
   const handleHomeClick = React.useCallback(() => navigate('/'), [navigate])
   const handleAuthItemClick = React.useCallback(
     e => {
-      const route = e.target.getAttribute('data-id')
+      const route = e.target.getAttribute('data-route')
       navigate(route)
     },
     [navigate]
   )
 
   return (
-    <Box sx={styles.box1}>
+    <Box sx={styles.rootBox}>
       <AppBar position="fixed" sx={styles.appBar}>
         <Toolbar sx={styles.toolbar}>
           <Typography
@@ -110,7 +110,7 @@ function MainLayout() {
               <Button
                 key={item.title}
                 color="inherit"
-                data-id={item.route}
+                data-route={item.route}
                 onClick={handleAuthItemClick}
               >
                 {item.title}
@@ -144,7 +144,7 @@ function MainLayout() {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={styles.box2}>
+      <Box component="main" sx={styles.mainBox}>
         <Toolbar sx={styles.toolbar} />
         <Outlet />
       </Box>

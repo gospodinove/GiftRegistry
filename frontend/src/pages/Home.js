@@ -20,7 +20,7 @@ function Home() {
 
   return (
     <Box sx={styles.box}>
-      <Grid container sx={styles.container}>
+      <Grid container sx={styles.gridContainer}>
         <Grid item xs={3} sx={styles.gridItem}>
           {isAuthenticated ? <CreateRegistry /> : null}
           <RegistriesList onListClick={onListClick} />
