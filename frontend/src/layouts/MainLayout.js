@@ -79,21 +79,24 @@ function MainLayout() {
     []
   )
 
-  const handleClick = React.useCallback(() => navigate('/'), [navigate])
-  const handleButtonClick = e => {
-    const route = e.target.getAttribute('data-id')
-    navigate(route)
-  }
+  const handleHomeClick = React.useCallback(() => navigate('/'), [navigate])
+  const handleAuthItemClick = React.useCallback(
+    e => {
+      const route = e.target.getAttribute('data-id')
+      navigate(route)
+    },
+    [navigate]
+  )
 
   return (
     <Box sx={styles.box1}>
       <AppBar position="fixed" sx={styles.appBar}>
-        <Toolbar sx={styles.toolbar1}>
+        <Toolbar sx={styles.toolbar}>
           <Typography
             variant="h6"
             component="div"
             sx={styles.typography}
-            onClick={handleClick}
+            onClick={handleHomeClick}
           >
             Gift Registry
           </Typography>
@@ -108,7 +111,7 @@ function MainLayout() {
                 key={item.title}
                 color="inherit"
                 data-id={item.route}
-                onClick={handleButtonClick}
+                onClick={handleAuthItemClick}
               >
                 {item.title}
               </Button>
@@ -142,7 +145,7 @@ function MainLayout() {
       </Box>
 
       <Box component="main" sx={styles.box2}>
-        <Toolbar sx={styles.toolbar2} />
+        <Toolbar sx={styles.toolbar} />
         <Outlet />
       </Box>
 

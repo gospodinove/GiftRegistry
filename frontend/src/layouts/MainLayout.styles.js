@@ -3,9 +3,9 @@ import { navbarHeight } from '../constants'
 export const styles = {
   drawerBox: { textAlign: 'center' },
   listItemButton: { textAlign: 'center' },
-  box1: { flexGrow: 1, height: '100%' },
+  rootBox: { flexGrow: 1, height: '100%' },
   appBar: { height: `${navbarHeight}px` },
-  toolbar1: { height: `${navbarHeight}px` },
+  toolbar: { height: `${navbarHeight}px` },
   typography: {
     flexGrow: 1,
     fontFamily: 'monospace',
@@ -23,6 +23,5 @@ export const styles = {
       height: '100%'
     }
   },
-  box2: { p: 3, pt: 0, pb: 0, height: '100%' },
-  toolbar2: { height: `${navbarHeight}px` }
+  mainBox: { p: 3, pt: 0, pb: 0, height: '100%' }
 }

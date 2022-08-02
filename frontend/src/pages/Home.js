@@ -21,11 +21,11 @@ function Home() {
   return (
     <Box sx={styles.box}>
       <Grid container sx={styles.container}>
-        <Grid item xs={3} sx={styles.gridItemXs3}>
+        <Grid item xs={3} sx={styles.gridItem}>
           {isAuthenticated ? <CreateRegistry /> : null}
           <RegistriesList onListClick={onListClick} />
         </Grid>
-        <Grid item xs={9} sx={styles.gridItemXs9}>
+        <Grid item xs={9} sx={styles.gridItem}>
           <Registry listId={selectedListId} />
         </Grid>
       </Grid>

@@ -12,9 +12,8 @@ export const styles = {
     height: '100%',
     pt: 3
   },
-  gridItemXs3: {
+  gridItem: {
     height: '100%',
     overflow: 'auto'
-  },
-  gridItemXs9: { height: '100%', overflow: 'auto' }
+  }
 }
