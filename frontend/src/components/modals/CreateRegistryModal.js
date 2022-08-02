@@ -103,7 +103,7 @@ function CreateRegistryModal({ open, onClose }) {
       } catch {
         dispatch({
           type: 'toast/show',
-          payload: { type: 'error', message: 'Could not create list' }
+          payload: { type: 'error', message: 'Could not create registry' }
         })
       }
     },
@@ -139,7 +139,7 @@ function CreateRegistryModal({ open, onClose }) {
               required
               margin="normal"
               id="custom-type"
-              label="List type name"
+              label="Registry type name"
               value={customType}
               onChange={handleCustomTypeChange}
               fullWidth
@@ -153,7 +153,7 @@ function CreateRegistryModal({ open, onClose }) {
             required
             margin="normal"
             id="name"
-            label="List name"
+            label="Registry name"
             value={name}
             onChange={handleNameChange}
             fullWidth
@@ -162,7 +162,7 @@ function CreateRegistryModal({ open, onClose }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create List</Button>
+          <Button type="submit">Create Registry</Button>
         </DialogActions>
       </Box>
     </Dialog>

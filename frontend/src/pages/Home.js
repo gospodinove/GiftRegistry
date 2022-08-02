@@ -13,7 +13,7 @@ function Home() {
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
-  const [selectedListId, setSelectedListId] = useState()
+  const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const handleCreateRegistryButtonClick = useCallback(
     () =>
@@ -21,9 +21,9 @@ function Home() {
     [dispatch]
   )
 
-  const onListClick = useCallback(
-    list => setSelectedListId(list.id),
-    [setSelectedListId]
+  const onRegistryClick = useCallback(
+    registry => setSelectedRegistryId(registry.id),
+    [setSelectedRegistryId]
   )
 
   return (
@@ -38,14 +38,14 @@ function Home() {
               onClick={handleCreateRegistryButtonClick}
               startIcon={<AddIcon />}
             >
-              Create new list
+              Create new registry
             </Button>
           ) : null}
-          <RegistriesList onListClick={onListClick} />
+          <RegistriesList onRegistryClick={onRegistryClick} />
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
-          {selectedListId ? (
-            <Registry listId={selectedListId} />
+          {selectedRegistryId ? (
+            <Registry registryId={selectedRegistryId} />
           ) : (
             <Box
               display="flex"

@@ -7,9 +7,9 @@ import { toastSlice } from './toastSlice'
 
 export const slices = {
   auth: authSlice,
-  lists: registriesSlice,
+  registries: registriesSlice,
   toast: toastSlice,
-  listItems: registryItemsSlice,
+  registryItems: registryItemsSlice,
   modals: modalsSlice
 }
 

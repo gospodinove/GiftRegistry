@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-// list id => array of items
+// registry id => array of items
 const initialState = {}
 
 export const registryItemsSlice = createSlice({
@@ -8,11 +8,11 @@ export const registryItemsSlice = createSlice({
   initialState,
   reducers: {
     set: (state, action) => {
-      state[action.payload.listId] = action.payload.items
+      state[action.payload.registryId] = action.payload.items
     },
     add: (state, action) => {
-      state[action.payload.listId] = [
-        ...state[action.payload.listId],
+      state[action.payload.registryId] = [
+        ...state[action.payload.registryId],
         action.payload.item
       ]
     },
