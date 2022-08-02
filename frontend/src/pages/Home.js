@@ -21,7 +21,7 @@ function Home() {
     [dispatch]
   )
 
-  const onRegistryClick = useCallback(
+  const onSelectedChange = useCallback(
     registry => setSelectedRegistryId(registry.id),
     [setSelectedRegistryId]
   )
@@ -41,7 +41,7 @@ function Home() {
               Create new registry
             </Button>
           ) : null}
-          <RegistriesList onRegistryClick={onRegistryClick} />
+          <RegistriesList onSelectedChange={onSelectedChange} />
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
           {selectedRegistryId ? (

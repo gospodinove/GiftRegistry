@@ -119,7 +119,7 @@ function CreateRegistryModal({ open, onClose }) {
             select
             margin="normal"
             id="type"
-            label="type"
+            label="Type"
             value={type}
             onChange={handleTypeChange}
             fullWidth
@@ -139,7 +139,7 @@ function CreateRegistryModal({ open, onClose }) {
               required
               margin="normal"
               id="custom-type"
-              label="Registry type name"
+              label="Type name"
               value={customType}
               onChange={handleCustomTypeChange}
               fullWidth
@@ -153,7 +153,7 @@ function CreateRegistryModal({ open, onClose }) {
             required
             margin="normal"
             id="name"
-            label="Registry name"
+            label="Name"
             value={name}
             onChange={handleNameChange}
             fullWidth

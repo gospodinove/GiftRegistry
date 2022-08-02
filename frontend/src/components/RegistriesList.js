@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 
-const RegistriesList = ({ onRegistryClick }) => {
+const RegistriesList = ({ onSelectedChange }) => {
   const registries = useSelector(state => state.registries)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
@@ -58,9 +58,9 @@ const RegistriesList = ({ onRegistryClick }) => {
   const handleRegistryClick = useCallback(
     registry => {
       setSelectedRegistryId(registry.id)
-      onRegistryClick(registry)
+      onSelectedChange(registry)
     },
-    [onRegistryClick, setSelectedRegistryId]
+    [onSelectedChange, setSelectedRegistryId]
   )
 
   return (
