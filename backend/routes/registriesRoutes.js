@@ -90,7 +90,7 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
 router.post('/:id/items', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
 
-  const item = { ...req.body, listId: req.params.id, takenBy: null }
+  const item = { ...req.body, registryId: req.params.id, takenBy: null }
 
   try {
     const schema = {
@@ -103,7 +103,7 @@ router.post('/:id/items', isAuthenticated, async (req, res) => {
     await validateAll(item, schema, validationMessages)
 
     try {
-      await db.collection('listItems').insertOne(item)
+      await db.collection('registryItems').insertOne(item)
 
       replaceId(item)
 
