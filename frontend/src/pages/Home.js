@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
@@ -54,7 +54,18 @@ export default function Home() {
           <RegistriesList onListClick={onListClick} />
         </Grid>
         <Grid item xs={9}>
-          <Registry listId={selectedListId} />
+          {selectedListId ? (
+            <Registry listId={selectedListId} />
+          ) : (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100%"
+            >
+              <Typography variant="h5">No selected list</Typography>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Box>

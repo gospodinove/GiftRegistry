@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '@mui/material/Button'
@@ -20,8 +20,6 @@ function CreateRegistryItemModal({ open, onClose }) {
   const [description, setDescription] = React.useState('')
   const [link, setLink] = React.useState('')
   const [errors, setErrors] = React.useState({})
-
-  useEffect(() => {}, [])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -57,13 +55,16 @@ function CreateRegistryItemModal({ open, onClose }) {
     [errors]
   )
 
-  const handleDescriptionChange = useCallback(e => {
-    setDescription(e.target.value)
+  const handleDescriptionChange = useCallback(
+    e => {
+      setDescription(e.target.value)
 
-    if (errors.description !== undefined) {
-      setErrors({ ...errors, description: undefined })
-    }
-  })
+      if (errors.description !== undefined) {
+        setErrors({ ...errors, description: undefined })
+      }
+    },
+    [errors]
+  )
 
   const handleLinkChange = useCallback(
     e => {
