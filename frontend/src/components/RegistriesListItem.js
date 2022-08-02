@@ -28,10 +28,10 @@ const getIcon = type => {
   }
 }
 
-function RegistriesListItem({ list, isSelected, onClick }) {
+function RegistriesListItem({ registry, isSelected, onClick }) {
   const handleClick = useCallback(() => {
-    onClick(list)
-  }, [list, onClick])
+    onClick(registry)
+  }, [registry, onClick])
 
   return (
     <ListItem component="div" disablePadding>
@@ -40,8 +40,8 @@ function RegistriesListItem({ list, isSelected, onClick }) {
         selected={isSelected}
         onClick={handleClick}
       >
-        <ListItemText primary={list.name} secondary={list.type} />
-        <ListItemIcon>{getIcon(list.type)}</ListItemIcon>
+        <ListItemText primary={registry.name} secondary={registry.type} />
+        <ListItemIcon>{getIcon(registry.type)}</ListItemIcon>
       </ListItemButton>
     </ListItem>
   )

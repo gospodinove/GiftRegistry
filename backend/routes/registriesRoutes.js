@@ -13,7 +13,7 @@ extend('password', passwordValidator)
 
 router.post('/', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
-  const list = req.body
+  const registry = req.body
 
   try {
     const schema = {
@@ -21,19 +21,19 @@ router.post('/', isAuthenticated, async (req, res) => {
       name: 'required|string'
     }
 
-    await validate(list, schema, validationMessages)
+    await validate(registry, schema, validationMessages)
 
     try {
-      list.users = [req.session.user.id]
-      list.date = new Date()
+      registry.users = [req.session.user.id]
+      registry.date = new Date()
 
-      await db.collection('lists').insertOne(list)
+      await db.collection('registries').insertOne(registry)
 
-      replaceId(list)
+      replaceId(registry)
 
-      res.json({ success: true, list })
+      res.json({ success: true, registry })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not create list')
+      sendErrorResponse(res, 500, 'general', 'Could not create registry')
     }
   } catch (errors) {
     sendErrorResponse(res, 500, 'field-error', errors)
@@ -45,11 +45,17 @@ router.get('/', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id
 
   try {
-    const lists = await db.collection('lists').find({ users: userId }).toArray()
+    const registries = await db
+      .collection('registries')
+      .find({ users: userId })
+      .toArray()
 
-    res.json({ success: true, lists: lists.map(list => replaceId(list)) })
+    res.json({
+      success: true,
+      registries: registries.map(registry => replaceId(registry))
+    })
   } catch {
-    sendErrorResponse(res, 500, 'general', 'No lists from this user')
+    sendErrorResponse(res, 500, 'general', 'No registries from this user')
   }
 })
 
@@ -57,26 +63,31 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
 
   try {
-    const list = await db.collection('lists').findOne({
+    const registry = await db.collection('registries').findOne({
       _id: ObjectId(req.params.id),
       users: req.session.user.id
     })
 
-    if (!list) {
-      sendErrorResponse(res, 404, 'general', 'Could not find your list')
+    if (!registry) {
+      sendErrorResponse(res, 404, 'general', 'Could not find your registry')
       return
     }
 
-    replaceId(list)
+    replaceId(registry)
 
     const items = await db
-      .collection('listItems')
-      .find({ listId: list.id.toString() })
+      .collection('registryItems')
+      .find({ registryId: registry.id.toString() })
       .toArray()
 
     res.json({ success: true, items: items.map(item => replaceId(item)) })
   } catch (errors) {
-    sendErrorResponse(res, 500, 'general', 'Could not fetch your list items')
+    sendErrorResponse(
+      res,
+      500,
+      'general',
+      'Could not fetch your registry items'
+    )
   }
 })
 

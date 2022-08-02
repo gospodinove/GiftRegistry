@@ -4,29 +4,30 @@ import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 
-const RegistriesList = ({ onListClick }) => {
-  const lists = useSelector(state => state.lists)
+const RegistriesList = ({ onRegistryClick }) => {
+  const registries = useSelector(state => state.registries)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
-  const [selectedListId, setSelectedListId] = useState()
+  const [selectedRegistryId, setSelectedRegistryId] = useState()
 
-  const listsSortedByDate = useMemo(
+  const registriesSortedByDate = useMemo(
     () =>
-      [...lists].sort(
-        (listOne, listTwo) => new Date(listTwo.date) - new Date(listOne.date)
+      [...registries].sort(
+        (registryOne, registryTwo) =>
+          new Date(registryTwo.date) - new Date(registryOne.date)
       ),
-    [lists]
+    [registries]
   )
 
   const dispatch = useDispatch()
 
-  const getLists = useCallback(async () => {
+  const getRegistries = useCallback(async () => {
     if (!isAuthenticated) {
       return
     }
 
     try {
-      const response = await api('lists')
+      const response = await api('registries')
 
       if (!response.success) {
         switch (response.errorType) {
@@ -41,35 +42,35 @@ const RegistriesList = ({ onListClick }) => {
         }
       }
 
-      dispatch({ type: 'lists/add', payload: response.lists })
+      dispatch({ type: 'registries/add', payload: response.registries })
     } catch {
       dispatch({
         type: 'toast/show',
-        payload: { type: 'error', message: 'No lists from this user' }
+        payload: { type: 'error', message: 'No registries from this user' }
       })
     }
   }, [dispatch, isAuthenticated])
 
   useEffect(() => {
-    getLists()
-  }, [getLists])
+    getRegistries()
+  }, [getRegistries])
 
-  const handleListClick = useCallback(
-    list => {
-      setSelectedListId(list.id)
-      onListClick(list)
+  const handleRegistryClick = useCallback(
+    registry => {
+      setSelectedRegistryId(registry.id)
+      onRegistryClick(registry)
     },
-    [onListClick, setSelectedListId]
+    [onRegistryClick, setSelectedRegistryId]
   )
 
   return (
     <List>
-      {listsSortedByDate.map(list => (
+      {registriesSortedByDate.map(registry => (
         <RegistriesListItem
-          key={list.id}
-          list={list}
-          isSelected={selectedListId === list.id}
-          onClick={handleListClick}
+          key={registry.id}
+          registry={registry}
+          isSelected={selectedRegistryId === registry.id}
+          onClick={handleRegistryClick}
         />
       ))}
     </List>

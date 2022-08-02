@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 // list id => array of items
 const initialState = {}
 
-export const listItemsSlice = createSlice({
-  name: 'listItems',
+export const registryItemsSlice = createSlice({
+  name: 'registryItems',
   initialState,
   reducers: {
     add: (state, action) => {

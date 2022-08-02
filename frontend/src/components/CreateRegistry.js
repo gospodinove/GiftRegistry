@@ -12,7 +12,7 @@ import Icon from '@mui/material/Icon'
 import Box from '@mui/material/Box'
 import { styles } from './CreateRegistry.styles'
 
-const listTypes = [
+const registryTypes = [
   'Birthday',
   'Wedding',
   'Graduation/Prom',
@@ -86,7 +86,7 @@ function CreateRegistry() {
         name
       }
       try {
-        const response = await api('lists', 'post', data)
+        const response = await api('registries', 'post', data)
 
         if (!response.success) {
           switch (response.errorType) {
@@ -104,7 +104,7 @@ function CreateRegistry() {
           }
         }
 
-        dispatch({ type: 'lists/add', payload: [response.list] })
+        dispatch({ type: 'registries/add', payload: [response.registry] })
 
         handleClose()
       } catch {
@@ -143,7 +143,7 @@ function CreateRegistry() {
               fullWidth
               variant="outlined"
             >
-              {listTypes.map(option => (
+              {registryTypes.map(option => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>

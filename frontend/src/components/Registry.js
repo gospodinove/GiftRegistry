@@ -4,19 +4,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 
-const Registry = ({ listId }) => {
+const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const listData = useSelector(state => state.lists.find(l => l.id === listId))
-  const items = useSelector(state => state.listItems[listId])
+  const registryData = useSelector(state =>
+    state.registries.find(registry => registry.id === registryId)
+  )
+  const items = useSelector(state => state.registryItems[registryId])
 
   const fetchItems = useCallback(async () => {
-    if (!listId || items !== undefined) {
+    if (!registryId || items !== undefined) {
       return
     }
 
     try {
-      const response = await api('lists/' + listId + '/items')
+      const response = await api('registries/' + registryId + '/items')
 
       if (!response.success) {
         dispatch({
@@ -30,19 +32,19 @@ const Registry = ({ listId }) => {
       }
 
       dispatch({
-        type: 'listItems/add',
-        payload: { listId, items: response.items }
+        type: 'registryItems/add',
+        payload: { registryId, items: response.items }
       })
     } catch {
       dispatch({
         type: 'toast/show',
         payload: {
           type: 'error',
-          message: 'Could not fetch your list items'
+          message: 'Could not fetch your registry items'
         }
       })
     }
-  }, [listId, items, dispatch])
+  }, [registryId, items, dispatch])
 
   useEffect(() => {
     fetchItems()
@@ -55,8 +57,8 @@ const Registry = ({ listId }) => {
 
   return items ? (
     <Box>
-      {/* TODO: Create ListDetailsSummary component */}
-      <Typography variant="h5">{listData.name}</Typography>
+      {/* TODO: Create RegistryDetailsSummary component */}
+      <Typography variant="h5">{registryData.name}</Typography>
 
       <List>
         {items.map(item => (
