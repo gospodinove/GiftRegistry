@@ -59,8 +59,8 @@ function MainLayout() {
       }
 
       dispatch({ type: 'auth/clear' })
-      dispatch({ type: 'lists/clear' })
-      dispatch({ type: 'listItems/clear' })
+      dispatch({ type: 'registries/clear' })
+      dispatch({ type: 'registryItems/clear' })
 
       dispatch({
         type: 'toast/show',
