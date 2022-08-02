@@ -5,7 +5,6 @@ import { Button, Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-// import { styles } from './Register.styles'
 
 function Register() {
   const dispatch = useDispatch()

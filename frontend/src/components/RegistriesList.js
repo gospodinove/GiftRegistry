@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
-// import { styles } from './RegistriesList.styles'
 
 const RegistriesList = ({ onListClick }) => {
   const lists = useSelector(state => state.lists)

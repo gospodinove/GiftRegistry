@@ -20,7 +20,7 @@ const Toast = () => {
       autoHideDuration={6000}
       onClose={handleClose}
     >
-      <Alert severity={data.type} sx={styles.width} onClose={handleClose}>
+      <Alert severity={data.type} sx={styles.alert} onClose={handleClose}>
         {data.message}
       </Alert>
     </Snackbar>
