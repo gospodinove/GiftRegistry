@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
+import ColorSelector from '../ColorSelector'
 
 const registryTypes = [
   'Birthday',
@@ -21,6 +22,7 @@ const registryTypes = [
 function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
+  const [color, setColor] = React.useState('info')
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
   const [errors, setErrors] = React.useState({})
@@ -34,6 +36,10 @@ function CreateRegistryModal({ open, onClose }) {
       setType('Birthday')
     }, 100)
   }, [onClose])
+
+  const handleColorChange = useCallback(color => {
+    setColor(color)
+  }, [])
 
   const handleTypeChange = useCallback(
     e => {
@@ -114,7 +120,9 @@ function CreateRegistryModal({ open, onClose }) {
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <Box component="form" onSubmit={onSubmit}>
         <DialogTitle>New registry</DialogTitle>
+
         <DialogContent>
+          <ColorSelector onChange={handleColorChange} />
           <TextField
             select
             margin="normal"
@@ -124,6 +132,7 @@ function CreateRegistryModal({ open, onClose }) {
             onChange={handleTypeChange}
             fullWidth
             variant="outlined"
+            color={color}
           >
             {registryTypes.map(option => (
               <MenuItem key={option} value={option}>
@@ -144,6 +153,7 @@ function CreateRegistryModal({ open, onClose }) {
               onChange={handleCustomTypeChange}
               fullWidth
               variant="outlined"
+              color={color}
             />
           ) : null}
           <TextField
@@ -158,11 +168,17 @@ function CreateRegistryModal({ open, onClose }) {
             onChange={handleNameChange}
             fullWidth
             variant="outlined"
+            color={color}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create Registry</Button>
+          <Button onClick={handleClose} color={color}>
+            Cancel
+          </Button>
+
+          <Button type="submit" color={color}>
+            Create Registry
+          </Button>
         </DialogActions>
       </Box>
     </Dialog>
