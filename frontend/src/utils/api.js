@@ -9,7 +9,7 @@ export const api = async (endPoint, method = 'GET', data) => {
 
   return (
     await fetch(url, {
-      method,
+      method: method.toUpperCase(),
       headers: {
         'Content-Type': 'application/json'
       },

@@ -71,7 +71,19 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData?.id])
 
-  const handleShareButtonClick = useCallback(() => {}, [])
+  const handleShareButtonClick = useCallback(() => {
+    if (!registryData) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'shareRegistry',
+        data: { registryId: registryData.id, shares: registryData.shares }
+      }
+    })
+  }, [dispatch, registryData])
 
   return (
     <>

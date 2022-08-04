@@ -4,6 +4,7 @@ const { replaceId, sendErrorResponse } = require('../utils')
 const { validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
+const { sendRegistryInvites } = require('../mail')
 
 const router = express.Router()
 
@@ -22,6 +23,7 @@ router.post('/', isAuthenticated, async (req, res) => {
     try {
       registry.users = [req.session.user.id]
       registry.date = new Date()
+      registry.shares = []
 
       await db.collection('registries').insertOne(registry)
 
@@ -110,6 +112,36 @@ router.post('/:id/items', isAuthenticated, async (req, res) => {
       res.json({ success: true, item })
     } catch {
       sendErrorResponse(res, 500, 'general', 'Could not add product')
+    }
+  } catch (errors) {
+    sendErrorResponse(res, 500, 'field-error', errors)
+  }
+})
+
+router.patch('/:id/share', isAuthenticated, async (req, res) => {
+  const db = req.app.locals.db
+
+  const data = req.body
+
+  try {
+    const schema = { 'emails.*': 'email' }
+
+    await validateAll(data, schema, validationMessages)
+
+    try {
+      const result = await db
+        .collection('registries')
+        .findOneAndUpdate(
+          { _id: ObjectId(req.params.id) },
+          { $addToSet: { shares: { $each: data.emails } } },
+          { returnDocument: 'after' }
+        )
+
+      sendRegistryInvites(data.emails)
+
+      res.json({ success: true, registry: replaceId(result.value) })
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not send emails')
     }
   } catch (errors) {
     sendErrorResponse(res, 500, 'field-error', errors)

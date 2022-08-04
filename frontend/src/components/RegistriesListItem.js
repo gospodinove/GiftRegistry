@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import CakeIcon from '@mui/icons-material/Cake'
 import SchoolIcon from '@mui/icons-material/School'
 import FavoriteIcon from '@mui/icons-material/Favorite'

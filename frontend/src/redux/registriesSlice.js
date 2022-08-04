@@ -7,6 +7,10 @@ export const registriesSlice = createSlice({
   initialState,
   reducers: {
     add: (state, action) => [...state, ...action.payload],
+    update: (state, action) => [
+      ...state.filter(r => r.id !== action.payload.id),
+      action.payload
+    ],
     clear: () => initialState
   }
 })
