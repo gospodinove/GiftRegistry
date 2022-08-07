@@ -23,5 +23,8 @@ export const styles = {
       height: '100%'
     }
   },
-  mainBox: { p: 3, pt: 0, pb: 0, height: '100%' }
+  mainBox: { p: 3, pt: 0, pb: 0, height: '100%' },
+  authNavBox: {
+    display: { xs: 'none', sm: 'block' }
+  }
 }

@@ -22,7 +22,7 @@ const registryTypes = [
 function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const [color, setColor] = React.useState('info')
+  const [color, setColor] = React.useState('primary')
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
   const [errors, setErrors] = React.useState({})
@@ -34,6 +34,7 @@ function CreateRegistryModal({ open, onClose }) {
     setTimeout(() => {
       setName('')
       setType('Birthday')
+      setColor('primary')
     }, 100)
   }, [onClose])
 
@@ -82,7 +83,8 @@ function CreateRegistryModal({ open, onClose }) {
 
       const data = {
         type: type === 'Custom' ? customType : type,
-        name
+        name,
+        color
       }
       try {
         const response = await api('registries', 'post', data)
@@ -113,7 +115,7 @@ function CreateRegistryModal({ open, onClose }) {
         })
       }
     },
-    [name, type, customType, dispatch, handleClose]
+    [name, type, customType, color, dispatch, handleClose]
   )
 
   return (

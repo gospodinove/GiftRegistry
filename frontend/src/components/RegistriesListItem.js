@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import CakeIcon from '@mui/icons-material/Cake'
@@ -7,40 +7,46 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import ParkIcon from '@mui/icons-material/Park'
 import AnimationIcon from '@mui/icons-material/Animation'
 import { ListItem } from '@mui/material'
+import { getHexByColorName } from '../utils/colors'
+import { styles } from './RegistriesListItem.styles'
 
-const getIcon = type => {
+const getIcon = (type, color) => {
   switch (type) {
     case 'Birthday':
-      return <CakeIcon />
+      return <CakeIcon color={color} />
 
     case 'Wedding':
-      return <FavoriteIcon />
+      return <FavoriteIcon color={color} />
 
     case 'Graduation/Prom':
-      return <SchoolIcon />
+      return <SchoolIcon color={color} />
 
     case 'Christmas':
-      return <ParkIcon />
+      return <ParkIcon color={color} />
 
     default:
-      return <AnimationIcon />
+      return <AnimationIcon color={color} />
   }
 }
 
-function RegistriesListItem({ registry, isSelected, onClick }) {
-  const handleClick = useCallback(() => {
-    onClick(registry)
-  }, [registry, onClick])
+function RegistriesListItem({ registry, onClick }) {
+  const handleClick = useCallback(() => onClick(registry), [registry, onClick])
+
+  const hexColor = useMemo(
+    () => getHexByColorName(registry.color),
+    [registry.color]
+  )
 
   return (
     <ListItem component="div" disablePadding>
       <ListItemButton
         component="button"
-        selected={isSelected}
+        className="listItemButton"
         onClick={handleClick}
+        sx={styles(hexColor)}
       >
         <ListItemText primary={registry.name} secondary={registry.type} />
-        {getIcon(registry.type)}
+        {getIcon(registry.type, registry.color)}
       </ListItemButton>
     </ListItem>
   )

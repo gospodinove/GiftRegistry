@@ -146,11 +146,7 @@ function MainLayout() {
             Gift Registry
           </Typography>
 
-          <Box
-            sx={{
-              display: { xs: 'none', sm: 'block' }
-            }}
-          >
+          <Box sx={styles.authNavBox}>
             {isAuthenticated ? (
               <Button key="logout" color="inherit" onClick={handleLogoutClick}>
                 Log out
