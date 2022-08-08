@@ -13,14 +13,13 @@ const transporter = nodemailer.createTransport({
 
 const emailAddress = 'gospodinove@gmail.com'
 
-module.exports.sendRegistryInvites = addresses => {
-  // TODO: invite token
-  addresses.forEach(address =>
+// TOOD: make link
+module.exports.sendRegistryInvites = users =>
+  users.forEach(user =>
     transporter.sendMail({
       from: emailAddress,
-      to: address,
+      to: user.email,
       subject: 'Gift Registry invite',
-      text: 'hello world'
+      text: 'Check out this link -> '
     })
   )
-}

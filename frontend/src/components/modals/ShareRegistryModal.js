@@ -122,8 +122,8 @@ function ShareRegistryModal({ open, onClose }) {
       <Box component="form" onSubmit={onSubmit}>
         <DialogTitle>Share registry</DialogTitle>
         <DialogContent>
-          {initialData?.shares.map((email, index) =>
-            renderTextField(index, email, true)
+          {initialData?.users.map((user, index) =>
+            renderTextField(index, user.email, true)
           )}
           {emails.map((email, index) => renderTextField(index, email, false))}
         </DialogContent>

@@ -80,7 +80,10 @@ const Registry = ({ registryId }) => {
       type: 'modals/show',
       payload: {
         name: 'shareRegistry',
-        data: { registryId: registryData.id, shares: registryData.shares }
+        data: {
+          registryId: registryData.id,
+          users: registryData.users.filter(user => user.role !== 'owner')
+        }
       }
     })
   }, [dispatch, registryData])

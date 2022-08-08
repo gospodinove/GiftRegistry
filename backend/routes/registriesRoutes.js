@@ -5,6 +5,7 @@ const { validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
+const bcrypt = require('bcrypt')
 
 const router = express.Router()
 
@@ -21,9 +22,8 @@ router.post('/', isAuthenticated, async (req, res) => {
     await validateAll(registry, schema, validationMessages)
 
     try {
-      registry.users = [req.session.user.id]
+      registry.users = [{ email: req.session.user.email, role: 'owner' }]
       registry.date = new Date()
-      registry.shares = []
 
       await db.collection('registries').insertOne(registry)
 
@@ -40,12 +40,11 @@ router.post('/', isAuthenticated, async (req, res) => {
 
 router.get('/', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
-  const userId = req.session.user.id
 
   try {
     const registries = await db
       .collection('registries')
-      .find({ users: userId })
+      .find({ users: { $elemMatch: { email: req.session.user.email } } })
       .toArray()
 
     res.json({
@@ -63,7 +62,7 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
   try {
     const registry = await db.collection('registries').findOne({
       _id: ObjectId(req.params.id),
-      users: req.session.user.id
+      users: { $elemMatch: { email: req.session.user.email } }
     })
 
     if (!registry) {
@@ -129,15 +128,41 @@ router.patch('/:id/share', isAuthenticated, async (req, res) => {
     await validateAll(data, schema, validationMessages)
 
     try {
+      const registeredUsers = await db
+        .collection('users')
+        .find({ email: { $in: data.emails } })
+        .toArray()
+
+      const registeredEmails = registeredUsers.map(user => user.email)
+      const unregisteredEmails = data.emails.filter(
+        email => !registeredEmails.includes(email)
+      )
+
+      const salt = await bcrypt.genSalt(10)
+      const users = await Promise.all(
+        unregisteredEmails.map(async email => ({
+          email,
+          token: await bcrypt.hash(email + new Date().toDateString(), salt),
+          isRegistrationComplete: false
+        }))
+      )
+
+      await db.collection('users').insertMany(users)
+
+      const userIdsAndRoles = users.map(user => ({
+        email: user.email,
+        role: 'invitee'
+      }))
+
       const result = await db
         .collection('registries')
         .findOneAndUpdate(
           { _id: ObjectId(req.params.id) },
-          { $addToSet: { shares: { $each: data.emails } } },
+          { $addToSet: { users: { $each: userIdsAndRoles } } },
           { returnDocument: 'after' }
         )
 
-      sendRegistryInvites(data.emails)
+      sendRegistryInvites([...users, ...registeredUsers])
 
       res.json({ success: true, registry: replaceId(result.value) })
     } catch {
