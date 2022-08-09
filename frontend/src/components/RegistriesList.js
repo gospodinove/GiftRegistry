@@ -1,5 +1,5 @@
 import { List } from '@mui/material'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
@@ -7,6 +7,8 @@ import { api } from '../utils/api'
 const RegistriesList = ({ onSelectedChange }) => {
   const registries = useSelector(state => state.registries)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+
+  const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const registriesSortedByDate = useMemo(
     () =>
@@ -56,6 +58,7 @@ const RegistriesList = ({ onSelectedChange }) => {
   const handleRegistryClick = useCallback(
     registry => {
       onSelectedChange(registry)
+      setSelectedRegistryId(registry.id)
     },
     [onSelectedChange]
   )
@@ -66,6 +69,7 @@ const RegistriesList = ({ onSelectedChange }) => {
         <RegistriesListItem
           key={registry.id}
           registry={registry}
+          isSelected={selectedRegistryId === registry.id}
           onClick={handleRegistryClick}
         />
       ))}

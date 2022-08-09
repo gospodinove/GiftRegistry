@@ -29,12 +29,17 @@ const getIcon = (type, color) => {
   }
 }
 
-function RegistriesListItem({ registry, onClick }) {
+function RegistriesListItem({ registry, isSelected, onClick }) {
   const handleClick = useCallback(() => onClick(registry), [registry, onClick])
 
   const hexColor = useMemo(
     () => getHexByColorName(registry.color),
     [registry.color]
+  )
+
+  const componentStyles = useMemo(
+    () => styles(hexColor, isSelected),
+    [hexColor, isSelected]
   )
 
   return (
@@ -43,7 +48,7 @@ function RegistriesListItem({ registry, onClick }) {
         component="button"
         className="listItemButton"
         onClick={handleClick}
-        sx={useMemo(() => styles(hexColor), [hexColor])}
+        sx={componentStyles.registryItemStyles}
       >
         <ListItemText primary={registry.name} secondary={registry.type} />
         {getIcon(registry.type, registry.color)}
