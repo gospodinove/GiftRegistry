@@ -20,5 +20,10 @@ export const api = async (endPoint, method = 'GET', data) => {
     throw await response.json()
   }
 
-  return response.json()
+  // response.json() throws when the reponse does not hold any data
+  try {
+    return await response.json()
+  } catch {
+    return
+  }
 }

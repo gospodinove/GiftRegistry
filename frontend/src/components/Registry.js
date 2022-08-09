@@ -22,27 +22,16 @@ const Registry = ({ registryId }) => {
     try {
       const response = await api('registries/' + registryId + '/items')
 
-      if (!response.success) {
-        dispatch({
-          type: 'toast/show',
-          payload: {
-            type: 'error',
-            message: response.errors
-          }
-        })
-        return
-      }
-
       dispatch({
         type: 'registryItems/set',
         payload: { registryId, items: response.items }
       })
-    } catch {
+    } catch (error) {
       dispatch({
         type: 'toast/show',
         payload: {
           type: 'error',
-          message: 'Could not fetch your registry items'
+          message: error.data
         }
       })
     }

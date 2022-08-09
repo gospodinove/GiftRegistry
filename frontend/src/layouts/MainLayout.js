@@ -49,15 +49,7 @@ function MainLayout() {
 
   const handleLogoutClick = React.useCallback(async () => {
     try {
-      const response = await api('auth/logout')
-
-      if (!response.success) {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: 'Could not log out' }
-        })
-        return
-      }
+      await api('auth/logout')
 
       dispatch({ type: 'auth/clear' })
       dispatch({ type: 'registries/clear' })
@@ -70,7 +62,7 @@ function MainLayout() {
     } catch {
       dispatch({
         type: 'toast/show',
-        payload: { type: 'error', message: 'Could not log out' }
+        payload: { type: 'error', message: 'Something went wrong' }
       })
     }
   }, [dispatch])

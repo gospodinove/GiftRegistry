@@ -33,7 +33,7 @@ router.post(
 
         replaceId(registry)
 
-        res.json({ success: true, registry })
+        res.json({ registry })
       } catch {
         sendErrorResponse(res, 500, 'general', 'Could not create registry')
       }
@@ -52,10 +52,7 @@ router.get('/', isAuthenticated, async (req, res) => {
       .find({ users: { $elemMatch: { email: req.session.user.email } } })
       .toArray()
 
-    res.json({
-      success: true,
-      registries: registries.map(registry => replaceId(registry))
-    })
+    res.json({ registries: registries.map(registry => replaceId(registry)) })
   } catch {
     sendErrorResponse(res, 500, 'general', 'No registries from this user')
   }
@@ -82,7 +79,7 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
       .find({ registryId: registry.id.toString() })
       .toArray()
 
-    res.json({ success: true, items: items.map(item => replaceId(item)) })
+    res.json({ items: items.map(item => replaceId(item)) })
   } catch {
     sendErrorResponse(
       res,
@@ -116,7 +113,7 @@ router.post(
 
         replaceId(item)
 
-        res.json({ success: true, item })
+        res.json({ item })
       } catch {
         sendErrorResponse(res, 500, 'general', 'Could not add product')
       }
@@ -176,7 +173,7 @@ router.patch(
 
         sendRegistryInvites([...users, ...registeredUsers])
 
-        res.json({ success: true, registry: replaceId(result.value) })
+        res.json({ registry: replaceId(result.value) })
       } catch {
         sendErrorResponse(res, 500, 'general', 'Could not send emails')
       }

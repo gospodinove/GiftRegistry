@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
 
       req.session.user = user
 
-      res.json({ success: true, user })
+      res.json({ user })
     } catch {
       sendErrorResponse(res, 500, 'general', 'Could not register user')
     }
@@ -106,7 +106,7 @@ router.post('/login', async (req, res) => {
 
       req.session.user = user
 
-      res.json({ success: true, user })
+      res.json({ user })
     } catch (err) {
       sendErrorResponse(res, 500, 'general', 'Could not login')
     }
@@ -130,7 +130,7 @@ router.get('/logout', (req, res) => {
         }
 
         res.clearCookie(process.env.SESSION_NAME)
-        res.json({ success: true })
+        res.send()
       })
     } else {
       sendErrorResponse(res, 500, 'general', 'Could not logout')

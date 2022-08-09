@@ -97,33 +97,32 @@ function CreateRegistryItemModal({ open, onClose }) {
           data
         )
 
-        if (!response.success) {
-          switch (response.errorType) {
-            case 'field-error':
-              setErrors(response.errors)
-              return
-            case 'general':
-              dispatch({
-                type: 'toast/show',
-                payload: { type: 'error', message: response.errors }
-              })
-              return
-            default:
-              return
-          }
-        }
-
         dispatch({
           type: 'registryItems/add',
           payload: { registryId: initialData.registryId, item: response.item }
         })
 
         handleClose()
-      } catch {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: 'Could not add product' }
-        })
+      } catch (error) {
+        switch (error.type) {
+          case 'field-error':
+            setErrors(error.message)
+            return
+
+          case 'general':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: error.data }
+            })
+            return
+
+          default:
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: 'Something went wrong' }
+            })
+            return
+        }
       }
     },
     [
