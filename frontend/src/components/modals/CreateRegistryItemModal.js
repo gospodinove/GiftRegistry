@@ -115,7 +115,10 @@ function CreateRegistryItemModal({ open, onClose }) {
 
         dispatch({
           type: 'registryItems/add',
-          payload: { registryId: initialData.registryId, item: response.item }
+          payload: {
+            registryId: initialData.registryId,
+            item: response.item
+          }
         })
 
         handleClose()
@@ -154,6 +157,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 id="name"
                 label="Product name"
                 value={name}
+                color={initialData?.color}
                 onChange={handleNameChange}
                 fullWidth
                 variant="outlined"
@@ -169,6 +173,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 id="price"
                 label="Price"
                 value={price}
+                color={initialData?.color}
                 onChange={handlePriceChange}
                 variant="outlined"
                 type="number"
@@ -188,6 +193,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 id="name"
                 label="Description"
                 value={description}
+                color={initialData?.color}
                 onChange={handleDescriptionChange}
                 fullWidth
                 variant="outlined"
@@ -204,6 +210,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 id="name"
                 label="Link"
                 value={link}
+                color={initialData?.color}
                 onChange={handleLinkChange}
                 fullWidth
                 variant="outlined"
@@ -213,8 +220,12 @@ function CreateRegistryItemModal({ open, onClose }) {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Add product</Button>
+          <Button onClick={handleClose} color={initialData?.color}>
+            Cancel
+          </Button>
+          <Button type="submit" color={initialData?.color}>
+            Add product
+          </Button>
         </DialogActions>
       </Box>
     </Dialog>

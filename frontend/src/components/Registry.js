@@ -66,10 +66,10 @@ const Registry = ({ registryId }) => {
       type: 'modals/show',
       payload: {
         name: 'createRegistryItem',
-        data: { registryId: registryData.id }
+        data: { registryId: registryData.id, color: registryData.color }
       }
     })
-  }, [dispatch, registryData?.id])
+  }, [dispatch, registryData?.id, registryData?.color])
 
   const handleShareButtonClick = useCallback(() => {}, [])
 
@@ -85,6 +85,7 @@ const Registry = ({ registryId }) => {
               variant="outlined"
               startIcon={<AddIcon />}
               onClick={handleAddButtonClick}
+              color={registryData.color}
             >
               Add
             </Button>
@@ -92,6 +93,7 @@ const Registry = ({ registryId }) => {
               variant="contained"
               startIcon={<ShareIcon />}
               onClick={handleShareButtonClick}
+              color={registryData.color}
             >
               Share
             </Button>
@@ -106,6 +108,7 @@ const Registry = ({ registryId }) => {
               <RegistryItem
                 key={item.id}
                 data={item}
+                color={registryData.color}
                 onToggle={handleItemToggle}
               />
             ))}

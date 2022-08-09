@@ -2,7 +2,7 @@ import { Checkbox, ListItem, ListItemIcon, ListItemText } from '@mui/material'
 import React, { useCallback, useState } from 'react'
 
 // TODO: display the article link
-const RegistryItem = ({ data, onToggle }) => {
+const RegistryItem = ({ data, onToggle, color }) => {
   const [isChecked, setIsChecked] = useState(data.takenBy !== null)
 
   const handleClick = useCallback(() => {
@@ -19,6 +19,7 @@ const RegistryItem = ({ data, onToggle }) => {
           disableRipple
           inputProps={{ 'aria-labelledby': data.id }}
           onClick={handleClick}
+          color={color}
         />
       </ListItemIcon>
       <ListItemText
