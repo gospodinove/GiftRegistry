@@ -43,7 +43,7 @@ function RegistriesListItem({ registry, onClick }) {
         component="button"
         className="listItemButton"
         onClick={handleClick}
-        sx={styles(hexColor)}
+        sx={useMemo(() => styles(hexColor), [hexColor])}
       >
         <ListItemText primary={registry.name} secondary={registry.type} />
         {getIcon(registry.type, registry.color)}
