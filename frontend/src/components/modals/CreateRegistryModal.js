@@ -78,6 +78,7 @@ function CreateRegistryModal({ open, onClose }) {
         type: type === 'Custom' ? customType : type,
         name
       }
+
       try {
         const response = await api('registries', 'post', data)
 
@@ -100,11 +101,21 @@ function CreateRegistryModal({ open, onClose }) {
         dispatch({ type: 'registries/add', payload: [response.registry] })
 
         handleClose()
-      } catch {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: 'Could not create registry' }
-        })
+      } catch (err) {
+        switch (err.type) {
+          case 'incomplete-registration':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: err.message }
+            })
+            return
+          default:
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: 'Could not create registry' }
+            })
+            return
+        }
       }
     },
     [name, type, customType, dispatch, handleClose]

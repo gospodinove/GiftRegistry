@@ -6,37 +6,42 @@ const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const bcrypt = require('bcrypt')
+const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 
 const router = express.Router()
 
-router.post('/', isAuthenticated, async (req, res) => {
-  const db = req.app.locals.db
-  const registry = req.body
-
-  try {
-    const schema = {
-      type: 'required|string|max:30',
-      name: 'required|string'
-    }
-
-    await validateAll(registry, schema, validationMessages)
+router.post(
+  '/',
+  [isAuthenticated, isRegistrationCompleted],
+  async (req, res) => {
+    const db = req.app.locals.db
+    const registry = req.body
 
     try {
-      registry.users = [{ email: req.session.user.email, role: 'owner' }]
-      registry.date = new Date()
+      const schema = {
+        type: 'required|string|max:30',
+        name: 'required|string'
+      }
 
-      await db.collection('registries').insertOne(registry)
+      await validateAll(registry, schema, validationMessages)
 
-      replaceId(registry)
+      try {
+        registry.users = [{ email: req.session.user.email, role: 'owner' }]
+        registry.date = new Date()
 
-      res.json({ success: true, registry })
-    } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not create registry')
+        await db.collection('registries').insertOne(registry)
+
+        replaceId(registry)
+
+        res.json({ success: true, registry })
+      } catch {
+        sendErrorResponse(res, 500, 'general', 'Could not create registry')
+      }
+    } catch (errors) {
+      sendErrorResponse(res, 500, 'field-error', errors)
     }
-  } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
   }
-})
+)
 
 router.get('/', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db
@@ -88,89 +93,97 @@ router.get('/:id/items', isAuthenticated, async (req, res) => {
   }
 })
 
-router.post('/:id/items', isAuthenticated, async (req, res) => {
-  const db = req.app.locals.db
+router.post(
+  '/:id/items',
+  [isAuthenticated, isRegistrationCompleted],
+  async (req, res) => {
+    const db = req.app.locals.db
 
-  const item = { ...req.body, registryId: req.params.id, takenBy: null }
-
-  try {
-    const schema = {
-      name: 'required|string',
-      price: 'required|number|above:0',
-      description: 'string|max:100',
-      link: 'url'
-    }
-
-    await validateAll(item, schema, validationMessages)
+    const item = { ...req.body, registryId: req.params.id, takenBy: null }
 
     try {
-      await db.collection('registryItems').insertOne(item)
+      const schema = {
+        name: 'required|string',
+        price: 'required|number|above:0',
+        description: 'string|max:100',
+        link: 'url'
+      }
 
-      replaceId(item)
+      await validateAll(item, schema, validationMessages)
 
-      res.json({ success: true, item })
-    } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not add product')
+      try {
+        await db.collection('registryItems').insertOne(item)
+
+        replaceId(item)
+
+        res.json({ success: true, item })
+      } catch {
+        sendErrorResponse(res, 500, 'general', 'Could not add product')
+      }
+    } catch (errors) {
+      sendErrorResponse(res, 500, 'field-error', errors)
     }
-  } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
   }
-})
+)
 
-router.patch('/:id/share', isAuthenticated, async (req, res) => {
-  const db = req.app.locals.db
+router.patch(
+  '/:id/share',
+  [isAuthenticated, isRegistrationCompleted],
+  async (req, res) => {
+    const db = req.app.locals.db
 
-  const data = req.body
-
-  try {
-    const schema = { 'emails.*': 'email' }
-
-    await validateAll(data, schema, validationMessages)
+    const data = req.body
 
     try {
-      const registeredUsers = await db
-        .collection('users')
-        .find({ email: { $in: data.emails } })
-        .toArray()
+      const schema = { 'emails.*': 'email' }
 
-      const registeredEmails = registeredUsers.map(user => user.email)
-      const unregisteredEmails = data.emails.filter(
-        email => !registeredEmails.includes(email)
-      )
+      await validateAll(data, schema, validationMessages)
 
-      const salt = await bcrypt.genSalt(10)
-      const users = await Promise.all(
-        unregisteredEmails.map(async email => ({
-          email,
-          token: await bcrypt.hash(email + new Date().toDateString(), salt),
-          isRegistrationComplete: false
-        }))
-      )
+      try {
+        const registeredUsers = await db
+          .collection('users')
+          .find({ email: { $in: data.emails } })
+          .toArray()
 
-      await db.collection('users').insertMany(users)
-
-      const userIdsAndRoles = users.map(user => ({
-        email: user.email,
-        role: 'invitee'
-      }))
-
-      const result = await db
-        .collection('registries')
-        .findOneAndUpdate(
-          { _id: ObjectId(req.params.id) },
-          { $addToSet: { users: { $each: userIdsAndRoles } } },
-          { returnDocument: 'after' }
+        const registeredEmails = registeredUsers.map(user => user.email)
+        const unregisteredEmails = data.emails.filter(
+          email => !registeredEmails.includes(email)
         )
 
-      sendRegistryInvites([...users, ...registeredUsers])
+        const salt = await bcrypt.genSalt(10)
+        const users = await Promise.all(
+          unregisteredEmails.map(async email => ({
+            email,
+            token: await bcrypt.hash(email + new Date().toDateString(), salt),
+            isRegistrationComplete: false
+          }))
+        )
 
-      res.json({ success: true, registry: replaceId(result.value) })
-    } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not send emails')
+        await db.collection('users').insertMany(users)
+
+        const userIdsAndRoles = users.map(user => ({
+          email: user.email,
+          role: 'invitee'
+        }))
+
+        const result = await db
+          .collection('registries')
+          .findOneAndUpdate(
+            { _id: ObjectId(req.params.id) },
+            { $addToSet: { users: { $each: userIdsAndRoles } } },
+            { returnDocument: 'after' }
+          )
+
+        sendRegistryInvites([...users, ...registeredUsers])
+
+        res.json({ success: true, registry: replaceId(result.value) })
+      } catch {
+        sendErrorResponse(res, 500, 'general', 'Could not send emails')
+      }
+    } catch (errors) {
+      sendErrorResponse(res, 500, 'field-error', errors)
     }
-  } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
   }
-})
+)
 
 module.exports = router
