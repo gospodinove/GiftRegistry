@@ -156,18 +156,24 @@ router.patch(
           }))
         )
 
-        await db.collection('users').insertMany(users)
+        if (users.length > 0) {
+          await db.collection('users').insertMany(users)
+        }
 
-        const userIdsAndRoles = users.map(user => ({
+        const userEmailsAndRoles = users.map(user => ({
           email: user.email,
           role: 'invitee'
         }))
+
+        registeredEmails.forEach(email =>
+          userEmailsAndRoles.push({ email, role: 'invitee' })
+        )
 
         const result = await db
           .collection('registries')
           .findOneAndUpdate(
             { _id: ObjectId(req.params.id) },
-            { $addToSet: { users: { $each: userIdsAndRoles } } },
+            { $addToSet: { users: { $each: userEmailsAndRoles } } },
             { returnDocument: 'after' }
           )
 

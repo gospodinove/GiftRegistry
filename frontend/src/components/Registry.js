@@ -63,7 +63,7 @@ const Registry = ({ registryId }) => {
         payload: { type: 'error', message: error.data }
       })
     }
-  }, [registryData.users, owner, user.email, registryId, dispatch])
+  }, [registryData?.users, owner, user?.email, registryId, dispatch])
 
   useEffect(() => {
     fetchItems()
