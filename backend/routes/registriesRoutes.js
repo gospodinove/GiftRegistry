@@ -137,13 +137,34 @@ router.patch(
       await validateAll(data, schema, validationMessages)
 
       try {
+        const registry = await db
+          .collection('registries')
+          .findOne({ _id: ObjectId(req.params.id) })
+
+        if (!registry) {
+          sendErrorResponse(res, 404, 'general', 'Could not find registry')
+          return
+        }
+
+        replaceId(registry)
+
+        const registryUserEmails = registry.users.map(u => u.email)
+        const newEmails = data.emails.filter(
+          email => !registryUserEmails.includes(email)
+        )
+
+        if (newEmails.length === 0) {
+          res.json({ registry })
+          return
+        }
+
         const registeredUsers = await db
           .collection('users')
-          .find({ email: { $in: data.emails } })
+          .find({ email: { $in: newEmails } })
           .toArray()
 
         const registeredEmails = registeredUsers.map(user => user.email)
-        const unregisteredEmails = data.emails.filter(
+        const unregisteredEmails = newEmails.filter(
           email => !registeredEmails.includes(email)
         )
 
