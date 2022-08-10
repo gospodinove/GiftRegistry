@@ -5,7 +5,7 @@ import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 
 const RegistriesList = ({ onSelectedChange }) => {
-  const registries = useSelector(state => state.registries)
+  const registries = useSelector(state => state.registries.data)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()

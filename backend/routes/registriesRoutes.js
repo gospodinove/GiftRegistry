@@ -183,4 +183,36 @@ router.patch(
   }
 )
 
+router.get('/:id/owner', [isAuthenticated], async (req, res) => {
+  const db = req.app.locals.db
+
+  try {
+    const registry = await db
+      .collection('registries')
+      .findOne({ _id: ObjectId(req.params.id) })
+
+    if (!registry) {
+      sendErrorResponse(res, 404, 'general', 'Could not find registry')
+      return
+    }
+
+    const registryOwnerEmail = registry.users.find(
+      u => u.role === 'owner'
+    ).email
+
+    const user = await db
+      .collection('users')
+      .findOne({ email: registryOwnerEmail })
+
+    if (!user) {
+      sendErrorResponse(res, 404, 'general', 'Could not find owner')
+      return
+    }
+
+    res.json({ owner: replaceId(user) })
+  } catch {
+    sendErrorResponse(res, 500, 'general', 'Could not find owner')
+  }
+})
+
 module.exports = router

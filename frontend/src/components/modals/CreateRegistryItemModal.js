@@ -105,6 +105,13 @@ function CreateRegistryItemModal({ open, onClose }) {
         handleClose()
       } catch (error) {
         switch (error.type) {
+          case 'incomplete-registration':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: error.data }
+            })
+            return
+
           case 'field-error':
             setErrors(error.message)
             return
