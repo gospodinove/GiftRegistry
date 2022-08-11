@@ -23,6 +23,7 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
+    // TODO: Add full-page loader for app set-up
     checkLoggedIn()
   }, [checkLoggedIn])
 
@@ -30,6 +31,8 @@ function App() {
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+
+        <Route path="invite/:token" element={<Home />} />
 
         {/* Auth */}
         <Route path="login" element={<Login />} />

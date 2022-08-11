@@ -78,33 +78,40 @@ function CreateRegistryModal({ open, onClose }) {
         type: type === 'Custom' ? customType : type,
         name
       }
+
       try {
         const response = await api('registries', 'post', data)
-
-        if (!response.success) {
-          switch (response.errorType) {
-            case 'field-error':
-              setErrors(response.errors)
-              return
-            case 'general':
-              dispatch({
-                type: 'toast/show',
-                payload: { type: 'error', message: response.errors }
-              })
-              return
-            default:
-              return
-          }
-        }
 
         dispatch({ type: 'registries/add', payload: [response.registry] })
 
         handleClose()
-      } catch {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: 'Could not create registry' }
-        })
+      } catch (error) {
+        switch (error.type) {
+          case 'incomplete-registration':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: error.data }
+            })
+            return
+
+          case 'field-error':
+            setErrors(error.data)
+            return
+
+          case 'general':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: error.data }
+            })
+            return
+
+          default:
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: 'Something went wrong' }
+            })
+            return
+        }
       }
     },
     [name, type, customType, dispatch, handleClose]

@@ -5,14 +5,20 @@ import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import AddIcon from '@mui/icons-material/Add'
 import ShareIcon from '@mui/icons-material/Share'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
   const registryData = useSelector(state =>
-    state.registries.find(registry => registry.id === registryId)
+    state.registries.data.find(registry => registry.id === registryId)
   )
   const items = useSelector(state => state.registryItems[registryId])
+
+  const user = useSelector(state => state.auth.user)
+  const owner = useSelector(
+    state => state.registries.ownerByRegistryId[registryId]
+  )
 
   const fetchItems = useCallback(async () => {
     if (!registryId || items !== undefined) {
@@ -22,35 +28,50 @@ const Registry = ({ registryId }) => {
     try {
       const response = await api('registries/' + registryId + '/items')
 
-      if (!response.success) {
-        dispatch({
-          type: 'toast/show',
-          payload: {
-            type: 'error',
-            message: response.errors
-          }
-        })
-        return
-      }
-
       dispatch({
         type: 'registryItems/set',
         payload: { registryId, items: response.items }
       })
-    } catch {
+    } catch (error) {
       dispatch({
         type: 'toast/show',
         payload: {
           type: 'error',
-          message: 'Could not fetch your registry items'
+          message: error.data
         }
       })
     }
   }, [registryId, items, dispatch])
 
+  const maybeFetchRegistryOwner = useCallback(async () => {
+    const registryOwner = registryData.users.find(u => u.role === 'owner')
+
+    if (user.email === registryOwner.email || owner !== undefined) {
+      return
+    }
+
+    try {
+      const response = await api('registries/' + registryId + '/owner')
+
+      dispatch({
+        type: 'registries/addOwner',
+        payload: { registryId: registryId, owner: response.owner }
+      })
+    } catch (error) {
+      dispatch({
+        type: 'toast/show',
+        payload: { type: 'error', message: error.data }
+      })
+    }
+  }, [registryData?.users, owner, user?.email, registryId, dispatch])
+
   useEffect(() => {
     fetchItems()
   }, [fetchItems])
+
+  useEffect(() => {
+    maybeFetchRegistryOwner()
+  }, [maybeFetchRegistryOwner])
 
   const handleItemToggle = useCallback(id => {
     // TODO: update object
@@ -71,14 +92,38 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData?.id])
 
-  const handleShareButtonClick = useCallback(() => {}, [])
+  const handleShareButtonClick = useCallback(() => {
+    if (!registryData) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'shareRegistry',
+        data: {
+          registryId: registryData.id,
+          users: registryData.users.filter(user => user.role !== 'owner')
+        }
+      }
+    })
+  }, [dispatch, registryData])
 
   return (
     <>
       {registryData ? (
         /* TODO: Create RegistryDetailsSummary component */
         <>
-          <Typography variant="h5">{registryData.name}</Typography>
+          <Typography variant="h4">{registryData.name}</Typography>
+
+          {owner && (
+            <Stack direction="row" spacing={1}>
+              <AccountCircleIcon />
+              <Typography variant="h6">
+                {owner.firstName + ' ' + owner.lastName}
+              </Typography>
+            </Stack>
+          )}
 
           <Stack direction="row" spacing={1}>
             <Button

@@ -1,12 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = []
+const initialState = {
+  data: [],
+  ownerByRegistryId: {}
+}
 
 export const registriesSlice = createSlice({
   name: 'registries',
   initialState,
   reducers: {
-    add: (state, action) => [...state, ...action.payload],
+    add: (state, action) => {
+      state.data = [...state.data, ...action.payload]
+    },
+    update: (state, action) => {
+      state.data = [
+        ...state.data.filter(r => r.id !== action.payload.id),
+        action.payload
+      ]
+    },
+    addOwner: (state, action) => {
+      state.ownerByRegistryId[action.payload.registryId] = action.payload.owner
+    },
+    removeOwner: (state, action) => {
+      state.ownerByRegistryId[action.payload.registryId] = undefined
+    },
     clear: () => initialState
   }
 })

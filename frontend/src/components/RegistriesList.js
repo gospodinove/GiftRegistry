@@ -5,7 +5,7 @@ import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 
 const RegistriesList = ({ onSelectedChange }) => {
-  const registries = useSelector(state => state.registries)
+  const registries = useSelector(state => state.registries.data)
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
@@ -29,24 +29,11 @@ const RegistriesList = ({ onSelectedChange }) => {
     try {
       const response = await api('registries')
 
-      if (!response.success) {
-        switch (response.errorType) {
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: response.errors }
-            })
-            return
-          default:
-            return
-        }
-      }
-
       dispatch({ type: 'registries/add', payload: response.registries })
-    } catch {
+    } catch (error) {
       dispatch({
         type: 'toast/show',
-        payload: { type: 'error', message: 'No registries from this user' }
+        payload: { type: 'error', message: error.data }
       })
     }
   }, [dispatch, isAuthenticated])

@@ -36,8 +36,17 @@ router.post('/register', async (req, res) => {
 
       const salt = await bcrypt.genSalt(10)
       const password = await bcrypt.hash(req.body.password, salt)
+      const token = await bcrypt.hash(
+        req.body.email + new Date().toDateString(),
+        salt
+      )
 
-      const user = { ...req.body, password }
+      const user = {
+        ...req.body,
+        password,
+        token,
+        isRegistrationComplete: true
+      }
 
       await db.collection('users').insertOne(user)
 
@@ -47,7 +56,7 @@ router.post('/register', async (req, res) => {
 
       req.session.user = user
 
-      res.json({ success: true, user })
+      res.json({ user })
     } catch {
       sendErrorResponse(res, 500, 'general', 'Could not register user')
     }
@@ -97,7 +106,7 @@ router.post('/login', async (req, res) => {
 
       req.session.user = user
 
-      res.json({ success: true, user })
+      res.json({ user })
     } catch (err) {
       sendErrorResponse(res, 500, 'general', 'Could not login')
     }
@@ -121,13 +130,37 @@ router.get('/logout', (req, res) => {
         }
 
         res.clearCookie(process.env.SESSION_NAME)
-        res.json({ success: true })
+        res.send()
       })
     } else {
       sendErrorResponse(res, 500, 'general', 'Could not logout')
     }
   } catch {
     sendErrorResponse(res, 500, 'general', 'Could not logout')
+  }
+})
+
+router.post('/token', async (req, res) => {
+  const db = req.app.locals.db
+
+  try {
+    const user = await db.collection('users').findOne({ token: req.body.token })
+
+    if (!user) {
+      sendErrorResponse(
+        res,
+        404,
+        'general',
+        'Could not find user with this token'
+      )
+      return
+    }
+
+    req.session.user = user
+
+    res.json({ user })
+  } catch {
+    sendErrorResponse(res, 500, 'general', 'Something went wrong')
   }
 })
 
