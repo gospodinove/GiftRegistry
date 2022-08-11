@@ -1,1 +1,1 @@
-module.exports.frontEndURL = 'http://localhost:3000'
+module.exports.frontEndBaseURL = 'http://localhost:3000'

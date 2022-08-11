@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const dotenv = require('dotenv')
-const { frontEndURL } = require('./constants')
+const { frontEndBaseURL } = require('./constants')
 
 dotenv.config()
 
@@ -20,6 +20,7 @@ module.exports.sendRegistryInvites = users =>
       from: emailAddress,
       to: user.email,
       subject: 'Gift Registry invite',
-      text: 'Check out this link -> ' + frontEndURL + '/invite/' + user.token
+      text:
+        'Check out this link -> ' + frontEndBaseURL + '/invite/' + user.token
     })
   )

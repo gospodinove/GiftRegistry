@@ -7,6 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const bcrypt = require('bcrypt')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
+const fetchRegistry = require('../middleware/fetchRegistry')
 
 const router = express.Router()
 
@@ -58,45 +59,41 @@ router.get('/', isAuthenticated, async (req, res) => {
   }
 })
 
-router.get('/:id/items', isAuthenticated, async (req, res) => {
-  const db = req.app.locals.db
-
-  try {
-    const registry = await db.collection('registries').findOne({
-      _id: ObjectId(req.params.id),
-      users: { $elemMatch: { email: req.session.user.email } }
-    })
-
-    if (!registry) {
-      sendErrorResponse(res, 404, 'general', 'Could not find your registry')
-      return
-    }
-
-    replaceId(registry)
-
-    const items = await db
-      .collection('registryItems')
-      .find({ registryId: registry.id.toString() })
-      .toArray()
-
-    res.json({ items: items.map(item => replaceId(item)) })
-  } catch {
-    sendErrorResponse(
-      res,
-      500,
-      'general',
-      'Could not fetch your registry items'
-    )
-  }
-})
-
-router.post(
-  '/:id/items',
-  [isAuthenticated, isRegistrationCompleted],
+router.get(
+  '/:registryId/items',
+  [isAuthenticated, fetchRegistry],
   async (req, res) => {
     const db = req.app.locals.db
 
-    const item = { ...req.body, registryId: req.params.id, takenBy: null }
+    try {
+      const items = await db
+        .collection('registryItems')
+        .find({ registryId: req.params.registryId })
+        .toArray()
+
+      res.json({ items: items.map(item => replaceId(item)) })
+    } catch {
+      sendErrorResponse(
+        res,
+        500,
+        'general',
+        'Could not fetch your registry items'
+      )
+    }
+  }
+)
+
+router.post(
+  '/:registryId/items',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    const item = {
+      ...req.body,
+      registryId: req.params.registryId,
+      takenBy: null
+    }
 
     try {
       const schema = {
@@ -124,10 +121,11 @@ router.post(
 )
 
 router.patch(
-  '/:id/share',
-  [isAuthenticated, isRegistrationCompleted],
+  '/:registryId/share',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
   async (req, res) => {
     const db = req.app.locals.db
+    const registry = res.locals.registry
 
     const data = req.body
 
@@ -137,17 +135,6 @@ router.patch(
       await validateAll(data, schema, validationMessages)
 
       try {
-        const registry = await db
-          .collection('registries')
-          .findOne({ _id: ObjectId(req.params.id) })
-
-        if (!registry) {
-          sendErrorResponse(res, 404, 'general', 'Could not find registry')
-          return
-        }
-
-        replaceId(registry)
-
         const registryUserEmails = registry.users.map(u => u.email)
         const newEmails = data.emails.filter(
           email => !registryUserEmails.includes(email)
@@ -181,19 +168,18 @@ router.patch(
           await db.collection('users').insertMany(users)
         }
 
-        const userEmailsAndRoles = users.map(user => ({
-          email: user.email,
-          role: 'invitee'
-        }))
-
-        registeredEmails.forEach(email =>
-          userEmailsAndRoles.push({ email, role: 'invitee' })
-        )
+        const userEmailsAndRoles = [
+          ...users.map(user => ({
+            email: user.email,
+            role: 'invitee'
+          })),
+          ...registeredEmails.map(email => ({ email, role: 'invitee' }))
+        ]
 
         const result = await db
           .collection('registries')
           .findOneAndUpdate(
-            { _id: ObjectId(req.params.id) },
+            { _id: ObjectId(req.params.registryId) },
             { $addToSet: { users: { $each: userEmailsAndRoles } } },
             { returnDocument: 'after' }
           )
@@ -210,36 +196,32 @@ router.patch(
   }
 )
 
-router.get('/:id/owner', [isAuthenticated], async (req, res) => {
-  const db = req.app.locals.db
+router.get(
+  '/:registryId/owner',
+  [isAuthenticated, fetchRegistry],
+  async (req, res) => {
+    const db = req.app.locals.db
+    const registry = res.locals.registry
 
-  try {
-    const registry = await db
-      .collection('registries')
-      .findOne({ _id: ObjectId(req.params.id) })
+    try {
+      const registryOwnerEmail = registry.users.find(
+        u => u.role === 'owner'
+      ).email
 
-    if (!registry) {
-      sendErrorResponse(res, 404, 'general', 'Could not find registry')
-      return
+      const user = await db
+        .collection('users')
+        .findOne({ email: registryOwnerEmail })
+
+      if (!user) {
+        sendErrorResponse(res, 404, 'general', 'Could not find owner')
+        return
+      }
+
+      res.json({ owner: replaceId(user) })
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not find owner')
     }
-
-    const registryOwnerEmail = registry.users.find(
-      u => u.role === 'owner'
-    ).email
-
-    const user = await db
-      .collection('users')
-      .findOne({ email: registryOwnerEmail })
-
-    if (!user) {
-      sendErrorResponse(res, 404, 'general', 'Could not find owner')
-      return
-    }
-
-    res.json({ owner: replaceId(user) })
-  } catch {
-    sendErrorResponse(res, 500, 'general', 'Could not find owner')
   }
-})
+)
 
 module.exports = router

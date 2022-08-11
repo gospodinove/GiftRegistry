@@ -22,6 +22,7 @@ function ShareRegistryModal({ open, onClose }) {
 
     setTimeout(() => {
       setEmails([''])
+      setErrors([])
     }, 100)
   }, [onClose])
 
@@ -37,7 +38,7 @@ function ShareRegistryModal({ open, onClose }) {
     [emails]
   )
 
-  const onSubmit = useCallback(
+  const handleSubmit = useCallback(
     e => {
       e.preventDefault()
 
@@ -50,7 +51,7 @@ function ShareRegistryModal({ open, onClose }) {
     [emails]
   )
 
-  const handleSubmit = useCallback(
+  const handleSendClick = useCallback(
     async e => {
       e.preventDefault()
 
@@ -125,7 +126,7 @@ function ShareRegistryModal({ open, onClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <Box component="form" onSubmit={onSubmit}>
+      <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>Share registry</DialogTitle>
         <DialogContent>
           {initialData?.users.map((user, index) =>
@@ -135,11 +136,11 @@ function ShareRegistryModal({ open, onClose }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={onSubmit}>Add more</Button>
+          <Button onClick={handleSubmit}>Add more</Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
           <Button type="submit" sx={{ display: 'none' }}></Button>
           {/* this is used as the real submit button */}
-          <Button onClick={handleSubmit}>Send</Button>
+          <Button onClick={handleSendClick}>Send</Button>
         </DialogActions>
       </Box>
     </Dialog>

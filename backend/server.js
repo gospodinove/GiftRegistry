@@ -8,7 +8,7 @@ const logger = require('morgan')
 const { getMongoDBUrl } = require('./utils')
 const authRoutes = require('./routes/authRoutes')
 const registriesRoutes = require('./routes/registriesRoutes')
-const { frontEndURL } = require('./constants')
+const { frontEndBaseURL } = require('./constants')
 
 dotenv.config()
 
@@ -17,7 +17,7 @@ const apiRouter = express.Router()
 
 app.use(
   cors({
-    origin: frontEndURL,
+    origin: frontEndBaseURL,
     credentials: true
   })
 )
