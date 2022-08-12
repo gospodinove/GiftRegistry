@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Button, Stack, Typography } from '@mui/material'
@@ -10,10 +10,10 @@ function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const [errors, setErrors] = React.useState({})
+  const [errors, setErrors] = useState({})
 
   const handleEmailChange = useCallback(
     e => {
@@ -37,7 +37,7 @@ function Login() {
     [errors]
   )
 
-  const onSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
@@ -82,7 +82,7 @@ function Login() {
         component="form"
         autoComplete="off"
         width="400px"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <Stack spacing={2} mt={2}>
           <Typography variant="h4">Login</Typography>
@@ -122,4 +122,4 @@ function Login() {
   )
 }
 
-export default React.memo(Login)
+export default memo(Login)
