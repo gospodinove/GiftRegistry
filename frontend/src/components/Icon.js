@@ -12,6 +12,7 @@ import ShareIcon from '@mui/icons-material/Share'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 const getIcon = (type, color) => {
   switch (type) {
@@ -53,6 +54,9 @@ const getIcon = (type, color) => {
 
     case 'close':
       return <CloseIcon sx={{ color }} />
+
+    case 'account-circle':
+      return <AccountCircleIcon sx={{ color }} />
 
     default:
       return <QuestionMarkIcon sx={{ color }} />

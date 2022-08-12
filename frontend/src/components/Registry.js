@@ -102,7 +102,8 @@ const Registry = ({ registryId }) => {
         name: 'shareRegistry',
         data: {
           registryId: registryData.id,
-          users: registryData.users.filter(user => user.role !== 'owner')
+          users: registryData.users.filter(user => user.role !== 'owner'),
+          color: registryData.color
         }
       }
     })
@@ -117,7 +118,7 @@ const Registry = ({ registryId }) => {
 
           {owner && (
             <Stack direction="row" spacing={1}>
-              <AccountCircleIcon />
+              <Icon type="account-circle" />
               <Typography variant="h6">
                 {owner.firstName + ' ' + owner.lastName}
               </Typography>
