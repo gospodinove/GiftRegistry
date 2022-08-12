@@ -1,9 +1,9 @@
-function isAuthenticated(req, res, next) {
-  if (req.session.user) {
-    next()
+const { sendErrorResponse } = require('../utils')
+
+module.exports = function isAuthenticated(req, res, next) {
+  if (!req.session.user) {
+    sendErrorResponse(res, 401, 'unauthorized', 'Unauthorized access')
   } else {
-    next({ status: 401, message: `Unauthorized access` })
+    next()
   }
 }
-
-module.exports = isAuthenticated

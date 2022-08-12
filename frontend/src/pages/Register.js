@@ -78,31 +78,28 @@ function Register() {
       try {
         const response = await api('auth/register', 'POST', user)
 
-        if (!response.success) {
-          switch (response.errorType) {
-            case 'field-error':
-              setErrors(response.errors)
-              return
-
-            case 'general':
-              dispatch({
-                type: 'toast/show',
-                payload: { type: 'error', message: response.errors }
-              })
-              return
-
-            default:
-              return
-          }
-        }
-
         dispatch({ type: 'auth/setUser', payload: response.user })
         navigate('/')
-      } catch {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: 'Could not register user' }
-        })
+      } catch (error) {
+        switch (error.type) {
+          case 'field-error':
+            setErrors(error.data)
+            return
+
+          case 'general':
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: error.data }
+            })
+            return
+
+          default:
+            dispatch({
+              type: 'toast/show',
+              payload: { type: 'error', message: 'Something went wrong' }
+            })
+            return
+        }
       }
     },
     [firstName, lastName, email, password, navigate, dispatch]

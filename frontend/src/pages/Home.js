@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,13 +8,38 @@ import { styles } from './Home.styles'
 import Icon from '../components/Icon'
 import './Home.css'
 import Button from '../components/Button'
+import { useParams } from 'react-router-dom'
+import { api } from '../utils/api'
 
 function Home() {
   const dispatch = useDispatch()
+  const params = useParams()
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
+
+  const authenticateWithToken = useCallback(
+    async token => {
+      try {
+        const response = await api('auth/token', 'post', { token })
+
+        dispatch({ type: 'auth/setUser', payload: response.user })
+      } catch (error) {
+        dispatch({
+          type: 'toast/show',
+          payload: { type: 'error', message: error.data }
+        })
+      }
+    },
+    [dispatch]
+  )
+
+  useEffect(() => {
+    if (params?.token && !isAuthenticated) {
+      authenticateWithToken(params.token)
+    }
+  }, [params, isAuthenticated, authenticateWithToken])
 
   const handleCreateRegistryButtonClick = useCallback(
     () =>

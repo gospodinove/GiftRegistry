@@ -7,14 +7,23 @@ export const api = async (endPoint, method = 'GET', data) => {
     Object.keys(data).forEach(key => url.searchParams.append(key, data[key]))
   }
 
-  return (
-    await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: method !== 'GET' ? JSON.stringify(data) : undefined,
-      credentials: 'include'
-    })
-  ).json()
+  const response = await fetch(url, {
+    method: method.toUpperCase(),
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: method !== 'GET' ? JSON.stringify(data) : undefined,
+    credentials: 'include'
+  })
+
+  if (!response.ok) {
+    throw await response.json()
+  }
+
+  // response.json() throws when the reponse does not hold any data
+  try {
+    return await response.json()
+  } catch {
+    return
+  }
 }
