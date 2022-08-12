@@ -73,7 +73,7 @@ function Register() {
   )
 
   const makeRequest = useCallback(
-    () => async (endpoint, method) => {
+    async (endpoint, method) => {
       const user = {
         firstName,
         lastName,
@@ -120,7 +120,7 @@ function Register() {
       if (user === undefined) {
         makeRequest('auth/register', 'post')
       } else {
-        makeRequest('auth/register', 'patch')
+        makeRequest('users/' + user.id, 'put')
       }
     },
     [makeRequest, user]
