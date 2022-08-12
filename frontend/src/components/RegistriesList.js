@@ -21,8 +21,8 @@ const RegistriesList = ({ onSelectedChange }) => {
 
   const dispatch = useDispatch()
 
-  const getRegistries = useCallback(async () => {
-    if (!isAuthenticated) {
+  const maybeFetchRegistries = useCallback(async () => {
+    if (!isAuthenticated || registries.length > 0) {
       return
     }
 
@@ -36,11 +36,11 @@ const RegistriesList = ({ onSelectedChange }) => {
         payload: { type: 'error', message: error.data }
       })
     }
-  }, [dispatch, isAuthenticated])
+  }, [dispatch, isAuthenticated, registries.length])
 
   useEffect(() => {
-    getRegistries()
-  }, [getRegistries])
+    maybeFetchRegistries()
+  }, [maybeFetchRegistries])
 
   const handleRegistryClick = useCallback(
     registry => {

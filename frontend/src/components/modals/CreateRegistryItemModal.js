@@ -108,7 +108,11 @@ function CreateRegistryItemModal({ open, onClose }) {
           case 'incomplete-registration':
             dispatch({
               type: 'toast/show',
-              payload: { type: 'error', message: error.data }
+              payload: {
+                type: 'error',
+                message: error.data,
+                navigation: { title: 'Register', target: '/register' }
+              }
             })
             return
 

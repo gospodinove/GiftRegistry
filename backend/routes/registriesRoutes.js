@@ -1,11 +1,10 @@
 const express = require('express')
 const { validateAll } = require('indicative/validator')
-const { replaceId, sendErrorResponse } = require('../utils')
+const { replaceId, sendErrorResponse, makeToken } = require('../utils')
 const { validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
-const bcrypt = require('bcrypt')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
 
@@ -155,11 +154,10 @@ router.patch(
           email => !registeredEmails.includes(email)
         )
 
-        const salt = await bcrypt.genSalt(10)
         const users = await Promise.all(
           unregisteredEmails.map(async email => ({
             email,
-            token: await bcrypt.hash(email + new Date().toDateString(), salt),
+            token: await makeToken(email),
             isRegistrationComplete: false
           }))
         )
