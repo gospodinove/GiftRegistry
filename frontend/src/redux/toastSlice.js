@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = { open: false, message: '', type: undefined }
+const initialState = {
+  open: false,
+  message: '',
+  type: undefined,
+  navigation: undefined
+}
 
 export const toastSlice = createSlice({
   name: 'toast',
@@ -10,6 +15,7 @@ export const toastSlice = createSlice({
       state.open = true
       state.message = action.payload.message
       state.type = action.payload.type
+      state.navigation = action.payload.navigation
     },
     hide: () => initialState
   }

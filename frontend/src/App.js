@@ -41,7 +41,7 @@ function App() {
         <Route
           path="login"
           element={
-            <ProtectedRoute congition={user === undefined} fallbackRoute="/">
+            <ProtectedRoute condition={user === undefined} fallbackRoute="/">
               <Login />
             </ProtectedRoute>
           }
@@ -50,7 +50,7 @@ function App() {
           path="register"
           element={
             <ProtectedRoute
-              congition={user === undefined || user.isRegistrationComplete}
+              condition={user === undefined || !user.isRegistrationComplete}
               fallbackRoute="/"
             >
               <Register />
