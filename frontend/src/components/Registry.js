@@ -1,10 +1,10 @@
-import { Box, Button, List, Stack, Typography } from '@mui/material'
+import { Box, List, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
-import AddIcon from '@mui/icons-material/Add'
-import ShareIcon from '@mui/icons-material/Share'
+import Button from './Button'
+import Icon from './Icon'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -83,7 +83,7 @@ const Registry = ({ registryId }) => {
           <Stack direction="row" spacing={1}>
             <Button
               variant="outlined"
-              startIcon={<AddIcon />}
+              startIcon={<Icon type="add" />}
               onClick={handleAddButtonClick}
               color={registryData.color}
             >
@@ -91,7 +91,7 @@ const Registry = ({ registryId }) => {
             </Button>
             <Button
               variant="contained"
-              startIcon={<ShareIcon />}
+              startIcon={<Icon type="share" />}
               onClick={handleShareButtonClick}
               color={registryData.color}
             >

@@ -1,12 +1,13 @@
 import React from 'react'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
-import AddIcon from '@mui/icons-material/Add'
+import Icon from '../components/Icon'
 import './Home.css'
+import Button from '../components/Button'
 
 function Home() {
   const dispatch = useDispatch()
@@ -36,7 +37,7 @@ function Home() {
               variant="outlined"
               fullWidth
               onClick={handleCreateRegistryButtonClick}
-              startIcon={<AddIcon />}
+              startIcon={<Icon type="add" />}
             >
               Create new registry
             </Button>

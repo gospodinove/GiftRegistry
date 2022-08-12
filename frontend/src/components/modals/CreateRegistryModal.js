@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { api } from '../../utils/api'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import Button from '../Button'
+import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
+import { appColors } from '../../constants'
 
 const registryTypes = [
   'Birthday',
@@ -22,7 +23,7 @@ const registryTypes = [
 function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const [color, setColor] = React.useState('primary')
+  const [color, setColor] = React.useState(appColors[0])
   const [type, setType] = React.useState('Birthday')
   const [name, setName] = React.useState('')
   const [errors, setErrors] = React.useState({})
@@ -34,7 +35,7 @@ function CreateRegistryModal({ open, onClose }) {
     setTimeout(() => {
       setName('')
       setType('Birthday')
-      setColor('primary')
+      setColor(appColors[0])
     }, 100)
   }, [onClose])
 

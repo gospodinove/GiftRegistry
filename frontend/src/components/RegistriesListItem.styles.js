@@ -7,6 +7,9 @@ export function styles(hex, isSelected) {
       '&:hover': {
         backgroundColor: hexToRGBA(hex, 0.3)
       }
+    },
+    iconStyles: {
+      color: hex
     }
   }
 }

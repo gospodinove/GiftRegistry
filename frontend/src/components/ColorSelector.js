@@ -1,41 +1,53 @@
-import React, { useCallback } from 'react'
+import React, { memo, useCallback } from 'react'
 import Box from '@mui/material/Box'
-import CircleIcon from '@mui/icons-material/Circle'
-// import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
-import CameraRoundedIcon from '@mui/icons-material/CameraRounded'
-import { IconButton } from '@mui/material'
+import Icon from './Icon'
 import { styles } from './ColorSelector.styles'
-// import { HuePicker } from 'react-color'
-// import Button from './CustomButton'
-
-const colors = ['primary', 'warning', 'error', 'success', 'secondary']
+import { HuePicker } from 'react-color'
+import Button from './Button'
+import { appColors } from '../constants'
 
 function ColorSelector({ onChange }) {
-  const [color, setColor] = React.useState('primary')
-  // const [sliderColor, setSliderColor] = React.useState(0)
+  const [color, setColor] = React.useState(appColors[0])
+  const [sliderColor, setSliderColor] = React.useState('#ff0300')
+  const [isSliderVisible, setIsSliderVisible] = React.useState(false)
 
   const handleColorClick = useCallback(
     e => {
       const newColor = e.currentTarget.getAttribute('data-color')
       setColor(newColor)
       onChange(newColor)
+      setIsSliderVisible(false)
     },
     [onChange]
   )
 
-  // const handleChangeColor = useCallback(
-  //   e => {
-  //     setSliderColor(e.hex)
-  //     console.log(color)
-  //   },
-  //   [color]
-  // )
+  const handleChangeColor = useCallback(
+    e => {
+      setSliderColor(e.hex)
+      onChange(e.hex)
+    },
+    [onChange]
+  )
+
+  const handleCustomColorClick = useCallback(() => {
+    setColor()
+    if (isSliderVisible) {
+      setIsSliderVisible(false)
+      setColor(appColors[0])
+      onChange(appColors[0])
+    } else {
+      setIsSliderVisible(true)
+      onChange(sliderColor)
+      setColor(sliderColor)
+    }
+  }, [setIsSliderVisible, isSliderVisible, onChange, sliderColor])
 
   return (
     <>
       <Box sx={styles.colorBox}>
-        {colors.map(c => (
-          <IconButton
+        {appColors.map(c => (
+          <Button
+            icon-only="true"
             aria-label="circle"
             data-color={c}
             focusable="true"
@@ -43,22 +55,36 @@ function ColorSelector({ onChange }) {
             key={c}
             onClick={handleColorClick}
           >
-            {color !== c ? <CircleIcon /> : <CameraRoundedIcon />}
-          </IconButton>
+            {color !== c ? (
+              <Icon type="circle" />
+            ) : (
+              <Icon type="camera-rounded" />
+            )}
+          </Button>
         ))}
-        {/* <IconButton>
-          <AddCircleOutlineOutlinedIcon />
-        </IconButton> */}
+        <Button
+          icon-only="true"
+          color="#a9a9a9"
+          onClick={handleCustomColorClick}
+        >
+          {isSliderVisible ? (
+            <Icon type="add-outlined" color={sliderColor} />
+          ) : (
+            <Icon type="add-filled" />
+          )}
+        </Button>
       </Box>
-      {/* <Box pt="10px" pb="10px">
-        <HuePicker
-          onChange={handleChangeColor}
-          color={sliderColor}
-          width="100%"
-        />
-      </Box> */}
+      {isSliderVisible ? (
+        <Box pt="10px" pb="10px">
+          <HuePicker
+            onChange={handleChangeColor}
+            color={sliderColor}
+            width="100%"
+          />
+        </Box>
+      ) : null}
     </>
   )
 }
 
-export default ColorSelector
+export default memo(ColorSelector)

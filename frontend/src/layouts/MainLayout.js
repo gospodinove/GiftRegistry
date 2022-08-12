@@ -15,8 +15,7 @@ import {
   ListItemButton,
   ListItemText
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import CloseIcon from '@mui/icons-material/Close'
+import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
@@ -80,7 +79,7 @@ function MainLayout() {
       <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
           <IconButton onClick={handleDrawerToggle}>
-            <CloseIcon />
+            <Icon type="close" />
           </IconButton>
         </Box>
 
@@ -172,7 +171,7 @@ function MainLayout() {
             onClick={handleDrawerToggle}
             sx={styles.iconButton}
           >
-            <MenuIcon />
+            <Icon type="menu" />
           </IconButton>
         </Toolbar>
       </AppBar>
