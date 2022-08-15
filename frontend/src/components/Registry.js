@@ -1,5 +1,5 @@
 import { Box, List, Stack, Typography } from '@mui/material'
-import React, { useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
@@ -128,7 +128,8 @@ const Registry = ({ registryId }) => {
           <Stack direction="row" spacing={1}>
             <Button
               variant="outlined"
-              startIcon={<Icon type="add" />}
+              icon-mode="start"
+              icon="add"
               onClick={handleAddButtonClick}
               color={registryData.color}
             >
@@ -136,7 +137,8 @@ const Registry = ({ registryId }) => {
             </Button>
             <Button
               variant="contained"
-              startIcon={<Icon type="share" />}
+              icon-mode="start"
+              icon="share"
               onClick={handleShareButtonClick}
               color={registryData.color}
             >
@@ -164,4 +166,4 @@ const Registry = ({ registryId }) => {
   )
 }
 
-export default React.memo(Registry)
+export default memo(Registry)

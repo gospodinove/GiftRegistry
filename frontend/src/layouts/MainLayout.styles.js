@@ -1,11 +1,11 @@
-import { navbarHeight } from '../constants'
+import { NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
   drawerBox: { textAlign: 'center' },
   listItemButton: { textAlign: 'center' },
   rootBox: { flexGrow: 1, height: '100%' },
-  appBar: { height: `${navbarHeight}px` },
-  toolbar: { height: `${navbarHeight}px` },
+  appBar: { height: `${NAVBAR_HEIGHT}px` },
+  toolbar: { height: `${NAVBAR_HEIGHT}px` },
   typography: {
     flexGrow: 1,
     fontFamily: 'monospace',

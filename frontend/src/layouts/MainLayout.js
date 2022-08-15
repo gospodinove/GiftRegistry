@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { memo, useMemo, useState, useCallback } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -32,13 +32,13 @@ function MainLayout() {
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const handleDrawerToggle = React.useCallback(() => {
+  const handleDrawerToggle = useCallback(() => {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
-  const handleDrawerItemClick = React.useCallback(
+  const handleDrawerItemClick = useCallback(
     route => {
       handleDrawerToggle()
       navigate(route)
@@ -46,7 +46,7 @@ function MainLayout() {
     [handleDrawerToggle, navigate]
   )
 
-  const handleLogoutClick = React.useCallback(async () => {
+  const handleLogoutClick = useCallback(async () => {
     try {
       await api('auth/logout')
 
@@ -66,7 +66,7 @@ function MainLayout() {
     }
   }, [dispatch])
 
-  const drawer = React.useCallback(
+  const drawer = useCallback(
     () => (
       <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
@@ -110,13 +110,13 @@ function MainLayout() {
     ]
   )
 
-  const container = React.useMemo(
+  const container = useMemo(
     () => (window !== undefined ? window.document.body : undefined),
     []
   )
 
-  const handleHomeClick = React.useCallback(() => navigate('/'), [navigate])
-  const handleAuthItemClick = React.useCallback(
+  const handleHomeClick = useCallback(() => navigate('/'), [navigate])
+  const handleAuthItemClick = useCallback(
     e => {
       const route = e.target.getAttribute('data-route')
       navigate(route)
@@ -193,4 +193,4 @@ function MainLayout() {
   )
 }
 
-export default React.memo(MainLayout)
+export default memo(MainLayout)

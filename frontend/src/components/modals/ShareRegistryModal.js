@@ -108,15 +108,12 @@ function ShareRegistryModal({ open, onClose }) {
   const renderTextField = (index, email, isInvited) => (
     <TextField
       key={isInvited ? email : index + 'email'}
-      margin="normal"
       id={isInvited ? email : index + 'email'}
       label={isInvited ? 'Invited' : 'Email ' + (index + 1)}
       value={email}
       disabled={isInvited}
       onChange={handleEmailChange}
       type="email"
-      fullWidth
-      variant="outlined"
       inputProps={{ 'data-index': index }}
       autoFocus={index === emails.length - 1}
       error={isInvited ? undefined : errors['emails.' + index] !== undefined}

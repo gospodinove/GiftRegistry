@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { memo } from 'react'
 
 const getIcon = (type, color) => {
   switch (type) {
@@ -63,6 +64,8 @@ const getIcon = (type, color) => {
   }
 }
 
-export default function Icon({ type, color }) {
+function Icon({ type, color }) {
   return getIcon(type, color)
 }
+
+export default memo(Icon)

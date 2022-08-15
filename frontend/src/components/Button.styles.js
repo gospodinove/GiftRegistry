@@ -1,11 +1,11 @@
-import { shadeColor } from '../utils/colors'
+import tinycolor from '../utils/colors'
 
 export function styles(color) {
   return {
     text: {
       color,
       '&:hover': {
-        backgroundColor: shadeColor(color, 230)
+        backgroundColor: tinycolor(color).setAlpha(0.1).toString()
       }
     },
     contained: {
@@ -16,10 +16,10 @@ export function styles(color) {
     },
     outlined: {
       color,
-      border: '1px solid' + shadeColor(color, 100),
+      border: '1px solid ' + tinycolor(color).lighten(20).toString(),
       '&:hover': {
-        border: '1px solid' + color,
-        backgroundColor: shadeColor(color, 230)
+        border: '1px solid ' + color,
+        backgroundColor: tinycolor(color).setAlpha(0.1).toString()
       }
     },
     iconButton: {

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import { ListItem } from '@mui/material'
@@ -44,4 +44,4 @@ function RegistriesListItem({ registry, isSelected, onClick }) {
   )
 }
 
-export default React.memo(RegistriesListItem)
+export default memo(RegistriesListItem)

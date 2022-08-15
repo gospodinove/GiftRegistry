@@ -1,5 +1,5 @@
 import { ListItem, ListItemIcon, ListItemText } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import Checkbox from './Checkbox'
 
 // TODO: display the article link
@@ -32,4 +32,4 @@ const RegistryItem = ({ data, onToggle, color }) => {
   )
 }
 
-export default React.memo(RegistryItem)
+export default memo(RegistryItem)

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { memo, useState, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
@@ -11,12 +11,12 @@ function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const [firstName, setFirstName] = React.useState('')
-  const [lastName, setLastName] = React.useState('')
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const [errors, setErrors] = React.useState({})
+  const [errors, setErrors] = useState({})
 
   const handleEmailChange = useCallback(
     e => {
@@ -62,7 +62,7 @@ function Register() {
     [errors]
   )
 
-  const onSubmit = React.useCallback(
+  const onSubmit = useCallback(
     async e => {
       e.preventDefault()
 
@@ -119,8 +119,6 @@ function Register() {
           <TextField
             id="first-name"
             label="First name"
-            variant="outlined"
-            fullWidth
             value={firstName}
             onChange={handleFirstNameChange}
             error={errors.firstName !== undefined}
@@ -130,8 +128,6 @@ function Register() {
           <TextField
             id="last-name"
             label="Last name"
-            variant="outlined"
-            fullWidth
             value={lastName}
             onChange={handleLastNameChange}
             error={errors.lastName !== undefined}
@@ -143,8 +139,6 @@ function Register() {
             id="email"
             type="email"
             label="Email"
-            variant="outlined"
-            fullWidth
             value={email}
             onChange={handleEmailChange}
             error={errors.email !== undefined}
@@ -156,8 +150,6 @@ function Register() {
             id="password"
             type="password"
             label="Password"
-            variant="outlined"
-            fullWidth
             value={password}
             onChange={handlePasswordChange}
             error={errors.password !== undefined}
@@ -174,4 +166,4 @@ function Register() {
   )
 }
 
-export default React.memo(Register)
+export default memo(Register)

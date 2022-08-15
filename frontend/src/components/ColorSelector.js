@@ -1,17 +1,17 @@
-import React, { memo, useCallback } from 'react'
+import { useState, memo, useCallback } from 'react'
 import Box from '@mui/material/Box'
-import Icon from './Icon'
+// import Icon from './Icon'
 import { styles } from './ColorSelector.styles'
 import { HuePicker } from 'react-color'
 import Button from './Button'
-import { appColors } from '../constants'
+import { COLORS } from '../constants'
 
 function ColorSelector({ onChange }) {
-  const [color, setColor] = React.useState(appColors[0])
-  const [sliderColor, setSliderColor] = React.useState('#ff0300')
-  const [isSliderVisible, setIsSliderVisible] = React.useState(false)
+  const [color, setColor] = useState(COLORS.APP[0])
+  const [sliderColor, setSliderColor] = useState(COLORS.SLIDER_INITIAL)
+  const [isSliderVisible, setIsSliderVisible] = useState(false)
 
-  const handleColorClick = useCallback(
+  const handleAppColorButtonClick = useCallback(
     e => {
       const newColor = e.currentTarget.getAttribute('data-color')
       setColor(newColor)
@@ -21,7 +21,7 @@ function ColorSelector({ onChange }) {
     [onChange]
   )
 
-  const handleChangeColor = useCallback(
+  const handleSliderColorChange = useCallback(
     e => {
       setSliderColor(e.hex)
       onChange(e.hex)
@@ -29,55 +29,37 @@ function ColorSelector({ onChange }) {
     [onChange]
   )
 
-  const handleCustomColorClick = useCallback(() => {
+  const toggleSlider = useCallback(() => {
     setColor()
-    if (isSliderVisible) {
-      setIsSliderVisible(false)
-      setColor(appColors[0])
-      onChange(appColors[0])
-    } else {
-      setIsSliderVisible(true)
-      onChange(sliderColor)
-      setColor(sliderColor)
-    }
+    setIsSliderVisible(!isSliderVisible)
+    setColor(isSliderVisible ? COLORS.APP[0] : sliderColor)
+    onChange(isSliderVisible ? COLORS.APP[0] : sliderColor)
   }, [setIsSliderVisible, isSliderVisible, onChange, sliderColor])
 
   return (
     <>
       <Box sx={styles.colorBox}>
-        {appColors.map(c => (
+        {COLORS.APP.map(c => (
           <Button
-            icon-only="true"
-            aria-label="circle"
+            icon-mode="only"
             data-color={c}
-            focusable="true"
             color={c}
             key={c}
-            onClick={handleColorClick}
-          >
-            {color !== c ? (
-              <Icon type="circle" />
-            ) : (
-              <Icon type="camera-rounded" />
-            )}
-          </Button>
+            onClick={handleAppColorButtonClick}
+            icon={color !== c ? 'circle' : 'camera-rounded'}
+          />
         ))}
         <Button
-          icon-only="true"
-          color="#a9a9a9"
-          onClick={handleCustomColorClick}
-        >
-          {isSliderVisible ? (
-            <Icon type="add-outlined" color={sliderColor} />
-          ) : (
-            <Icon type="add-filled" />
-          )}
-        </Button>
+          icon-mode="only"
+          color={COLORS.LIGHTGRAY}
+          onClick={toggleSlider}
+          icon={isSliderVisible ? 'add-outlined' : 'add-filled'}
+        />
       </Box>
       {isSliderVisible ? (
         <Box pt="10px" pb="10px">
           <HuePicker
-            onChange={handleChangeColor}
+            onChange={handleSliderColorChange}
             color={sliderColor}
             width="100%"
           />

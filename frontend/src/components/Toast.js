@@ -1,5 +1,5 @@
 import { Alert, Snackbar } from '@mui/material'
-import React, { useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { styles } from './Toast.styles'
 
@@ -27,4 +27,4 @@ const Toast = () => {
   )
 }
 
-export default React.memo(Toast)
+export default memo(Toast)

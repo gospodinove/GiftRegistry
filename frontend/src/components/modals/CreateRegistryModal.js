@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { memo, useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
-import { appColors } from '../../constants'
+import { COLORS } from '../../constants'
 
 const registryTypes = [
   'Birthday',
@@ -23,11 +23,11 @@ const registryTypes = [
 function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const [color, setColor] = React.useState(appColors[0])
-  const [type, setType] = React.useState('Birthday')
-  const [name, setName] = React.useState('')
-  const [errors, setErrors] = React.useState({})
-  const [customType, setCustomType] = React.useState('Custom')
+  const [color, setColor] = useState(COLORS.APP[0])
+  const [type, setType] = useState('Birthday')
+  const [name, setName] = useState('')
+  const [errors, setErrors] = useState({})
+  const [customType, setCustomType] = useState('Custom')
 
   const handleClose = useCallback(() => {
     onClose()
@@ -35,7 +35,7 @@ function CreateRegistryModal({ open, onClose }) {
     setTimeout(() => {
       setName('')
       setType('Birthday')
-      setColor(appColors[0])
+      setColor(COLORS.APP[0])
     }, 100)
   }, [onClose])
 
@@ -135,13 +135,10 @@ function CreateRegistryModal({ open, onClose }) {
           <ColorSelector onChange={handleColorChange} />
           <TextField
             select
-            margin="normal"
             id="type"
             label="Type"
             value={type}
             onChange={handleTypeChange}
-            fullWidth
-            variant="outlined"
             color={color}
           >
             {registryTypes.map(option => (
@@ -156,13 +153,10 @@ function CreateRegistryModal({ open, onClose }) {
               helperText={errors.type}
               autoFocus
               required
-              margin="normal"
               id="custom-type"
               label="Type name"
               value={customType}
               onChange={handleCustomTypeChange}
-              fullWidth
-              variant="outlined"
               color={color}
             />
           ) : null}
@@ -171,13 +165,10 @@ function CreateRegistryModal({ open, onClose }) {
             helperText={errors.name}
             autoFocus
             required
-            margin="normal"
             id="name"
             label="Name"
             value={name}
             onChange={handleNameChange}
-            fullWidth
-            variant="outlined"
             color={color}
           />
         </DialogContent>
@@ -195,4 +186,4 @@ function CreateRegistryModal({ open, onClose }) {
   )
 }
 
-export default React.memo(CreateRegistryModal)
+export default memo(CreateRegistryModal)

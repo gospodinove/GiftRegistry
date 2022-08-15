@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
-import Icon from '../components/Icon'
+// import Icon from '../components/Icon'
 import './Home.css'
 import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
@@ -60,9 +60,10 @@ function Home() {
             <Button
               sx={styles.button}
               variant="outlined"
-              fullWidth
               onClick={handleCreateRegistryButtonClick}
-              startIcon={<Icon type="add" />}
+              // startIcon={<Icon type="add" />}
+              icon="add"
+              icon-mode="start"
             >
               Create new registry
             </Button>
@@ -88,4 +89,4 @@ function Home() {
   )
 }
 
-export default React.memo(Home)
+export default memo(Home)

@@ -1,4 +1,4 @@
-export function styles(color) {
+export const styles = color => {
   return {
     color
   }
