@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
@@ -9,9 +9,11 @@ import Register from './pages/Register'
 import { api } from './utils/api'
 import { isEmptyObject } from './utils/objects'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
+import FullPageLoader from './components/FullPageLoader'
 
 function App() {
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(true)
 
   const user = useSelector(state => state.auth.user)
 
@@ -22,7 +24,10 @@ function App() {
       if (user && !isEmptyObject(user)) {
         dispatch({ type: 'auth/setUser', payload: user })
       }
-    } catch {}
+    } catch {
+    } finally {
+      setIsLoading(false)
+    }
   }, [dispatch])
 
   useEffect(() => {
@@ -30,7 +35,9 @@ function App() {
     checkLoggedIn()
   }, [checkLoggedIn])
 
-  return (
+  return isLoading ? (
+    <FullPageLoader />
+  ) : (
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route path="/" element={<Home />} />
