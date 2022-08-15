@@ -6,7 +6,8 @@ const {
   replaceId,
   sendErrorResponse,
   hashPassword,
-  makeToken
+  makeToken,
+  comparePasswords
 } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
 
@@ -89,7 +90,7 @@ router.post('/login', async (req, res) => {
         return
       }
 
-      const isPasswordValid = await bcrypt.compare(
+      const isPasswordValid = await comparePasswords(
         req.body.password,
         user.password
       )
