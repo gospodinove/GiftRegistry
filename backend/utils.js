@@ -30,9 +30,17 @@ const parseValidationErrorMessages = errors => {
   return result
 }
 
+const slashPlaceholder = 'slash'
+
 module.exports.hashPassword = async function (string) {
   const salt = await bcrypt.genSalt(10)
-  return await bcrypt.hash(string, salt)
+  const hash = await bcrypt.hash(string, salt)
+  return hash.replace(/\//g, slashPlaceholder)
+}
+
+module.exports.comparePasswords = async function (string, hash) {
+  const regex = new RegExp(slashPlaceholder)
+  return await bcrypt.compare(string, hash.replace(regex, '/'))
 }
 
 module.exports.makeToken = async function (email) {
