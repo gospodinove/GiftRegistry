@@ -15,41 +15,6 @@ function Button({ color, ...props }) {
     [color, props.sx, props.variant]
   )
 
-  // switch (props['icon-mode']) {
-  //   case 'only':
-  //     return (
-  //       <IconButton {...props} sx={buttonStyles}>
-  //         <Icon type={props.icon}>{props.children}</Icon>
-  //       </IconButton>
-  //     )
-  //   case 'start':
-  //     return (
-  //       <MuiButton
-  //         {...props}
-  //         sx={buttonStyles}
-  //         startIcon={<Icon type={props.icon}></Icon>}
-  //       >
-  //         {props.children}
-  //       </MuiButton>
-  //     )
-  //   case 'end':
-  //     return (
-  //       <MuiButton
-  //         {...props}
-  //         sx={buttonStyles}
-  //         endIcon={<Icon type={props.icon}></Icon>}
-  //       >
-  //         {props.children}
-  //       </MuiButton>
-  //     )
-  //   default:
-  //     return (
-  //       <MuiButton {...props} sx={buttonStyles}>
-  //         {props.children}
-  //       </MuiButton>
-  //     )
-  // }
-
   const startIcon = useMemo(
     () => (props['icon-mode'] === 'start' ? <Icon type={props.icon} /> : null),
     [props]
