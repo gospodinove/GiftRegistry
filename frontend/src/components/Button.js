@@ -24,7 +24,7 @@ function Button({ color, ...props }) {
     [props]
   )
 
-  return props['icon-mode'] === 'only' ? (
+  return props['icon-mode'] === 'icon-only' ? (
     <IconButton {...props} sx={buttonStyles}>
       <Icon type={props.icon} />
     </IconButton>

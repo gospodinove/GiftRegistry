@@ -7,8 +7,8 @@ function TextField({ color, ...props }) {
 
   return (
     <MuiTextField
-      sx={textFieldStyles}
       {...props}
+      sx={textFieldStyles}
       fullWidth
       margin="normal"
       variant="outlined"

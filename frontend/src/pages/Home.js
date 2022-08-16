@@ -61,7 +61,6 @@ function Home() {
               sx={styles.button}
               variant="outlined"
               onClick={handleCreateRegistryButtonClick}
-              // startIcon={<Icon type="add" />}
               icon="add"
               icon-mode="start"
             >

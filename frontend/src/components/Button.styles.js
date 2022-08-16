@@ -1,4 +1,4 @@
-import tinycolor from '../utils/colors'
+const tinycolor = require('tinycolor2')
 
 export function styles(color) {
   return {

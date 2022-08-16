@@ -9,7 +9,3 @@ export const hexToRGBA = (hex, alpha) => {
     return 'rgb(' + r + ', ' + g + ', ' + b + ')'
   }
 }
-
-const tinycolor = require('tinycolor2')
-
-export default tinycolor

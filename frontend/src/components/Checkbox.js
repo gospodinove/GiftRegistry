@@ -6,7 +6,7 @@ function Checkbox({ color, ...props }) {
   const checkboxStyles = useMemo(() => styles(color), [color])
 
   return (
-    <MuiCheckbox style={checkboxStyles} {...props}>
+    <MuiCheckbox {...props} style={checkboxStyles}>
       {props.children}
     </MuiCheckbox>
   )

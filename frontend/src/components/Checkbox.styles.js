@@ -1,5 +1,1 @@
-export const styles = color => {
-  return {
-    color
-  }
-}
+export const styles = color => ({ color })

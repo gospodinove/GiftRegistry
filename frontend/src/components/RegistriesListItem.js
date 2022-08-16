@@ -4,6 +4,7 @@ import ListItemText from '@mui/material/ListItemText'
 import { ListItem } from '@mui/material'
 import { styles } from './RegistriesListItem.styles'
 import Icon from './Icon'
+import { COLORS } from '..//constants'
 
 const getIconType = registryType => {
   switch (registryType) {
@@ -25,7 +26,7 @@ function RegistriesListItem({ registry, isSelected, onClick }) {
   const handleClick = useCallback(() => onClick(registry), [registry, onClick])
 
   const componentStyles = useMemo(
-    () => styles(registry.color ?? '#000000', isSelected),
+    () => styles(registry.color ?? COLORS.ICON_DEFAULT, isSelected),
     [registry.color, isSelected]
   )
 

@@ -8,6 +8,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
+import { styles } from './ShareRegistryModal.styles'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -140,7 +141,7 @@ function ShareRegistryModal({ open, onClose }) {
             Add more
           </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
-          <Button type="submit" sx={{ display: 'none' }}></Button>
+          <Button type="submit" sx={styles.hiddenButton}></Button>
           {/* this is used as the real submit button */}
           <Button onClick={handleSendClick} color={initialData?.color}>
             Send

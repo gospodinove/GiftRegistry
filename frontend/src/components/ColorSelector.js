@@ -41,7 +41,7 @@ function ColorSelector({ onChange }) {
       <Box sx={styles.colorBox}>
         {COLORS.APP.map(c => (
           <Button
-            icon-mode="only"
+            icon-mode="icon-only"
             data-color={c}
             color={c}
             key={c}
@@ -50,7 +50,7 @@ function ColorSelector({ onChange }) {
           />
         ))}
         <Button
-          icon-mode="only"
+          icon-mode="icon-only"
           color={COLORS.LIGHTGRAY}
           onClick={toggleSlider}
           icon={isSliderVisible ? 'add-outlined' : 'add-filled'}
