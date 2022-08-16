@@ -1,6 +1,5 @@
 import { useState, memo, useCallback } from 'react'
 import Box from '@mui/material/Box'
-// import Icon from './Icon'
 import { styles } from './ColorSelector.styles'
 import { HuePicker } from 'react-color'
 import Button from './Button'
