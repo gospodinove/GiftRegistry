@@ -16,7 +16,7 @@ function CreateRegistryItemModal({ open, onClose }) {
   const initialData = useSelector(state => state.modals.createRegistryItem)
 
   const [name, setName] = useState('')
-  const [price, setPrice] = useState(0)
+  const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
   const [link, setLink] = useState('')
   const [errors, setErrors] = useState({})
@@ -28,7 +28,7 @@ function CreateRegistryItemModal({ open, onClose }) {
       setName('')
       setErrors({})
       setLink('')
-      setPrice(0)
+      setPrice('')
       setDescription('')
     }, 100)
   }, [onClose])
@@ -46,7 +46,9 @@ function CreateRegistryItemModal({ open, onClose }) {
 
   const handlePriceChange = useCallback(
     e => {
-      setPrice(e.target.value)
+      if (e.target.value >= 0) {
+        setPrice(e.target.value)
+      }
 
       if (errors.price !== undefined) {
         setErrors({ ...errors, price: undefined })
@@ -120,7 +122,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             return
 
           case 'field-error':
-            setErrors(error.message)
+            setErrors(error.data)
             return
 
           case 'general':
@@ -175,7 +177,6 @@ function CreateRegistryItemModal({ open, onClose }) {
               <TextField
                 error={errors.price !== undefined}
                 helperText={errors.price}
-                required
                 id="price"
                 label="Price"
                 value={price}
