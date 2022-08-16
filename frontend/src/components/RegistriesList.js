@@ -1,5 +1,5 @@
 import { List } from '@mui/material'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
@@ -44,10 +44,10 @@ const RegistriesList = ({ onSelectedChange }) => {
 
   const handleRegistryClick = useCallback(
     registry => {
-      setSelectedRegistryId(registry.id)
       onSelectedChange(registry)
+      setSelectedRegistryId(registry.id)
     },
-    [onSelectedChange, setSelectedRegistryId]
+    [onSelectedChange]
   )
 
   return (
@@ -64,4 +64,4 @@ const RegistriesList = ({ onSelectedChange }) => {
   )
 }
 
-export default React.memo(RegistriesList)
+export default memo(RegistriesList)

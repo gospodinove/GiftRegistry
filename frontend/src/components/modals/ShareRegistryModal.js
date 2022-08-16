@@ -1,13 +1,14 @@
 import { memo, useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import Button from '../Button'
+import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
+import { styles } from './ShareRegistryModal.styles'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -112,19 +113,17 @@ function ShareRegistryModal({ open, onClose }) {
   const renderTextField = (index, email, isInvited) => (
     <TextField
       key={isInvited ? email : index + 'email'}
-      margin="normal"
       id={isInvited ? email : index + 'email'}
       label={isInvited ? 'Invited' : 'Email ' + (index + 1)}
       value={email}
       disabled={isInvited}
       onChange={handleEmailChange}
       type="email"
-      fullWidth
-      variant="outlined"
       inputProps={{ 'data-index': index }}
       autoFocus={index === emails.length - 1}
       error={isInvited ? undefined : errors['emails.' + index] !== undefined}
       helperText={isInvited ? undefined : errors['emails.' + index]}
+      color={initialData?.color}
     />
   )
 
@@ -139,12 +138,18 @@ function ShareRegistryModal({ open, onClose }) {
           {emails.map((email, index) => renderTextField(index, email, false))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add more</Button>
+          <Button onClick={handleClose} color={initialData?.color}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color={initialData?.color}>
+            Add more
+          </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
-          <Button type="submit" sx={{ display: 'none' }}></Button>
+          <Button type="submit" sx={styles.hiddenButton}></Button>
           {/* this is used as the real submit button */}
-          <Button onClick={handleSendClick}>Send</Button>
+          <Button onClick={handleSendClick} color={initialData?.color}>
+            Send
+          </Button>
         </DialogActions>
       </Box>
     </Dialog>

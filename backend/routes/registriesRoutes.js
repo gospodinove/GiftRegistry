@@ -20,7 +20,8 @@ router.post(
     try {
       const schema = {
         type: 'required|string|max:30',
-        name: 'required|string'
+        name: 'required|string',
+        color: 'required|string'
       }
 
       await validateAll(registry, schema, validationMessages)

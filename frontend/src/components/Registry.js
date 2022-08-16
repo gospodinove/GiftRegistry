@@ -1,11 +1,10 @@
-import { Box, Button, List, Stack, Typography } from '@mui/material'
-import React, { useCallback, useEffect } from 'react'
+import { Box, List, Stack, Typography } from '@mui/material'
+import { memo, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
-import AddIcon from '@mui/icons-material/Add'
-import ShareIcon from '@mui/icons-material/Share'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import Button from './Button'
+import Icon from './Icon'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -87,10 +86,10 @@ const Registry = ({ registryId }) => {
       type: 'modals/show',
       payload: {
         name: 'createRegistryItem',
-        data: { registryId: registryData.id }
+        data: { registryId: registryData.id, color: registryData.color }
       }
     })
-  }, [dispatch, registryData?.id])
+  }, [dispatch, registryData?.id, registryData?.color])
 
   const handleShareButtonClick = useCallback(() => {
     if (!registryData) {
@@ -103,7 +102,8 @@ const Registry = ({ registryId }) => {
         name: 'shareRegistry',
         data: {
           registryId: registryData.id,
-          users: registryData.users.filter(user => user.role !== 'owner')
+          users: registryData.users.filter(user => user.role !== 'owner'),
+          color: registryData.color
         }
       }
     })
@@ -118,7 +118,7 @@ const Registry = ({ registryId }) => {
 
           {owner && (
             <Stack direction="row" spacing={1}>
-              <AccountCircleIcon />
+              <Icon type="account-circle" />
               <Typography variant="h6">
                 {owner.firstName + ' ' + owner.lastName}
               </Typography>
@@ -128,15 +128,19 @@ const Registry = ({ registryId }) => {
           <Stack direction="row" spacing={1}>
             <Button
               variant="outlined"
-              startIcon={<AddIcon />}
+              icon-mode="start"
+              icon="add"
               onClick={handleAddButtonClick}
+              color={registryData.color}
             >
               Add
             </Button>
             <Button
               variant="contained"
-              startIcon={<ShareIcon />}
+              icon-mode="start"
+              icon="share"
               onClick={handleShareButtonClick}
+              color={registryData.color}
             >
               Share
             </Button>
@@ -151,6 +155,7 @@ const Registry = ({ registryId }) => {
               <RegistryItem
                 key={item.id}
                 data={item}
+                color={registryData.color}
                 onToggle={handleItemToggle}
               />
             ))}
@@ -161,4 +166,4 @@ const Registry = ({ registryId }) => {
   )
 }
 
-export default React.memo(Registry)
+export default memo(Registry)

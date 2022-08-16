@@ -1,10 +1,11 @@
 import { memo, useCallback, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import { Button, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Button from '../components/Button'
 
 function Register() {
   const dispatch = useDispatch()
@@ -142,8 +143,6 @@ function Register() {
           <TextField
             id="first-name"
             label="First name"
-            variant="outlined"
-            fullWidth
             value={firstName}
             onChange={handleFirstNameChange}
             error={errors.firstName !== undefined}
@@ -153,8 +152,6 @@ function Register() {
           <TextField
             id="last-name"
             label="Last name"
-            variant="outlined"
-            fullWidth
             value={lastName}
             onChange={handleLastNameChange}
             error={errors.lastName !== undefined}
@@ -166,8 +163,6 @@ function Register() {
             id="email"
             type="email"
             label="Email"
-            variant="outlined"
-            fullWidth
             value={email}
             onChange={handleEmailChange}
             error={errors.email !== undefined}
@@ -180,8 +175,6 @@ function Register() {
             id="password"
             type="password"
             label="Password"
-            variant="outlined"
-            fullWidth
             value={password}
             onChange={handlePasswordChange}
             error={errors.password !== undefined}

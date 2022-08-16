@@ -1,7 +1,7 @@
-import React from 'react'
+import { memo } from 'react'
 
 function NotFound() {
   return <h1>404</h1>
 }
 
-export default React.memo(NotFound)
+export default memo(NotFound)

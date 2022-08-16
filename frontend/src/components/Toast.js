@@ -1,5 +1,5 @@
 import { Alert, Button, Snackbar } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { styles } from './Toast.styles'
@@ -50,4 +50,4 @@ const Toast = () => {
   )
 }
 
-export default React.memo(Toast)
+export default memo(Toast)
