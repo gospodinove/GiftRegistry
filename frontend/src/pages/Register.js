@@ -1,9 +1,9 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 
@@ -11,12 +11,23 @@ function Register() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const user = useSelector(state => state.auth.user)
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    if (user === undefined || user.isRegistrationComplete) {
+      return
+    }
+
+    // fill the form with the data from the partially registered user
+    setEmail(user.email)
+  }, [user])
 
   const handleEmailChange = useCallback(
     e => {
@@ -62,12 +73,8 @@ function Register() {
     [errors]
   )
 
-  const onSubmit = useCallback(
-    async e => {
-      e.preventDefault()
-
-      setErrors({})
-
+  const makeRequest = useCallback(
+    async (endpoint, method) => {
       const user = {
         firstName,
         lastName,
@@ -76,7 +83,7 @@ function Register() {
       }
 
       try {
-        const response = await api('auth/register', 'POST', user)
+        const response = await api(endpoint, method, user)
 
         dispatch({ type: 'auth/setUser', payload: response.user })
         navigate('/')
@@ -102,7 +109,22 @@ function Register() {
         }
       }
     },
-    [firstName, lastName, email, password, navigate, dispatch]
+    [dispatch, email, firstName, lastName, navigate, password]
+  )
+
+  const handleSubmit = useCallback(
+    e => {
+      e.preventDefault()
+
+      setErrors({})
+
+      if (user === undefined) {
+        makeRequest('auth/register', 'post')
+      } else {
+        makeRequest('users/' + user.id, 'put')
+      }
+    },
+    [makeRequest, user]
   )
 
   return (
@@ -111,10 +133,12 @@ function Register() {
         component="form"
         autoComplete="off"
         width="400px"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <Stack spacing={2} mt={2}>
-          <Typography variant="h4">Register</Typography>
+          <Typography variant="h4">
+            {user ? 'Complete registration' : 'Register'}
+          </Typography>
 
           <TextField
             id="first-name"
@@ -143,6 +167,7 @@ function Register() {
             onChange={handleEmailChange}
             error={errors.email !== undefined}
             helperText={errors.email}
+            disabled={user !== undefined}
             required
           />
 

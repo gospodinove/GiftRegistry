@@ -38,7 +38,7 @@ function Login() {
     [errors]
   )
 
-  const onSubmit = useCallback(
+  const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
@@ -83,7 +83,7 @@ function Login() {
         component="form"
         autoComplete="off"
         width="400px"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <Stack spacing={2} mt={2}>
           <Typography variant="h4">Login</Typography>

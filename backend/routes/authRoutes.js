@@ -2,7 +2,13 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const { validateAll } = require('indicative/validator')
 const { extend } = require('indicative/validator')
-const { replaceId, sendErrorResponse } = require('../utils')
+const {
+  replaceId,
+  sendErrorResponse,
+  hashPassword,
+  makeToken,
+  comparePasswords
+} = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
 
 const router = express.Router()
@@ -34,12 +40,8 @@ router.post('/register', async (req, res) => {
         return
       }
 
-      const salt = await bcrypt.genSalt(10)
-      const password = await bcrypt.hash(req.body.password, salt)
-      const token = await bcrypt.hash(
-        req.body.email + new Date().toDateString(),
-        salt
-      )
+      const password = await hashPassword(req.body.password)
+      const token = await makeToken(req.body.email)
 
       const user = {
         ...req.body,
@@ -88,7 +90,7 @@ router.post('/login', async (req, res) => {
         return
       }
 
-      const isPasswordValid = await bcrypt.compare(
+      const isPasswordValid = await comparePasswords(
         req.body.password,
         user.password
       )
@@ -155,6 +157,8 @@ router.post('/token', async (req, res) => {
       )
       return
     }
+
+    replaceId(user)
 
     req.session.user = user
 
