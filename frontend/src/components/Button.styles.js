@@ -1,4 +1,4 @@
-const tinycolor = require('tinycolor2')
+import tinycolor from 'tinycolor2'
 
 export function styles(color) {
   return {
