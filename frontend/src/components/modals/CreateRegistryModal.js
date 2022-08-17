@@ -23,6 +23,8 @@ const registryTypes = [
 function CreateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [color, setColor] = useState(COLORS.APP[0])
   const [type, setType] = useState('Birthday')
   const [name, setName] = useState('')
@@ -80,6 +82,7 @@ function CreateRegistryModal({ open, onClose }) {
     async e => {
       e.preventDefault()
 
+      setIsLoading(true)
       setErrors({})
 
       const data = {
@@ -125,6 +128,8 @@ function CreateRegistryModal({ open, onClose }) {
             })
             return
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [name, type, customType, color, dispatch, handleClose]
@@ -181,7 +186,7 @@ function CreateRegistryModal({ open, onClose }) {
             Cancel
           </Button>
 
-          <Button type="submit" color={color}>
+          <Button type="submit" color={color} loading={isLoading}>
             Create Registry
           </Button>
         </DialogActions>

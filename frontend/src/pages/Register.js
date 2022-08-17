@@ -13,6 +13,8 @@ function Register() {
 
   const user = useSelector(state => state.auth.user)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -82,6 +84,8 @@ function Register() {
         password
       }
 
+      setIsLoading(true)
+
       try {
         const response = await api(endpoint, method, user)
 
@@ -107,6 +111,8 @@ function Register() {
             })
             return
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [dispatch, email, firstName, lastName, navigate, password]
@@ -182,7 +188,12 @@ function Register() {
             required
           />
 
-          <Button variant="contained" type="submit" size="large">
+          <Button
+            variant="contained"
+            type="submit"
+            size="large"
+            loading={isLoading}
+          >
             Submit
           </Button>
         </Stack>
