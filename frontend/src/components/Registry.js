@@ -1,4 +1,4 @@
-import { Box, Button, List, Stack, Typography } from '@mui/material'
+import { Box, Button, List, Skeleton, Stack, Typography } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
@@ -21,7 +21,8 @@ const Registry = ({ registryId }) => {
     state => state.registries.ownerByRegistryId[registryId]
   )
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingItems, setIsLoadingItems] = useState(true)
+  const [isLoadingOwner, setIsLoadingOwner] = useState(true)
 
   const fetchItems = useCallback(async () => {
     if (!registryId || items !== undefined) {
@@ -44,7 +45,7 @@ const Registry = ({ registryId }) => {
         }
       })
     } finally {
-      setIsLoading(false)
+      setIsLoadingItems(false)
     }
   }, [registryId, items, dispatch])
 
@@ -67,6 +68,8 @@ const Registry = ({ registryId }) => {
         type: 'toast/show',
         payload: { type: 'error', message: error.data }
       })
+    } finally {
+      setIsLoadingOwner(false)
     }
   }, [registryData?.users, owner, user?.email, registryId, dispatch])
 
@@ -121,13 +124,17 @@ const Registry = ({ registryId }) => {
         <>
           <Typography variant="h4">{registryData.name}</Typography>
 
-          {owner && (
+          {owner && !isLoadingOwner ? (
             <Stack direction="row" spacing={1}>
               <AccountCircleIcon />
               <Typography variant="h6">
                 {owner.firstName + ' ' + owner.lastName}
               </Typography>
             </Stack>
+          ) : (
+            <Typography variant="h6">
+              <Skeleton width="250px" />
+            </Typography>
           )}
 
           <Stack direction="row" spacing={1}>
@@ -149,7 +156,7 @@ const Registry = ({ registryId }) => {
         </>
       ) : null}
 
-      {items && !isLoading ? (
+      {items && !isLoadingItems ? (
         <Box>
           <List>
             {items.map(item => (
