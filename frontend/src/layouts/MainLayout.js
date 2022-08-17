@@ -3,16 +3,21 @@ import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
+import Button from '../components/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Collapse from '@mui/material/Collapse'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Divider,
   Drawer,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText
 } from '@mui/material'
 import Icon from '../components/Icon'
@@ -30,13 +35,21 @@ function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+  const user = useSelector(state => state.auth.user)
+  const isAuthenticated = user !== undefined
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [innerDrawer, setInnerDrawer] = useState(false)
+  const [toggleAvatarDropdown, setToggleAvatarDropdown] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
 
   const handleDrawerToggle = useCallback(() => {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
+
+  const handleInnerDrawerToggle = useCallback(() => {
+    setInnerDrawer(!innerDrawer)
+  }, [innerDrawer])
 
   const handleDrawerItemClick = useCallback(
     route => {
@@ -64,29 +77,69 @@ function MainLayout() {
         payload: { type: 'error', message: 'Something went wrong' }
       })
     }
+    setToggleAvatarDropdown(false)
+    setAnchorEl(null)
   }, [dispatch])
 
   const drawer = useCallback(
     () => (
       <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
-          <IconButton onClick={handleDrawerToggle}>
-            <Icon type="close" />
-          </IconButton>
+          <Button
+            onClick={handleDrawerToggle}
+            icon-mode="icon-only"
+            icon="close"
+          />
         </Box>
 
         <Divider />
 
+        {/* <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Starred" />
+          </ListItemButton>
+        </List>
+      </Collapse> */}
+
         <List>
           {isAuthenticated ? (
-            <ListItem key="logout" disablePadding>
-              <ListItemButton
-                onClick={handleLogoutClick}
-                sx={styles.listItemButton}
-              >
-                <ListItemText primary="Log out" />
-              </ListItemButton>
-            </ListItem>
+            <>
+              <ListItem key="logout" disablePadding>
+                <ListItemButton
+                  onClick={handleInnerDrawerToggle}
+                  sx={styles.listItemButton}
+                >
+                  <ListItemIcon>
+                    <Icon type="account-box" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={(
+                      user?.firstName +
+                      ' ' +
+                      user?.lastName
+                    ).toUpperCase()}
+                  />
+                  {innerDrawer ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={innerDrawer} timeout="auto" unmountOnExit>
+                <List>
+                  <ListItemButton
+                    onClick={handleLogoutClick}
+                    sx={styles.logoutListItemButton}
+                  >
+                    <ListItemIcon>
+                      <Icon type="logout" />
+                    </ListItemIcon>
+                    <ListItemText primary="LOG OUT" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            </>
           ) : (
             authNavItems.map(item => (
               <ListItem key={item.title} disablePadding>
@@ -94,6 +147,9 @@ function MainLayout() {
                   onClick={() => handleDrawerItemClick(item.route)}
                   sx={styles.listItemButton}
                 >
+                  <ListItemIcon>
+                    <Icon type={item.title.replace(/\s/g, '')} />
+                  </ListItemIcon>
                   <ListItemText primary={item.title.toUpperCase()} />
                 </ListItemButton>
               </ListItem>
@@ -106,7 +162,11 @@ function MainLayout() {
       handleDrawerItemClick,
       handleDrawerToggle,
       isAuthenticated,
-      handleLogoutClick
+      handleLogoutClick,
+      user?.firstName,
+      user?.lastName,
+      innerDrawer,
+      handleInnerDrawerToggle
     ]
   )
 
@@ -124,6 +184,14 @@ function MainLayout() {
     [navigate]
   )
 
+  const handleAvatarClick = useCallback(
+    event => {
+      setToggleAvatarDropdown(!toggleAvatarDropdown)
+      setAnchorEl(anchorEl ? null : event.currentTarget)
+    },
+    [toggleAvatarDropdown, anchorEl]
+  )
+
   return (
     <Box sx={styles.rootBox}>
       <AppBar position="fixed" sx={styles.appBar}>
@@ -139,14 +207,32 @@ function MainLayout() {
 
           <Box sx={styles.authNavBox}>
             {isAuthenticated ? (
-              <Button key="logout" color="inherit" onClick={handleLogoutClick}>
-                Log out
-              </Button>
+              <>
+                <Button
+                  icon="account-circle"
+                  color="#ffffff"
+                  icon-mode="start"
+                  onClick={handleAvatarClick}
+                >
+                  {user?.firstName + ' ' + user?.lastName}
+                </Button>
+
+                <Menu
+                  open={toggleAvatarDropdown}
+                  anchorEl={anchorEl}
+                  onClose={handleAvatarClick}
+                >
+                  <MenuItem onClick={handleLogoutClick}>
+                    <Icon type="logout" />
+                    {'\xa0\xa0Logout'}
+                  </MenuItem>
+                </Menu>
+              </>
             ) : (
               authNavItems.map(item => (
                 <Button
                   key={item.title}
-                  color="inherit"
+                  color="#ffffff"
                   data-route={item.route}
                   onClick={handleAuthItemClick}
                 >
@@ -156,15 +242,17 @@ function MainLayout() {
             )}
           </Box>
 
-          <IconButton
-            color="inherit"
+          <Button
+            color="#ffffff"
+            icon="menu"
+            icon-mode="icon-only"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={styles.iconButton}
           >
             <Icon type="menu" />
-          </IconButton>
+          </Button>
         </Toolbar>
       </AppBar>
 

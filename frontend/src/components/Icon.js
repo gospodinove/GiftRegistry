@@ -13,6 +13,10 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import LogoutIcon from '@mui/icons-material/Logout'
+import LoginIcon from '@mui/icons-material/Login'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import { memo } from 'react'
 
 const getIcon = (type, color) => {
@@ -58,6 +62,18 @@ const getIcon = (type, color) => {
 
     case 'account-circle':
       return <AccountCircleIcon sx={{ color }} />
+
+    case 'logout':
+      return <LogoutIcon sx={{ color }} />
+
+    case 'login':
+      return <LoginIcon sx={{ color }} />
+
+    case 'account-box':
+      return <AccountBoxIcon sx={{ color }} />
+
+    case 'register':
+      return <AppRegistrationIcon sx={{ color }} />
 
     default:
       return <QuestionMarkIcon sx={{ color }} />

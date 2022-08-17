@@ -2,7 +2,7 @@ import { NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
   drawerBox: { textAlign: 'center' },
-  listItemButton: { textAlign: 'center' },
+  logoutListItemButton: { pl: 4 },
   rootBox: { flexGrow: 1, height: '100%' },
   appBar: { height: `${NAVBAR_HEIGHT}px` },
   toolbar: { height: `${NAVBAR_HEIGHT}px` },
