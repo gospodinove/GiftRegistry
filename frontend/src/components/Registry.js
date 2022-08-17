@@ -80,6 +80,37 @@ const Registry = ({ registryId }) => {
     maybeFetchRegistryOwner()
   }, [maybeFetchRegistryOwner])
 
+  const maybeRenderOwner = useCallback(() => {
+    const registryOwner = registryData.users.find(u => u.role === 'owner')
+
+    if (user.email === registryOwner.email) {
+      return null
+    }
+
+    if (isLoadingOwner) {
+      return (
+        <Typography variant="h6">
+          <Skeleton width="250px" />
+        </Typography>
+      )
+    }
+
+    return (
+      <Stack direction="row" spacing={1}>
+        <Icon type="account-circle" />
+        <Typography variant="h6">
+          {owner.firstName + ' ' + owner.lastName}
+        </Typography>
+      </Stack>
+    )
+  }, [
+    isLoadingOwner,
+    owner?.firstName,
+    owner?.lastName,
+    registryData?.users,
+    user?.email
+  ])
+
   const handleItemToggle = useCallback(id => {
     // TODO: update object
     console.log(id)
@@ -124,18 +155,7 @@ const Registry = ({ registryId }) => {
         <>
           <Typography variant="h4">{registryData.name}</Typography>
 
-          {owner && !isLoadingOwner ? (
-            <Stack direction="row" spacing={1}>
-              <Icon type="account-circle" />
-              <Typography variant="h6">
-                {owner.firstName + ' ' + owner.lastName}
-              </Typography>
-            </Stack>
-          ) : (
-            <Typography variant="h6">
-              <Skeleton width="250px" />
-            </Typography>
-          )}
+          {maybeRenderOwner()}
 
           <Stack direction="row" spacing={1}>
             <Button
