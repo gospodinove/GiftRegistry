@@ -1,12 +1,12 @@
-import { navbarHeight } from '../constants'
+import { NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
   box: {
     width: '100%',
     boxSizing: 'border-box',
     height: '100%',
-    mt: `-${navbarHeight}px`,
-    pt: navbarHeight + 'px'
+    mt: `-${NAVBAR_HEIGHT}px`,
+    pt: NAVBAR_HEIGHT + 'px'
   },
   gridContainer: {
     height: '100%',

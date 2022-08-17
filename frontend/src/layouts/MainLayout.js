@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { memo, useMemo, useState, useCallback } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -15,8 +15,7 @@ import {
   ListItemButton,
   ListItemText
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import CloseIcon from '@mui/icons-material/Close'
+import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
@@ -33,13 +32,13 @@ function MainLayout() {
 
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const handleDrawerToggle = React.useCallback(() => {
+  const handleDrawerToggle = useCallback(() => {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
-  const handleDrawerItemClick = React.useCallback(
+  const handleDrawerItemClick = useCallback(
     route => {
       handleDrawerToggle()
       navigate(route)
@@ -47,7 +46,7 @@ function MainLayout() {
     [handleDrawerToggle, navigate]
   )
 
-  const handleLogoutClick = React.useCallback(async () => {
+  const handleLogoutClick = useCallback(async () => {
     try {
       await api('auth/logout')
 
@@ -67,12 +66,12 @@ function MainLayout() {
     }
   }, [dispatch])
 
-  const drawer = React.useCallback(
+  const drawer = useCallback(
     () => (
       <Box sx={styles.drawerBox}>
         <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
           <IconButton onClick={handleDrawerToggle}>
-            <CloseIcon />
+            <Icon type="close" />
           </IconButton>
         </Box>
 
@@ -111,13 +110,13 @@ function MainLayout() {
     ]
   )
 
-  const container = React.useMemo(
+  const container = useMemo(
     () => (window !== undefined ? window.document.body : undefined),
     []
   )
 
-  const handleHomeClick = React.useCallback(() => navigate('/'), [navigate])
-  const handleAuthItemClick = React.useCallback(
+  const handleHomeClick = useCallback(() => navigate('/'), [navigate])
+  const handleAuthItemClick = useCallback(
     e => {
       const route = e.target.getAttribute('data-route')
       navigate(route)
@@ -138,11 +137,7 @@ function MainLayout() {
             Gift Registry
           </Typography>
 
-          <Box
-            sx={{
-              display: { xs: 'none', sm: 'block' }
-            }}
-          >
+          <Box sx={styles.authNavBox}>
             {isAuthenticated ? (
               <Button key="logout" color="inherit" onClick={handleLogoutClick}>
                 Log out
@@ -168,7 +163,7 @@ function MainLayout() {
             onClick={handleDrawerToggle}
             sx={styles.iconButton}
           >
-            <MenuIcon />
+            <Icon type="menu" />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -198,4 +193,4 @@ function MainLayout() {
   )
 }
 
-export default React.memo(MainLayout)
+export default memo(MainLayout)

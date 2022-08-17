@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CreateRegistryItemModal from './modals/CreateRegistryItemModal'
 import CreateRegistryModal from './modals/CreateRegistryModal'
@@ -56,4 +56,4 @@ const Modals = () => {
   )
 }
 
-export default Modals
+export default memo(Modals)

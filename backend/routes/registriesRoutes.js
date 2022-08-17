@@ -20,7 +20,8 @@ router.post(
     try {
       const schema = {
         type: 'required|string|max:30',
-        name: 'required|string'
+        name: 'required|string',
+        color: 'required|string'
       }
 
       await validateAll(registry, schema, validationMessages)
@@ -97,7 +98,7 @@ router.post(
     try {
       const schema = {
         name: 'required|string',
-        price: 'required|number|above:0',
+        price: 'number|above:0',
         description: 'string|max:100',
         link: 'url'
       }

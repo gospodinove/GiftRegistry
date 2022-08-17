@@ -1,10 +1,11 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useState, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import { Button, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Button from '../components/Button'
 
 function Login() {
   const dispatch = useDispatch()
@@ -92,7 +93,6 @@ function Login() {
             type="email"
             label="Email"
             variant="outlined"
-            fullWidth
             value={email}
             onChange={handleEmailChange}
             error={errors.email !== undefined}
@@ -105,7 +105,6 @@ function Login() {
             type="password"
             label="Password"
             variant="outlined"
-            fullWidth
             value={password}
             onChange={handlePasswordChange}
             error={errors.password !== undefined}

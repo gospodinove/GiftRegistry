@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react'
+import { memo, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import Button from '../Button'
+import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -15,11 +15,11 @@ function CreateRegistryItemModal({ open, onClose }) {
 
   const initialData = useSelector(state => state.modals.createRegistryItem)
 
-  const [name, setName] = React.useState('')
-  const [price, setPrice] = React.useState(0)
-  const [description, setDescription] = React.useState('')
-  const [link, setLink] = React.useState('')
-  const [errors, setErrors] = React.useState({})
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [description, setDescription] = useState('')
+  const [link, setLink] = useState('')
+  const [errors, setErrors] = useState({})
 
   const handleClose = useCallback(() => {
     onClose()
@@ -28,7 +28,7 @@ function CreateRegistryItemModal({ open, onClose }) {
       setName('')
       setErrors({})
       setLink('')
-      setPrice(0)
+      setPrice('')
       setDescription('')
     }, 100)
   }, [onClose])
@@ -46,7 +46,9 @@ function CreateRegistryItemModal({ open, onClose }) {
 
   const handlePriceChange = useCallback(
     e => {
-      setPrice(e.target.value)
+      if (e.target.value >= 0) {
+        setPrice(e.target.value)
+      }
 
       if (errors.price !== undefined) {
         setErrors({ ...errors, price: undefined })
@@ -99,7 +101,10 @@ function CreateRegistryItemModal({ open, onClose }) {
 
         dispatch({
           type: 'registryItems/add',
-          payload: { registryId: initialData.registryId, item: response.item }
+          payload: {
+            registryId: initialData.registryId,
+            item: response.item
+          }
         })
 
         handleClose()
@@ -117,7 +122,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             return
 
           case 'field-error':
-            setErrors(error.message)
+            setErrors(error.data)
             return
 
           case 'general':
@@ -160,13 +165,11 @@ function CreateRegistryItemModal({ open, onClose }) {
                 helperText={errors.name}
                 autoFocus
                 required
-                margin="normal"
                 id="name"
                 label="Product name"
                 value={name}
+                color={initialData?.color}
                 onChange={handleNameChange}
-                fullWidth
-                variant="outlined"
               />
             </Grid>
 
@@ -174,13 +177,11 @@ function CreateRegistryItemModal({ open, onClose }) {
               <TextField
                 error={errors.price !== undefined}
                 helperText={errors.price}
-                required
-                margin="normal"
                 id="price"
                 label="Price"
                 value={price}
+                color={initialData?.color}
                 onChange={handlePriceChange}
-                variant="outlined"
                 type="number"
                 InputProps={{
                   startAdornment: (
@@ -194,13 +195,11 @@ function CreateRegistryItemModal({ open, onClose }) {
               <TextField
                 error={errors.description !== undefined}
                 helperText={errors.description}
-                margin="normal"
                 id="name"
                 label="Description"
                 value={description}
+                color={initialData?.color}
                 onChange={handleDescriptionChange}
-                fullWidth
-                variant="outlined"
                 multiline
                 maxRows={4}
               />
@@ -210,25 +209,27 @@ function CreateRegistryItemModal({ open, onClose }) {
               <TextField
                 error={errors.link !== undefined}
                 helperText={errors.link}
-                margin="normal"
                 id="name"
                 label="Link"
                 value={link}
+                color={initialData?.color}
                 onChange={handleLinkChange}
-                fullWidth
-                variant="outlined"
               />
             </Grid>
           </Grid>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Add product</Button>
+          <Button onClick={handleClose} color={initialData?.color}>
+            Cancel
+          </Button>
+          <Button type="submit" color={initialData?.color}>
+            Add product
+          </Button>
         </DialogActions>
       </Box>
     </Dialog>
   )
 }
 
-export default CreateRegistryItemModal
+export default memo(CreateRegistryItemModal)

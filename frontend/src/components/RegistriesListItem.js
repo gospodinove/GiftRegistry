@@ -1,49 +1,48 @@
-import React, { useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
-import CakeIcon from '@mui/icons-material/Cake'
-import SchoolIcon from '@mui/icons-material/School'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import ParkIcon from '@mui/icons-material/Park'
-import AnimationIcon from '@mui/icons-material/Animation'
 import { ListItem } from '@mui/material'
+import { styles } from './RegistriesListItem.styles'
+import Icon from './Icon'
+import { COLORS } from '..//constants'
 
-const getIcon = type => {
-  switch (type) {
+const getIconType = registryType => {
+  switch (registryType) {
     case 'Birthday':
-      return <CakeIcon />
-
+      return 'cake'
     case 'Wedding':
-      return <FavoriteIcon />
-
+      return 'favorite'
     case 'Graduation/Prom':
-      return <SchoolIcon />
-
+      return 'school'
     case 'Christmas':
-      return <ParkIcon />
-
+      return 'park'
+    case 'Custom':
     default:
-      return <AnimationIcon />
+      return 'animation'
   }
 }
 
 function RegistriesListItem({ registry, isSelected, onClick }) {
-  const handleClick = useCallback(() => {
-    onClick(registry)
-  }, [registry, onClick])
+  const handleClick = useCallback(() => onClick(registry), [registry, onClick])
+
+  const componentStyles = useMemo(
+    () => styles(registry.color ?? COLORS.ICON_DEFAULT, isSelected),
+    [registry.color, isSelected]
+  )
 
   return (
     <ListItem component="div" disablePadding>
       <ListItemButton
         component="button"
-        selected={isSelected}
+        className="listItemButton"
         onClick={handleClick}
+        sx={componentStyles.registryItemStyles}
       >
         <ListItemText primary={registry.name} secondary={registry.type} />
-        {getIcon(registry.type)}
+        <Icon type={getIconType(registry.type)} color={registry.color} />
       </ListItemButton>
     </ListItem>
   )
 }
 
-export default React.memo(RegistriesListItem)
+export default memo(RegistriesListItem)
