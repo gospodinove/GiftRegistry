@@ -1,11 +1,12 @@
 import { Box, Button, List, Stack, Typography } from '@mui/material'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import AddIcon from '@mui/icons-material/Add'
 import ShareIcon from '@mui/icons-material/Share'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import RegistryItemSkeleton from './RegistryItemSkeleton'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -19,6 +20,8 @@ const Registry = ({ registryId }) => {
   const owner = useSelector(
     state => state.registries.ownerByRegistryId[registryId]
   )
+
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchItems = useCallback(async () => {
     if (!registryId || items !== undefined) {
@@ -40,6 +43,8 @@ const Registry = ({ registryId }) => {
           message: error.data
         }
       })
+    } finally {
+      setIsLoading(false)
     }
   }, [registryId, items, dispatch])
 
@@ -144,7 +149,7 @@ const Registry = ({ registryId }) => {
         </>
       ) : null}
 
-      {items ? (
+      {items && !isLoading ? (
         <Box>
           <List>
             {items.map(item => (
@@ -156,7 +161,12 @@ const Registry = ({ registryId }) => {
             ))}
           </List>
         </Box>
-      ) : null}
+      ) : (
+        <>
+          <RegistryItemSkeleton />
+          <RegistryItemSkeleton />
+        </>
+      )}
     </>
   )
 }

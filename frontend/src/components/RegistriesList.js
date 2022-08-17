@@ -1,35 +1,9 @@
-import { Box, List, Skeleton, Stack } from '@mui/material'
+import { List } from '@mui/material'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
-import { styles } from './RegistriesList.styles'
-
-const Loader = () => (
-  <>
-    <Stack direction="row" spacing={5} pt="8px" pb="8px" pl="16px" pr="16px">
-      <Stack spacing={1} width="80%">
-        <Skeleton height={15} />
-        <Skeleton width="40%" height={15} />
-      </Stack>
-
-      <Box width="20%" sx={styles.skeletonCircleContainer}>
-        <Skeleton variant="circular" width={24} height={24} />
-      </Box>
-    </Stack>
-
-    <Stack direction="row" spacing={5} pt="8px" pb="8px" pl="16px" pr="16px">
-      <Stack spacing={1} width="80%">
-        <Skeleton height={15} />
-        <Skeleton width="40%" height={15} />
-      </Stack>
-
-      <Box width="20%" sx={styles.skeletonCircleContainer}>
-        <Skeleton variant="circular" width={24} height={24} />
-      </Box>
-    </Stack>
-  </>
-)
+import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 
 const RegistriesList = ({ onSelectedChange }) => {
   const registries = useSelector(state => state.registries.data)
@@ -84,7 +58,10 @@ const RegistriesList = ({ onSelectedChange }) => {
   return (
     <List>
       {isLoading ? (
-        <Loader />
+        <>
+          <RegistriesListItemSkeleton />
+          <RegistriesListItemSkeleton />
+        </>
       ) : (
         registriesSortedByDate.map(registry => (
           <RegistriesListItem
