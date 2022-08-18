@@ -113,9 +113,9 @@ function MainLayout() {
                     ).toUpperCase()}
                   />
                   {isUserInnerDrawerOpen ? (
-                    <Icon type="expandless" />
+                    <Icon type="expand-less" />
                   ) : (
-                    <Icon type="expandmore" />
+                    <Icon type="expand-more" />
                   )}
                 </ListItemButton>
               </ListItem>

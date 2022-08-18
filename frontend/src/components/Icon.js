@@ -79,10 +79,10 @@ const getIcon = (type, color, sx) => {
     case 'register':
       return <AppRegistrationIcon sx={styles} />
 
-    case 'expandless':
+    case 'expand-less':
       return <ExpandLessIcon sx={styles} />
 
-    case 'expandmore':
+    case 'expand-more':
       return <ExpandMoreIcon sx={styles} />
 
     default:
