@@ -7,8 +7,6 @@ import Button from '../components/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Collapse from '@mui/material/Collapse'
-import ExpandLess from '@mui/icons-material/ExpandLess'
-import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -25,10 +23,11 @@ import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
+import { COLORS } from '../constants'
 
 const authNavItems = [
-  { title: 'login', route: 'login' },
-  { title: 'register', route: 'register' }
+  { title: 'login', route: 'login', icon: 'login' },
+  { title: 'register', route: 'register', icon: 'register' }
 ]
 
 function MainLayout() {
@@ -39,17 +38,18 @@ function MainLayout() {
   const isAuthenticated = user !== undefined
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [innerDrawer, setInnerDrawer] = useState(false)
-  const [toggleAvatarDropdown, setToggleAvatarDropdown] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [isUserInnerDrawerOpen, setIsUserInnerDrawerOpen] = useState(false)
+  const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
+  const [avatarDropdownAnchorElement, setAvatarDropdownAnchorElement] =
+    useState(null)
 
   const handleDrawerToggle = useCallback(() => {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
   const handleInnerDrawerToggle = useCallback(() => {
-    setInnerDrawer(!innerDrawer)
-  }, [innerDrawer])
+    setIsUserInnerDrawerOpen(!isUserInnerDrawerOpen)
+  }, [isUserInnerDrawerOpen])
 
   const handleDrawerItemClick = useCallback(
     route => {
@@ -77,8 +77,8 @@ function MainLayout() {
         payload: { type: 'error', message: 'Something went wrong' }
       })
     }
-    setToggleAvatarDropdown(false)
-    setAnchorEl(null)
+    setIsAvatarDropdownOpen(false)
+    setAvatarDropdownAnchorElement(null)
   }, [dispatch])
 
   const drawer = useCallback(
@@ -93,17 +93,6 @@ function MainLayout() {
         </Box>
 
         <Divider />
-
-        {/* <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-          </ListItemButton>
-        </List>
-      </Collapse> */}
 
         <List>
           {isAuthenticated ? (
@@ -123,14 +112,18 @@ function MainLayout() {
                       user?.lastName
                     ).toUpperCase()}
                   />
-                  {innerDrawer ? <ExpandLess /> : <ExpandMore />}
+                  {isUserInnerDrawerOpen ? (
+                    <Icon type="expandless" />
+                  ) : (
+                    <Icon type="expandmore" />
+                  )}
                 </ListItemButton>
               </ListItem>
-              <Collapse in={innerDrawer} timeout="auto" unmountOnExit>
+              <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
                 <List>
                   <ListItemButton
                     onClick={handleLogoutClick}
-                    sx={styles.logoutListItemButton}
+                    sx={styles.nestedListItem}
                   >
                     <ListItemIcon>
                       <Icon type="logout" />
@@ -148,7 +141,7 @@ function MainLayout() {
                   sx={styles.listItemButton}
                 >
                   <ListItemIcon>
-                    <Icon type={item.title.replace(/\s/g, '')} />
+                    <Icon type={item.icon} />
                   </ListItemIcon>
                   <ListItemText primary={item.title.toUpperCase()} />
                 </ListItemButton>
@@ -165,7 +158,7 @@ function MainLayout() {
       handleLogoutClick,
       user?.firstName,
       user?.lastName,
-      innerDrawer,
+      isUserInnerDrawerOpen,
       handleInnerDrawerToggle
     ]
   )
@@ -184,12 +177,14 @@ function MainLayout() {
     [navigate]
   )
 
-  const handleAvatarClick = useCallback(
+  const handleAvatarDropdownToggle = useCallback(
     event => {
-      setToggleAvatarDropdown(!toggleAvatarDropdown)
-      setAnchorEl(anchorEl ? null : event.currentTarget)
+      setIsAvatarDropdownOpen(!isAvatarDropdownOpen)
+      setAvatarDropdownAnchorElement(
+        avatarDropdownAnchorElement ? null : event.currentTarget
+      )
     },
-    [toggleAvatarDropdown, anchorEl]
+    [isAvatarDropdownOpen, avatarDropdownAnchorElement]
   )
 
   return (
@@ -210,21 +205,21 @@ function MainLayout() {
               <>
                 <Button
                   icon="account-circle"
-                  color="#ffffff"
+                  color={COLORS.WHITE}
                   icon-mode="start"
-                  onClick={handleAvatarClick}
+                  onClick={handleAvatarDropdownToggle}
                 >
                   {user?.firstName + ' ' + user?.lastName}
                 </Button>
 
                 <Menu
-                  open={toggleAvatarDropdown}
-                  anchorEl={anchorEl}
-                  onClose={handleAvatarClick}
+                  open={isAvatarDropdownOpen}
+                  anchorEl={avatarDropdownAnchorElement}
+                  onClose={handleAvatarDropdownToggle}
                 >
                   <MenuItem onClick={handleLogoutClick}>
-                    <Icon type="logout" />
-                    {'\xa0\xa0Logout'}
+                    <Icon type="logout" sx={styles.logoutIcon} />
+                    Logout
                   </MenuItem>
                 </Menu>
               </>
@@ -232,7 +227,7 @@ function MainLayout() {
               authNavItems.map(item => (
                 <Button
                   key={item.title}
-                  color="#ffffff"
+                  color={COLORS.WHITE}
                   data-route={item.route}
                   onClick={handleAuthItemClick}
                 >
@@ -243,7 +238,7 @@ function MainLayout() {
           </Box>
 
           <Button
-            color="#ffffff"
+            color={COLORS.WHITE}
             icon="menu"
             icon-mode="icon-only"
             aria-label="open drawer"
