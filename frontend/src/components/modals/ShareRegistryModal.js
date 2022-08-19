@@ -13,7 +13,7 @@ import { styles } from './ShareRegistryModal.styles'
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(state => state.modals.shareRegistry)
+  const initialData = useSelector(state => state.modals.shareRegistry?.data)
 
   const [emails, setEmails] = useState([''])
   const [errors, setErrors] = useState([])

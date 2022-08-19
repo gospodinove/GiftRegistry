@@ -19,6 +19,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import EditIcon from '@mui/icons-material/Edit'
 import { memo } from 'react'
 
 const getIcon = (type, color, sx) => {
@@ -84,6 +85,9 @@ const getIcon = (type, color, sx) => {
 
     case 'expand-more':
       return <ExpandMoreIcon sx={styles} />
+
+    case 'edit':
+      return <EditIcon sx={styles} />
 
     default:
       return <QuestionMarkIcon sx={styles} />
