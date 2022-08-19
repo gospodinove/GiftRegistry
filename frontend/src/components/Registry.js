@@ -1,4 +1,4 @@
-import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
+import { List, Skeleton, Stack, Typography } from '@mui/material'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
@@ -6,6 +6,7 @@ import RegistryItem from './RegistryItem'
 import Button from './Button'
 import Icon from './Icon'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
+import Empty from './Empty'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -180,24 +181,24 @@ const Registry = ({ registryId }) => {
         </>
       ) : null}
 
-      {items && !isLoadingItems ? (
-        <Box>
-          <List>
-            {items.map(item => (
-              <RegistryItem
-                key={item.id}
-                data={item}
-                color={registryData.color}
-                onToggle={handleItemToggle}
-              />
-            ))}
-          </List>
-        </Box>
-      ) : (
+      {isLoadingItems ? (
         <>
           <RegistryItemSkeleton />
           <RegistryItemSkeleton />
         </>
+      ) : items?.length > 0 ? (
+        <List>
+          {items.map(item => (
+            <RegistryItem
+              key={item.id}
+              data={item}
+              color={registryData.color}
+              onToggle={handleItemToggle}
+            />
+          ))}
+        </List>
+      ) : (
+        <Empty text="No products in the registry" />
       )}
     </>
   )

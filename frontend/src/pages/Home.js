@@ -9,6 +9,7 @@ import './Home.css'
 import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
+import usePrevious from '../hooks/usePrevious'
 
 function Home() {
   const dispatch = useDispatch()
@@ -17,6 +18,8 @@ function Home() {
   const isAuthenticated = useSelector(state => state.auth.user !== undefined)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
+
+  const prev = usePrevious({ isAuthenticated })
 
   const authenticateWithToken = useCallback(
     async token => {
@@ -40,6 +43,12 @@ function Home() {
     }
   }, [params, isAuthenticated, authenticateWithToken])
 
+  useEffect(() => {
+    if (prev?.isAuthenticated !== isAuthenticated) {
+      setSelectedRegistryId(null)
+    }
+  }, [isAuthenticated, prev?.isAuthenticated])
+
   const handleCreateRegistryButtonClick = useCallback(
     () =>
       dispatch({ type: 'modals/show', payload: { name: 'createRegistry' } }),
@@ -55,18 +64,18 @@ function Home() {
     <Box sx={styles.box}>
       <Grid container sx={styles.gridContainer} spacing={2}>
         <Grid item xs={3} sx={styles.gridItem}>
-          {isAuthenticated ? (
-            <Button
-              sx={styles.button}
-              variant="outlined"
-              onClick={handleCreateRegistryButtonClick}
-              icon="add"
-              icon-mode="start"
-            >
-              Create new registry
-            </Button>
-          ) : null}
-          <RegistriesList onSelectedChange={onSelectedChange} />
+          <Button
+            sx={styles.button}
+            variant="outlined"
+            onClick={handleCreateRegistryButtonClick}
+            icon="add"
+            icon-mode="start"
+          >
+            Create new registry
+          </Button>
+          {isAuthenticated && (
+            <RegistriesList onSelectedChange={onSelectedChange} />
+          )}
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
           {selectedRegistryId ? (
