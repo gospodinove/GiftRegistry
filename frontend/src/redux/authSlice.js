@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+export const USER_SESSION_STATE = { FETCHED: 'fetched', FETCHING: 'fetching' }
+
 const initialState = {
   user: undefined,
-  // Possible values: fetching, fetched
-  userSessionState: 'fetching'
+  userSessionState: undefined
 }
 
 export const authSlice = createSlice({
@@ -14,10 +15,10 @@ export const authSlice = createSlice({
       state.user = action.payload
     },
     setUserSessionFetching: state => {
-      state.userSessionState = 'fetching'
+      state.userSessionState = USER_SESSION_STATE.FETCHING
     },
     setUserSessionFetched: state => {
-      state.userSessionState = 'fetched'
+      state.userSessionState = USER_SESSION_STATE.FETCHED
     },
     clear: () => initialState
   }

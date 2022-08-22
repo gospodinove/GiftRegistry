@@ -1,48 +1,36 @@
 import { memo, useMemo, useState, useCallback } from 'react'
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import Typography from '@mui/material/Typography'
 import Button from '../components/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Collapse from '@mui/material/Collapse'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Skeleton
+  AppBar,
+  Box,
+  Menu,
+  MenuItem,
+  Skeleton,
+  Toolbar,
+  Typography
 } from '@mui/material'
 import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
-import { COLORS, NAVBAR_HEIGHT } from '../constants'
-
-const authNavItems = [
-  { title: 'login', route: 'login', icon: 'login' },
-  { title: 'register', route: 'register', icon: 'register' }
-]
+import { AUTH_NAV_ITEMS, COLORS } from '../constants'
+import MainLayoutDrawer from './components/MainLayoutDrawer'
+import { USER_SESSION_STATE } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const userSessionState = useSelector(state => state.auth.userSessionState)
-  const isUserFetched = userSessionState === 'fetched'
+  const isFetchingSession = userSessionState === USER_SESSION_STATE.FETCHING
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [isUserInnerDrawerOpen, setIsUserInnerDrawerOpen] = useState(false)
   const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
   const [avatarDropdownAnchorElement, setAvatarDropdownAnchorElement] =
     useState(null)
@@ -51,19 +39,10 @@ function MainLayout() {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
-  const handleInnerDrawerToggle = useCallback(() => {
-    setIsUserInnerDrawerOpen(!isUserInnerDrawerOpen)
-  }, [isUserInnerDrawerOpen])
-
-  const handleDrawerItemClick = useCallback(
-    route => {
-      handleDrawerToggle()
-      navigate(route)
-    },
-    [handleDrawerToggle, navigate]
-  )
-
   const handleLogoutClick = useCallback(async () => {
+    setIsAvatarDropdownOpen(false)
+    setAvatarDropdownAnchorElement(null)
+
     try {
       await api('auth/logout')
 
@@ -81,106 +60,7 @@ function MainLayout() {
         payload: { type: 'error', message: 'Something went wrong' }
       })
     }
-    setIsAvatarDropdownOpen(false)
-    setAvatarDropdownAnchorElement(null)
   }, [dispatch])
-
-  const renderDrawerAuthItems = useCallback(() => {
-    if (!isUserFetched) {
-      return (
-        <Box mr={3} ml={3}>
-          <Skeleton height={40} width="100%" />
-        </Box>
-      )
-    }
-
-    if (!isAuthenticated) {
-      return authNavItems.map(item => (
-        <ListItem key={item.title} disablePadding>
-          <ListItemButton
-            onClick={() => handleDrawerItemClick(item.route)}
-            sx={styles.listItemButton}
-          >
-            <ListItemIcon>
-              <Icon type={item.icon} />
-            </ListItemIcon>
-            <ListItemText primary={item.title.toUpperCase()} />
-          </ListItemButton>
-        </ListItem>
-      ))
-    }
-
-    return (
-      <>
-        <ListItem key="logout" disablePadding>
-          <ListItemButton
-            onClick={handleInnerDrawerToggle}
-            sx={styles.listItemButton}
-          >
-            <ListItemIcon>
-              <Icon type="account-box" />
-            </ListItemIcon>
-            <ListItemText
-              primary={(user?.firstName + ' ' + user?.lastName).toUpperCase()}
-            />
-            {isUserInnerDrawerOpen ? (
-              <Icon type="expand-less" />
-            ) : (
-              <Icon type="expand-more" />
-            )}
-          </ListItemButton>
-        </ListItem>
-        <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
-          <List>
-            <ListItemButton
-              onClick={handleLogoutClick}
-              sx={styles.nestedListItem}
-            >
-              <ListItemIcon>
-                <Icon type="logout" />
-              </ListItemIcon>
-              <ListItemText primary="LOG OUT" />
-            </ListItemButton>
-          </List>
-        </Collapse>
-      </>
-    )
-  }, [
-    handleDrawerItemClick,
-    handleInnerDrawerToggle,
-    handleLogoutClick,
-    isAuthenticated,
-    isUserFetched,
-    isUserInnerDrawerOpen,
-    user?.firstName,
-    user?.lastName
-  ])
-
-  const renderDrawer = useCallback(
-    () => (
-      <Box sx={styles.drawerBox}>
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="center"
-          p={0.5}
-          pr={2}
-          height={NAVBAR_HEIGHT}
-        >
-          <Button
-            onClick={handleDrawerToggle}
-            icon-mode="icon-only"
-            icon="close"
-          />
-        </Box>
-
-        <Divider />
-
-        <List>{renderDrawerAuthItems()}</List>
-      </Box>
-    ),
-    [handleDrawerToggle, renderDrawerAuthItems]
-  )
 
   const container = useMemo(
     () => (window !== undefined ? window.document.body : undefined),
@@ -207,12 +87,12 @@ function MainLayout() {
   )
 
   const renderAuthItems = useCallback(() => {
-    if (!isUserFetched) {
+    if (isFetchingSession) {
       return <Skeleton height={30} width={200} sx={styles.skeleton} />
     }
 
     if (!isAuthenticated) {
-      return authNavItems.map(item => (
+      return AUTH_NAV_ITEMS.map(item => (
         <Button
           key={item.title}
           color={COLORS.WHITE}
@@ -256,7 +136,7 @@ function MainLayout() {
     handleLogoutClick,
     isAuthenticated,
     isAvatarDropdownOpen,
-    isUserFetched,
+    isFetchingSession,
     user?.firstName,
     user?.lastName
   ])
@@ -291,18 +171,14 @@ function MainLayout() {
       </AppBar>
 
       <Box component="nav">
-        {/* TODO: drawer component */}
-        <Drawer
+        <MainLayoutDrawer
           container={container}
-          anchor="top"
-          variant="temporary"
           open={isDrawerOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={styles.drawer}
-        >
-          {renderDrawer()}
-        </Drawer>
+          user={user}
+          isFetchingSession={isFetchingSession}
+          onToggle={handleDrawerToggle}
+          onLogoutClick={handleLogoutClick}
+        />
       </Box>
 
       <Box component="main" sx={styles.mainBox}>

@@ -7,3 +7,8 @@ export const COLORS = {
   ICON_DEFAULT: '#000000',
   WHITE: '#ffffff'
 }
+
+export const AUTH_NAV_ITEMS = [
+  { title: 'login', route: 'login', icon: 'login' },
+  { title: 'register', route: 'register', icon: 'register' }
+]
