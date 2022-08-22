@@ -223,4 +223,40 @@ router.get(
   }
 )
 
+router.put(
+  '/:registryId',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    const data = req.body
+
+    const schema = {
+      type: 'required|string|max:30',
+      name: 'required|string',
+      color: 'required|string'
+    }
+
+    try {
+      await validateAll(data, schema, validationMessages)
+
+      try {
+        const result = await db.collection('registries').findOneAndUpdate(
+          { _id: ObjectId(req.params.registryId) },
+          {
+            $set: { type: data.type, name: data.name, color: data.color }
+          },
+          { returnDocument: 'after' }
+        )
+
+        res.json({ registry: replaceId(result.value) })
+      } catch {
+        sendErrorResponse(res, 500, 'general', 'Could not update registry')
+      }
+    } catch (errors) {
+      sendErrorResponse(res, 500, 'field-error', errors)
+    }
+  }
+)
+
 module.exports = router

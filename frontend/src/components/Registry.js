@@ -120,11 +120,7 @@ const Registry = ({ registryId }) => {
       type: 'modals/show',
       payload: {
         name: 'createRegistry',
-        data: {
-          type: registryData.type,
-          name: registryData.name,
-          color: registryData.color
-        }
+        data: registryData
       }
     })
   }, [dispatch, registryData])

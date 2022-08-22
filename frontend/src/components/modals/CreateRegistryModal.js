@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useEffect } from 'react'
+import { memo, useState, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
@@ -17,6 +17,11 @@ function CreateRegistryModal({ open, onClose }) {
 
   const initialData = useSelector(state => state.modals.createRegistry?.data)
 
+  const isModalInUpdateMode = useMemo(
+    () => initialData !== undefined,
+    [initialData]
+  )
+
   const [color, setColor] = useState(COLORS.APP[0])
   const [type, setType] = useState('Birthday')
   const [name, setName] = useState('')
@@ -24,7 +29,7 @@ function CreateRegistryModal({ open, onClose }) {
   const [customType, setCustomType] = useState('Custom')
 
   useEffect(() => {
-    if (initialData) {
+    if (isModalInUpdateMode) {
       setName(initialData.name)
       setColor(initialData.color)
 
@@ -35,7 +40,7 @@ function CreateRegistryModal({ open, onClose }) {
         setCustomType(initialData.type)
       }
     }
-  }, [initialData])
+  }, [initialData, isModalInUpdateMode])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -88,60 +93,66 @@ function CreateRegistryModal({ open, onClose }) {
     async e => {
       e.preventDefault()
 
-      setErrors({})
-
       const data = {
         type: type === 'Custom' ? customType : type,
         name,
         color
       }
 
-      try {
-        const response = await api('registries', 'post', data)
+      setErrors({})
 
-        dispatch({ type: 'registries/add', payload: [response.registry] })
+      try {
+        const result = await api(
+          isModalInUpdateMode ? 'registries/' + initialData.id : 'registries',
+          isModalInUpdateMode ? 'put' : 'post',
+          data
+        )
+        dispatch({
+          type: isModalInUpdateMode ? 'registries/update' : 'registries/add',
+          payload: isModalInUpdateMode ? result.registry : [result.registry]
+        })
 
         handleClose()
       } catch (error) {
         switch (error.type) {
-          case 'incomplete-registration':
-            dispatch({
-              type: 'toast/show',
-              payload: {
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              }
-            })
-            return
-
           case 'field-error':
             setErrors(error.data)
-            return
+            break
 
           case 'general':
             dispatch({
               type: 'toast/show',
               payload: { type: 'error', message: error.data }
             })
-            return
+            break
 
           default:
             dispatch({
               type: 'toast/show',
               payload: { type: 'error', message: 'Something went wrong' }
             })
-            return
+            break
         }
       }
     },
-    [name, type, customType, color, dispatch, handleClose]
+    [
+      type,
+      customType,
+      name,
+      color,
+      isModalInUpdateMode,
+      handleClose,
+      dispatch,
+      initialData
+    ]
   )
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogTitle>New registry</DialogTitle>
+        <DialogTitle>
+          {initialData ? 'Edit registry' : 'New registry'}
+        </DialogTitle>
 
         <DialogContent>
           <ColorSelector
