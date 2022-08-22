@@ -16,14 +16,15 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Skeleton
 } from '@mui/material'
 import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
-import { COLORS } from '../constants'
+import { COLORS, NAVBAR_HEIGHT } from '../constants'
 
 const authNavItems = [
   { title: 'login', route: 'login', icon: 'login' },
@@ -33,6 +34,9 @@ const authNavItems = [
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const userSessionState = useSelector(state => state.auth.userSessionState)
+  const isUserFetched = userSessionState === 'fetched'
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
@@ -81,10 +85,88 @@ function MainLayout() {
     setAvatarDropdownAnchorElement(null)
   }, [dispatch])
 
-  const drawer = useCallback(
+  const renderDrawerAuthItems = useCallback(() => {
+    if (!isUserFetched) {
+      return (
+        <Box mr={3} ml={3}>
+          <Skeleton height={40} width="100%" />
+        </Box>
+      )
+    }
+
+    if (!isAuthenticated) {
+      return authNavItems.map(item => (
+        <ListItem key={item.title} disablePadding>
+          <ListItemButton
+            onClick={() => handleDrawerItemClick(item.route)}
+            sx={styles.listItemButton}
+          >
+            <ListItemIcon>
+              <Icon type={item.icon} />
+            </ListItemIcon>
+            <ListItemText primary={item.title.toUpperCase()} />
+          </ListItemButton>
+        </ListItem>
+      ))
+    }
+
+    return (
+      <>
+        <ListItem key="logout" disablePadding>
+          <ListItemButton
+            onClick={handleInnerDrawerToggle}
+            sx={styles.listItemButton}
+          >
+            <ListItemIcon>
+              <Icon type="account-box" />
+            </ListItemIcon>
+            <ListItemText
+              primary={(user?.firstName + ' ' + user?.lastName).toUpperCase()}
+            />
+            {isUserInnerDrawerOpen ? (
+              <Icon type="expand-less" />
+            ) : (
+              <Icon type="expand-more" />
+            )}
+          </ListItemButton>
+        </ListItem>
+        <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
+          <List>
+            <ListItemButton
+              onClick={handleLogoutClick}
+              sx={styles.nestedListItem}
+            >
+              <ListItemIcon>
+                <Icon type="logout" />
+              </ListItemIcon>
+              <ListItemText primary="LOG OUT" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      </>
+    )
+  }, [
+    handleDrawerItemClick,
+    handleInnerDrawerToggle,
+    handleLogoutClick,
+    isAuthenticated,
+    isUserFetched,
+    isUserInnerDrawerOpen,
+    user?.firstName,
+    user?.lastName
+  ])
+
+  const renderDrawer = useCallback(
     () => (
       <Box sx={styles.drawerBox}>
-        <Box display="flex" justifyContent="flex-end" p={0.5} pr={2}>
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+          p={0.5}
+          pr={2}
+          height={NAVBAR_HEIGHT}
+        >
           <Button
             onClick={handleDrawerToggle}
             icon-mode="icon-only"
@@ -94,73 +176,10 @@ function MainLayout() {
 
         <Divider />
 
-        <List>
-          {isAuthenticated ? (
-            <>
-              <ListItem key="logout" disablePadding>
-                <ListItemButton
-                  onClick={handleInnerDrawerToggle}
-                  sx={styles.listItemButton}
-                >
-                  <ListItemIcon>
-                    <Icon type="account-box" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={(
-                      user?.firstName +
-                      ' ' +
-                      user?.lastName
-                    ).toUpperCase()}
-                  />
-                  {isUserInnerDrawerOpen ? (
-                    <Icon type="expand-less" />
-                  ) : (
-                    <Icon type="expand-more" />
-                  )}
-                </ListItemButton>
-              </ListItem>
-              <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
-                <List>
-                  <ListItemButton
-                    onClick={handleLogoutClick}
-                    sx={styles.nestedListItem}
-                  >
-                    <ListItemIcon>
-                      <Icon type="logout" />
-                    </ListItemIcon>
-                    <ListItemText primary="LOG OUT" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            </>
-          ) : (
-            authNavItems.map(item => (
-              <ListItem key={item.title} disablePadding>
-                <ListItemButton
-                  onClick={() => handleDrawerItemClick(item.route)}
-                  sx={styles.listItemButton}
-                >
-                  <ListItemIcon>
-                    <Icon type={item.icon} />
-                  </ListItemIcon>
-                  <ListItemText primary={item.title.toUpperCase()} />
-                </ListItemButton>
-              </ListItem>
-            ))
-          )}
-        </List>
+        <List>{renderDrawerAuthItems()}</List>
       </Box>
     ),
-    [
-      handleDrawerItemClick,
-      handleDrawerToggle,
-      isAuthenticated,
-      handleLogoutClick,
-      user?.firstName,
-      user?.lastName,
-      isUserInnerDrawerOpen,
-      handleInnerDrawerToggle
-    ]
+    [handleDrawerToggle, renderDrawerAuthItems]
   )
 
   const container = useMemo(
@@ -187,6 +206,61 @@ function MainLayout() {
     [isAvatarDropdownOpen, avatarDropdownAnchorElement]
   )
 
+  const renderAuthItems = useCallback(() => {
+    if (!isUserFetched) {
+      return <Skeleton height={30} width={200} sx={styles.skeleton} />
+    }
+
+    if (!isAuthenticated) {
+      return authNavItems.map(item => (
+        <Button
+          key={item.title}
+          color={COLORS.WHITE}
+          data-route={item.route}
+          onClick={handleAuthItemClick}
+          icon={item.icon}
+          icon-mode="start"
+        >
+          {item.title}
+        </Button>
+      ))
+    }
+
+    return (
+      <>
+        <Button
+          icon="account-circle"
+          color={COLORS.WHITE}
+          icon-mode="start"
+          onClick={handleAvatarDropdownToggle}
+        >
+          {user?.firstName + ' ' + user?.lastName}
+        </Button>
+
+        <Menu
+          open={isAvatarDropdownOpen}
+          anchorEl={avatarDropdownAnchorElement}
+          onClose={handleAvatarDropdownToggle}
+        >
+          <MenuItem onClick={handleLogoutClick}>
+            <Icon type="logout" sx={styles.logoutIcon} />
+            Logout
+          </MenuItem>
+        </Menu>
+      </>
+    )
+  }, [
+    avatarDropdownAnchorElement,
+    handleAuthItemClick,
+    handleAvatarDropdownToggle,
+    handleLogoutClick,
+    isAuthenticated,
+    isAvatarDropdownOpen,
+    isUserFetched,
+    user?.firstName,
+    user?.lastName
+  ])
+
   return (
     <Box sx={styles.rootBox}>
       <AppBar position="fixed" sx={styles.appBar}>
@@ -200,42 +274,7 @@ function MainLayout() {
             Gift Registry
           </Typography>
 
-          <Box sx={styles.authNavBox}>
-            {isAuthenticated ? (
-              <>
-                <Button
-                  icon="account-circle"
-                  color={COLORS.WHITE}
-                  icon-mode="start"
-                  onClick={handleAvatarDropdownToggle}
-                >
-                  {user?.firstName + ' ' + user?.lastName}
-                </Button>
-
-                <Menu
-                  open={isAvatarDropdownOpen}
-                  anchorEl={avatarDropdownAnchorElement}
-                  onClose={handleAvatarDropdownToggle}
-                >
-                  <MenuItem onClick={handleLogoutClick}>
-                    <Icon type="logout" sx={styles.logoutIcon} />
-                    Logout
-                  </MenuItem>
-                </Menu>
-              </>
-            ) : (
-              authNavItems.map(item => (
-                <Button
-                  key={item.title}
-                  color={COLORS.WHITE}
-                  data-route={item.route}
-                  onClick={handleAuthItemClick}
-                >
-                  {item.title}
-                </Button>
-              ))
-            )}
-          </Box>
+          <Box sx={styles.authNavBox}>{renderAuthItems()}</Box>
 
           <Button
             color={COLORS.WHITE}
@@ -252,6 +291,7 @@ function MainLayout() {
       </AppBar>
 
       <Box component="nav">
+        {/* TODO: drawer component */}
         <Drawer
           container={container}
           anchor="top"
@@ -261,7 +301,7 @@ function MainLayout() {
           ModalProps={{ keepMounted: true }}
           sx={styles.drawer}
         >
-          {drawer()}
+          {renderDrawer()}
         </Drawer>
       </Box>
 

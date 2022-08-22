@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
@@ -9,15 +9,15 @@ import Register from './pages/Register'
 import { api } from './utils/api'
 import { isEmptyObject } from './utils/objects'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
-import FullPageLoader from './components/FullPageLoader'
 
 function App() {
   const dispatch = useDispatch()
-  const [isLoading, setIsLoading] = useState(true)
 
   const user = useSelector(state => state.auth.user)
 
   const checkLoggedIn = useCallback(async () => {
+    dispatch({ type: 'auth/setUserSessionFetching' })
+
     try {
       const user = await api('auth/session-user')
 
@@ -26,18 +26,15 @@ function App() {
       }
     } catch {
     } finally {
-      setIsLoading(false)
+      dispatch({ type: 'auth/setUserSessionFetched' })
     }
   }, [dispatch])
 
   useEffect(() => {
-    // TODO: Add full-page loader for app set-up
     checkLoggedIn()
   }, [checkLoggedIn])
 
-  return isLoading ? (
-    <FullPageLoader />
-  ) : (
+  return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route path="/" element={<Home />} />

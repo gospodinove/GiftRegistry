@@ -27,5 +27,6 @@ export const styles = {
   mainBox: { p: 3, pt: 0, pb: 0, height: '100%' },
   authNavBox: {
     display: { xs: 'none', sm: 'block' }
-  }
+  },
+  skeleton: { backgroundColor: 'rgba(255,255,255,0.6)' }
 }
