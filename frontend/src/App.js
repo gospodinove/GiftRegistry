@@ -15,7 +15,7 @@ function App() {
 
   const user = useSelector(state => state.auth.user)
 
-  const checkLoggedIn = useCallback(async () => {
+  const checkUserSession = useCallback(async () => {
     dispatch({ type: 'auth/setUserSessionFetching' })
 
     try {
@@ -31,8 +31,8 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
-    checkLoggedIn()
-  }, [checkLoggedIn])
+    checkUserSession()
+  }, [checkUserSession])
 
   return (
     <Routes>

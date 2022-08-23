@@ -25,6 +25,8 @@ const RegistriesList = ({ onSelectedChange }) => {
   const dispatch = useDispatch()
 
   const maybeFetchRegistries = useCallback(async () => {
+    setIsLoading(true)
+
     try {
       if (registries.length > 0) {
         return
@@ -55,28 +57,28 @@ const RegistriesList = ({ onSelectedChange }) => {
     [onSelectedChange]
   )
 
-  return (
-    <>
-      {isLoading ? (
-        <>
-          <RegistriesListItemSkeleton />
-          <RegistriesListItemSkeleton />
-        </>
-      ) : registriesSortedByDate.length > 0 ? (
-        <List>
-          {registriesSortedByDate.map(registry => (
-            <RegistriesListItem
-              key={registry.id}
-              registry={registry}
-              isSelected={selectedRegistryId === registry.id}
-              onClick={handleRegistryClick}
-            />
-          ))}
-        </List>
-      ) : (
-        <Empty text="No registries" />
-      )}
-    </>
+  if (isLoading) {
+    return (
+      <>
+        <RegistriesListItemSkeleton />
+        <RegistriesListItemSkeleton />
+      </>
+    )
+  }
+
+  return registriesSortedByDate.length > 0 ? (
+    <List>
+      {registriesSortedByDate.map(registry => (
+        <RegistriesListItem
+          key={registry.id}
+          registry={registry}
+          isSelected={selectedRegistryId === registry.id}
+          onClick={handleRegistryClick}
+        />
+      ))}
+    </List>
+  ) : (
+    <Empty text="No registries" />
   )
 }
 

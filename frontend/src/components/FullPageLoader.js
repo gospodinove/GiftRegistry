@@ -1,10 +1,15 @@
 import { Box } from '@mui/material'
 import { memo } from 'react'
 import calendarGif from '../assets/flipbook.gif'
-import { styles } from './FullPageLoader.styles'
 
 const FullPageLoader = () => (
-  <Box sx={styles}>
+  <Box
+    width="100%"
+    height="100%"
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+  >
     <img src={calendarGif} alt="Loading..." width={250} height={250} />
   </Box>
 )

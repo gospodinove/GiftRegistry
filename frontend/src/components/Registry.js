@@ -25,11 +25,13 @@ const Registry = ({ registryId }) => {
   const [isLoadingOwner, setIsLoadingOwner] = useState(true)
 
   const fetchItems = useCallback(async () => {
-    if (!registryId || items !== undefined) {
-      return
-    }
-
     try {
+      setIsLoadingItems(true)
+
+      if (!registryId || items !== undefined) {
+        return
+      }
+
       const response = await api('registries/' + registryId + '/items')
 
       dispatch({
@@ -50,13 +52,15 @@ const Registry = ({ registryId }) => {
   }, [registryId, items, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    const registryOwner = registryData.users.find(u => u.role === 'owner')
-
-    if (user.email === registryOwner.email || owner !== undefined) {
-      return
-    }
-
     try {
+      setIsLoadingOwner(true)
+
+      const registryOwner = registryData.users.find(u => u.role === 'owner')
+
+      if (user.email === registryOwner.email || owner !== undefined) {
+        return
+      }
+
       const response = await api('registries/' + registryId + '/owner')
 
       dispatch({
