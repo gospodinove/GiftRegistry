@@ -7,3 +7,11 @@ export const COLORS = {
   ICON_DEFAULT: '#000000',
   WHITE: '#ffffff'
 }
+
+export const REGISTRY_TYPES = [
+  'Birthday',
+  'Wedding',
+  'Graduation/Prom',
+  'Christmas',
+  'Custom'
+]

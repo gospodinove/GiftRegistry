@@ -13,7 +13,9 @@ import { Grid, InputAdornment } from '@mui/material'
 function CreateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(state => state.modals.createRegistryItem)
+  const initialData = useSelector(
+    state => state.modals.createRegistryItem?.data
+  )
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')

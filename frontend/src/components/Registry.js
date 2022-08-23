@@ -5,6 +5,7 @@ import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import Button from './Button'
 import Icon from './Icon'
+import { COLORS } from '../constants'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -109,12 +110,37 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
+  const onEditClick = useCallback(async () => {
+    if (!registryData) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'createRegistry',
+        data: registryData
+      }
+    })
+  }, [dispatch, registryData])
+
   return (
     <>
       {registryData ? (
         /* TODO: Create RegistryDetailsSummary component */
         <>
-          <Typography variant="h4">{registryData.name}</Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="h4">{registryData.name}</Typography>
+            <Button
+              icon-mode="icon-only"
+              icon="edit"
+              color={COLORS.LIGHTGRAY}
+              component="div"
+              onClick={onEditClick}
+            >
+              edit
+            </Button>
+          </Box>
 
           {owner && (
             <Stack direction="row" spacing={1}>

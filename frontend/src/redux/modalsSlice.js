@@ -8,7 +8,7 @@ export const modalsSlice = createSlice({
   initialState,
   reducers: {
     show: (state, action) => {
-      state[action.payload.name] = action.payload.data ?? {}
+      state[action.payload.name] = { data: action.payload.data }
     },
     hide: (state, action) => {
       state[action.payload.name] = undefined

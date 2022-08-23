@@ -6,7 +6,7 @@ import { COLORS } from '../constants'
 import Icon from './Icon'
 
 function Button({ color, ...props }) {
-  // FIXME: on some colors before the scroller in the createRegistryModal appears font weight is bolded
+  // FIXME: on some colors before the scroller in the PopulateRegistryModal appears font weight is bolded
   const buttonStyles = useMemo(
     () => ({
       ...props.sx,
