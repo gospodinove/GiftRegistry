@@ -12,7 +12,7 @@ import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
 import { COLORS, REGISTRY_TYPES } from '../../constants'
 
-function CreateRegistryModal({ open, onClose }) {
+function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const initialData = useSelector(state => state.modals.createRegistry?.data)
@@ -115,6 +115,17 @@ function CreateRegistryModal({ open, onClose }) {
         handleClose()
       } catch (error) {
         switch (error.type) {
+          case 'incomplete-registration':
+            dispatch({
+              type: 'toast/show',
+              payload: {
+                type: 'error',
+                message: error.data,
+                navigation: { title: 'Register', target: '/register' }
+              }
+            })
+            break
+
           case 'field-error':
             setErrors(error.data)
             break
@@ -212,4 +223,4 @@ function CreateRegistryModal({ open, onClose }) {
   )
 }
 
-export default memo(CreateRegistryModal)
+export default memo(PopulateRegistryModal)

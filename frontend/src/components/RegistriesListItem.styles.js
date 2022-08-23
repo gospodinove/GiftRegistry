@@ -10,7 +10,6 @@ export function styles(hex, isSelected) {
     },
     iconStyles: {
       color: hex
-    },
-    listItemText: { width: 'min-content' }
+    }
   }
 }

@@ -38,12 +38,7 @@ function RegistriesListItem({ registry, isSelected, onClick }) {
         onClick={handleClick}
         sx={componentStyles.registryItemStyles}
       >
-        <ListItemText
-          primary={registry.name}
-          secondary={registry.type}
-          sx={componentStyles.listItemText}
-          color="secondary"
-        />
+        <ListItemText primary={registry.name} secondary={registry.type} />
 
         <Icon type={getIconType(registry.type)} color={registry.color} />
       </ListItemButton>

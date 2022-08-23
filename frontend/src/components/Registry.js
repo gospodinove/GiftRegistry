@@ -6,7 +6,6 @@ import RegistryItem from './RegistryItem'
 import Button from './Button'
 import Icon from './Icon'
 import { COLORS } from '../constants'
-import { styles } from './Registry.styles'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -130,7 +129,7 @@ const Registry = ({ registryId }) => {
       {registryData ? (
         /* TODO: Create RegistryDetailsSummary component */
         <>
-          <Box sx={styles.nameBox}>
+          <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">{registryData.name}</Typography>
             <Button
               icon-mode="icon-only"

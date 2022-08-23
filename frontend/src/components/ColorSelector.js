@@ -11,14 +11,12 @@ function ColorSelector({ onChange, initialColor }) {
   const [isSliderVisible, setIsSliderVisible] = useState(false)
 
   useEffect(() => {
-    if (initialColor) {
-      if (COLORS.APP.includes(initialColor)) {
-        setColor(initialColor)
-      } else {
-        setColor()
-        setIsSliderVisible(true)
-        setSliderColor(initialColor)
-      }
+    if (initialColor && COLORS.APP.includes(initialColor)) {
+      setColor(initialColor)
+    } else {
+      setColor()
+      setIsSliderVisible(true)
+      setSliderColor(initialColor)
     }
   }, [initialColor])
 
