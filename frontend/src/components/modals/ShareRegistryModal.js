@@ -15,6 +15,8 @@ function ShareRegistryModal({ open, onClose }) {
 
   const initialData = useSelector(state => state.modals.shareRegistry?.data)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [emails, setEmails] = useState([''])
   const [errors, setErrors] = useState([])
 
@@ -59,6 +61,8 @@ function ShareRegistryModal({ open, onClose }) {
       if (!initialData?.registryId) {
         return
       }
+
+      setIsLoading(true)
 
       setErrors([])
 
@@ -105,6 +109,8 @@ function ShareRegistryModal({ open, onClose }) {
             })
             return
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [emails, initialData?.registryId, dispatch, handleClose]
@@ -147,7 +153,11 @@ function ShareRegistryModal({ open, onClose }) {
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
           <Button type="submit" sx={styles.hiddenButton}></Button>
           {/* this is used as the real submit button */}
-          <Button onClick={handleSendClick} color={initialData?.color}>
+          <Button
+            onClick={handleSendClick}
+            color={initialData?.color}
+            loading={isLoading}
+          >
             Send
           </Button>
         </DialogActions>

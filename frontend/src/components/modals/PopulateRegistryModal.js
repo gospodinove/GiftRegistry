@@ -15,6 +15,8 @@ import { COLORS, REGISTRY_TYPES } from '../../constants'
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const initialData = useSelector(state => state.modals.createRegistry?.data)
 
   const isModalInUpdateMode = useMemo(
@@ -93,13 +95,14 @@ function PopulateRegistryModal({ open, onClose }) {
     async e => {
       e.preventDefault()
 
+      setIsLoading(true)
+      setErrors({})
+
       const data = {
         type: type === 'Custom' ? customType : type,
         name,
         color
       }
-
-      setErrors({})
 
       try {
         const result = await api(
@@ -144,6 +147,8 @@ function PopulateRegistryModal({ open, onClose }) {
             })
             break
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [
@@ -214,7 +219,7 @@ function PopulateRegistryModal({ open, onClose }) {
             Cancel
           </Button>
 
-          <Button type="submit" color={color}>
+          <Button type="submit" color={color} loading={isLoading}>
             {initialData ? 'Update' : 'Create'}
           </Button>
         </DialogActions>

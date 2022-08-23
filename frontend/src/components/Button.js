@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react'
-import MuiButton from '@mui/material/Button'
+import { LoadingButton } from '@mui/lab'
 import { styles } from './Button.styles'
 import { IconButton } from '@mui/material'
 import { COLORS } from '../constants'
@@ -29,14 +29,17 @@ function Button({ color, ...props }) {
       <Icon type={props.icon} />
     </IconButton>
   ) : (
-    <MuiButton
+    <LoadingButton
       {...props}
       sx={buttonStyles}
       startIcon={startIcon}
       endIcon={endIcon}
+      loadingPosition={
+        props['icon-mode'] === 'icon-only' ? undefined : props['icon-mode']
+      }
     >
       {props.children}
-    </MuiButton>
+    </LoadingButton>
   )
 }
 

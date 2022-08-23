@@ -17,6 +17,8 @@ function CreateRegistryItemModal({ open, onClose }) {
     state => state.modals.createRegistryItem?.data
   )
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
@@ -86,6 +88,7 @@ function CreateRegistryItemModal({ open, onClose }) {
       e.preventDefault()
 
       setErrors({})
+      setIsLoading(true)
 
       const data = {
         name,
@@ -141,6 +144,8 @@ function CreateRegistryItemModal({ open, onClose }) {
             })
             return
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [
@@ -225,7 +230,7 @@ function CreateRegistryItemModal({ open, onClose }) {
           <Button onClick={handleClose} color={initialData?.color}>
             Cancel
           </Button>
-          <Button type="submit" color={initialData?.color}>
+          <Button type="submit" color={initialData?.color} loading={isLoading}>
             Add product
           </Button>
         </DialogActions>

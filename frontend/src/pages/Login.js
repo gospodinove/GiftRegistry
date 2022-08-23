@@ -11,6 +11,8 @@ function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -42,6 +44,8 @@ function Login() {
     async e => {
       e.preventDefault()
 
+      setIsLoading(true)
+
       setErrors({})
 
       try {
@@ -72,6 +76,8 @@ function Login() {
             })
             return
         }
+      } finally {
+        setIsLoading(false)
       }
     },
     [email, password, navigate, dispatch]
@@ -112,7 +118,12 @@ function Login() {
             required
           />
 
-          <Button variant="contained" type="submit" size="large">
+          <Button
+            variant="contained"
+            type="submit"
+            size="large"
+            loading={isLoading}
+          >
             Submit
           </Button>
         </Stack>

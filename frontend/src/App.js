@@ -15,20 +15,24 @@ function App() {
 
   const user = useSelector(state => state.auth.user)
 
-  const checkLoggedIn = useCallback(async () => {
+  const checkUserSession = useCallback(async () => {
+    dispatch({ type: 'auth/setUserSessionFetching' })
+
     try {
       const user = await api('auth/session-user')
 
       if (user && !isEmptyObject(user)) {
         dispatch({ type: 'auth/setUser', payload: user })
       }
-    } catch {}
+    } catch {
+    } finally {
+      dispatch({ type: 'auth/setUserSessionFetched' })
+    }
   }, [dispatch])
 
   useEffect(() => {
-    // TODO: Add full-page loader for app set-up
-    checkLoggedIn()
-  }, [checkLoggedIn])
+    checkUserSession()
+  }, [checkUserSession])
 
   return (
     <Routes>
