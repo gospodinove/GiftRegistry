@@ -1,14 +1,27 @@
-import { useState, memo, useCallback } from 'react'
+import { useState, memo, useCallback, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import { styles } from './ColorSelector.styles'
 import { HuePicker } from 'react-color'
 import Button from './Button'
 import { COLORS } from '../constants'
 
-function ColorSelector({ onChange }) {
+function ColorSelector({ onChange, initialColor }) {
   const [color, setColor] = useState(COLORS.APP[0])
   const [sliderColor, setSliderColor] = useState(COLORS.SLIDER_INITIAL)
   const [isSliderVisible, setIsSliderVisible] = useState(false)
+
+  useEffect(() => {
+    if (!initialColor) {
+      return
+    }
+    if (COLORS.APP.includes(initialColor)) {
+      setColor(initialColor)
+    } else {
+      setColor()
+      setIsSliderVisible(true)
+      setSliderColor(initialColor)
+    }
+  }, [initialColor])
 
   const handleAppColorButtonClick = useCallback(
     e => {

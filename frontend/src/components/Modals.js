@@ -1,16 +1,16 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CreateRegistryItemModal from './modals/CreateRegistryItemModal'
-import CreateRegistryModal from './modals/CreateRegistryModal'
+import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareRegistryModal from './modals/ShareRegistryModal'
 
 const Modals = () => {
   const dispatch = useDispatch()
 
-  const isCreateRegistryModalOpen = useSelector(
+  const isPopulateRegistryModalOpen = useSelector(
     state => state.modals.createRegistry !== undefined
   )
-  const handleCreateRegistryModalClose = useCallback(
+  const handlePopulateRegistryModalClose = useCallback(
     () =>
       dispatch({ type: 'modals/hide', payload: { name: 'createRegistry' } }),
     [dispatch]
@@ -38,9 +38,9 @@ const Modals = () => {
 
   return (
     <>
-      <CreateRegistryModal
-        open={isCreateRegistryModalOpen}
-        onClose={handleCreateRegistryModalClose}
+      <PopulateRegistryModal
+        open={isPopulateRegistryModalOpen}
+        onClose={handlePopulateRegistryModalClose}
       />
 
       <CreateRegistryItemModal

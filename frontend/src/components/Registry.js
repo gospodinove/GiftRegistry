@@ -1,10 +1,11 @@
-import { List, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import Button from './Button'
 import Icon from './Icon'
+import { COLORS } from '../constants'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 
@@ -153,12 +154,37 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
+  const onEditClick = useCallback(async () => {
+    if (!registryData) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'createRegistry',
+        data: registryData
+      }
+    })
+  }, [dispatch, registryData])
+
   return (
     <>
       {registryData ? (
         /* TODO: Create RegistryDetailsSummary component */
         <>
-          <Typography variant="h4">{registryData.name}</Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="h4">{registryData.name}</Typography>
+            <Button
+              icon-mode="icon-only"
+              icon="edit"
+              color={COLORS.LIGHTGRAY}
+              component="div"
+              onClick={onEditClick}
+            >
+              edit
+            </Button>
+          </Box>
 
           {maybeRenderOwner()}
 

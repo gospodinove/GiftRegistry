@@ -8,6 +8,14 @@ export const COLORS = {
   WHITE: '#ffffff'
 }
 
+export const REGISTRY_TYPES = [
+  'Birthday',
+  'Wedding',
+  'Graduation/Prom',
+  'Christmas',
+  'Custom'
+]
+
 export const AUTH_NAV_ITEMS = [
   { title: 'login', route: 'login', icon: 'login' },
   { title: 'register', route: 'register', icon: 'register' }

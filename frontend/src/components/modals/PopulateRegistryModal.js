@@ -1,5 +1,5 @@
-import { memo, useState, useCallback } from 'react'
-import { useDispatch } from 'react-redux'
+import { memo, useState, useCallback, useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
@@ -10,26 +10,39 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
-import { COLORS } from '../../constants'
+import { COLORS, REGISTRY_TYPES } from '../../constants'
 
-const registryTypes = [
-  'Birthday',
-  'Wedding',
-  'Graduation/Prom',
-  'Christmas',
-  'Custom'
-]
-
-function CreateRegistryModal({ open, onClose }) {
+function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const [isLoading, setIsLoading] = useState(false)
+
+  const initialData = useSelector(state => state.modals.createRegistry?.data)
+
+  const isModalInUpdateMode = useMemo(
+    () => initialData !== undefined,
+    [initialData]
+  )
 
   const [color, setColor] = useState(COLORS.APP[0])
   const [type, setType] = useState('Birthday')
   const [name, setName] = useState('')
   const [errors, setErrors] = useState({})
   const [customType, setCustomType] = useState('Custom')
+
+  useEffect(() => {
+    if (isModalInUpdateMode) {
+      setName(initialData.name)
+      setColor(initialData.color)
+
+      if (REGISTRY_TYPES.includes(initialData.type)) {
+        setType(initialData.type)
+      } else {
+        setType('Custom')
+        setCustomType(initialData.type)
+      }
+    }
+  }, [initialData, isModalInUpdateMode])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -78,7 +91,7 @@ function CreateRegistryModal({ open, onClose }) {
     [errors]
   )
 
-  const onSubmit = useCallback(
+  const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
@@ -92,9 +105,15 @@ function CreateRegistryModal({ open, onClose }) {
       }
 
       try {
-        const response = await api('registries', 'post', data)
-
-        dispatch({ type: 'registries/add', payload: [response.registry] })
+        const result = await api(
+          isModalInUpdateMode ? 'registries/' + initialData.id : 'registries',
+          isModalInUpdateMode ? 'put' : 'post',
+          data
+        )
+        dispatch({
+          type: isModalInUpdateMode ? 'registries/update' : 'registries/add',
+          payload: isModalInUpdateMode ? result.registry : [result.registry]
+        })
 
         handleClose()
       } catch (error) {
@@ -108,40 +127,54 @@ function CreateRegistryModal({ open, onClose }) {
                 navigation: { title: 'Register', target: '/register' }
               }
             })
-            return
+            break
 
           case 'field-error':
             setErrors(error.data)
-            return
+            break
 
           case 'general':
             dispatch({
               type: 'toast/show',
               payload: { type: 'error', message: error.data }
             })
-            return
+            break
 
           default:
             dispatch({
               type: 'toast/show',
               payload: { type: 'error', message: 'Something went wrong' }
             })
-            return
+            break
         }
       } finally {
         setIsLoading(false)
       }
     },
-    [name, type, customType, color, dispatch, handleClose]
+    [
+      type,
+      customType,
+      name,
+      color,
+      isModalInUpdateMode,
+      handleClose,
+      dispatch,
+      initialData
+    ]
   )
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <Box component="form" onSubmit={onSubmit}>
-        <DialogTitle>New registry</DialogTitle>
+      <Box component="form" onSubmit={handleSubmit}>
+        <DialogTitle>
+          {initialData ? 'Edit registry' : 'New registry'}
+        </DialogTitle>
 
         <DialogContent>
-          <ColorSelector onChange={handleColorChange} />
+          <ColorSelector
+            onChange={handleColorChange}
+            initialColor={initialData?.color}
+          />
           <TextField
             select
             id="type"
@@ -150,7 +183,7 @@ function CreateRegistryModal({ open, onClose }) {
             onChange={handleTypeChange}
             color={color}
           >
-            {registryTypes.map(option => (
+            {REGISTRY_TYPES.map(option => (
               <MenuItem key={option} value={option}>
                 {option}
               </MenuItem>
@@ -187,7 +220,7 @@ function CreateRegistryModal({ open, onClose }) {
           </Button>
 
           <Button type="submit" color={color} loading={isLoading}>
-            Create Registry
+            {initialData ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
       </Box>
@@ -195,4 +228,4 @@ function CreateRegistryModal({ open, onClose }) {
   )
 }
 
-export default memo(CreateRegistryModal)
+export default memo(PopulateRegistryModal)
