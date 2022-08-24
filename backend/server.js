@@ -9,7 +9,8 @@ const { getMongoDBUrl } = require('./utils')
 const authRoutes = require('./routes/authRoutes')
 const registriesRoutes = require('./routes/registriesRoutes')
 const usersRoutes = require('./routes/usersRoutes')
-const { frontEndBaseURL } = require('./constants')
+const registryItemsRoutes = require('./routes/registryItemsRoutes')
+const { FRONT_END_BASE_URL } = require('./constants')
 
 dotenv.config()
 
@@ -18,7 +19,7 @@ const apiRouter = express.Router()
 
 app.use(
   cors({
-    origin: frontEndBaseURL,
+    origin: FRONT_END_BASE_URL,
     credentials: true
   })
 )
@@ -53,6 +54,7 @@ MongoClient.connect(
     apiRouter.use('/auth', authRoutes)
     apiRouter.use('/registries', registriesRoutes)
     apiRouter.use('/users', usersRoutes)
+    apiRouter.use('/registryItems', registryItemsRoutes)
 
     app.listen(8080, () =>
       console.log('API is running on http://localhost:8080')

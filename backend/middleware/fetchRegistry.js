@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb')
+const { COLLECTION_NAMES } = require('../constants')
 const { sendErrorResponse, replaceId } = require('../utils')
 
 module.exports = async function fetchRegistry(req, res, next) {
@@ -6,7 +7,7 @@ module.exports = async function fetchRegistry(req, res, next) {
 
   try {
     const registry = await db
-      .collection('registries')
+      .collection(COLLECTION_NAMES.registries)
       .findOne({ _id: ObjectId(req.params.registryId) })
 
     if (!registry) {

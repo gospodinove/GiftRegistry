@@ -7,6 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
+const { COLLECTION_NAMES } = require('../constants')
 
 const router = express.Router()
 
@@ -30,7 +31,7 @@ router.post(
         registry.users = [{ email: req.session.user.email, role: 'owner' }]
         registry.date = new Date()
 
-        await db.collection('registries').insertOne(registry)
+        await db.collection(COLLECTION_NAMES.registries).insertOne(registry)
 
         replaceId(registry)
 
@@ -49,7 +50,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 
   try {
     const registries = await db
-      .collection('registries')
+      .collection(COLLECTION_NAMES.registries)
       .find({ users: { $elemMatch: { email: req.session.user.email } } })
       .toArray()
 
@@ -176,7 +177,7 @@ router.patch(
         ]
 
         const result = await db
-          .collection('registries')
+          .collection(COLLECTION_NAMES.registries)
           .findOneAndUpdate(
             { _id: ObjectId(req.params.registryId) },
             { $addToSet: { users: { $each: userEmailsAndRoles } } },
@@ -241,13 +242,15 @@ router.put(
       await validateAll(data, schema, validationMessages)
 
       try {
-        const result = await db.collection('registries').findOneAndUpdate(
-          { _id: ObjectId(req.params.registryId) },
-          {
-            $set: { type: data.type, name: data.name, color: data.color }
-          },
-          { returnDocument: 'after' }
-        )
+        const result = await db
+          .collection(COLLECTION_NAMES.registries)
+          .findOneAndUpdate(
+            { _id: ObjectId(req.params.registryId) },
+            {
+              $set: { type: data.type, name: data.name, color: data.color }
+            },
+            { returnDocument: 'after' }
+          )
 
         res.json({ registry: replaceId(result.value) })
       } catch {
