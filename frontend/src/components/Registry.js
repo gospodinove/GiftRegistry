@@ -131,7 +131,11 @@ const Registry = ({ registryId }) => {
       type: 'modals/show',
       payload: {
         name: 'createRegistryItem',
-        data: { registryId: registryData.id, color: registryData.color }
+        data: {
+          registryId: registryData.id,
+          color: registryData.color,
+          variant: 'create'
+        }
       }
     })
   }, [dispatch, registryData?.id, registryData?.color])
@@ -154,7 +158,7 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
-  const onEditClick = useCallback(async () => {
+  const handleEditClick = useCallback(() => {
     if (!registryData) {
       return
     }
@@ -168,6 +172,29 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
+  const handleItemEditClick = useCallback(
+    id => {
+      if (!registryData?.color) {
+        return
+      }
+
+      dispatch({
+        type: 'modals/show',
+        payload: {
+          name: 'createRegistryItem',
+
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            variant: 'update'
+          }
+        }
+      })
+    },
+    [dispatch, registryData, items]
+  )
+
   return (
     <>
       {registryData ? (
@@ -180,7 +207,7 @@ const Registry = ({ registryId }) => {
               icon="edit"
               color={COLORS.LIGHTGRAY}
               component="div"
-              onClick={onEditClick}
+              onClick={handleEditClick}
             >
               edit
             </Button>
@@ -224,6 +251,7 @@ const Registry = ({ registryId }) => {
               data={item}
               color={registryData.color}
               onToggle={handleItemToggle}
+              onEditClick={handleItemEditClick}
             />
           ))}
         </List>

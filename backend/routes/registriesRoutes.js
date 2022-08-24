@@ -112,7 +112,7 @@ router.post(
 
         res.json({ item })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not add product')
+        sendErrorResponse(res, 500, 'general', 'Could not add registry item')
       }
     } catch (errors) {
       sendErrorResponse(res, 500, 'field-error', errors)

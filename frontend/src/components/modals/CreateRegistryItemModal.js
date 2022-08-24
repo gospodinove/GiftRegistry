@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
@@ -17,6 +17,8 @@ function CreateRegistryItemModal({ open, onClose }) {
     state => state.modals.createRegistryItem?.data
   )
 
+  const isUpdateVariant = initialData?.variant === 'update'
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [name, setName] = useState('')
@@ -24,6 +26,15 @@ function CreateRegistryItemModal({ open, onClose }) {
   const [description, setDescription] = useState('')
   const [link, setLink] = useState('')
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    if (initialData && isUpdateVariant) {
+      setName(initialData?.item.name)
+      setPrice(initialData?.item.price ?? '')
+      setDescription(initialData?.item.description ?? '')
+      setLink(initialData?.item.link ?? '')
+    }
+  }, [initialData, isUpdateVariant])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -83,7 +94,7 @@ function CreateRegistryItemModal({ open, onClose }) {
     [errors]
   )
 
-  const onSubmit = useCallback(
+  const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
@@ -99,13 +110,15 @@ function CreateRegistryItemModal({ open, onClose }) {
 
       try {
         const response = await api(
-          'registries/' + initialData.registryId + '/items',
-          'post',
+          isUpdateVariant
+            ? 'registryItems/' + initialData.item.id
+            : 'registries/' + initialData.registryId + '/items',
+          isUpdateVariant ? 'put' : 'post',
           data
         )
 
         dispatch({
-          type: 'registryItems/add',
+          type: isUpdateVariant ? 'registryItems/update' : 'registryItems/add',
           payload: {
             registryId: initialData.registryId,
             item: response.item
@@ -155,13 +168,15 @@ function CreateRegistryItemModal({ open, onClose }) {
       description,
       dispatch,
       handleClose,
-      initialData?.registryId
+      initialData?.registryId,
+      initialData?.item?.id,
+      isUpdateVariant
     ]
   )
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <Box component="form" onSubmit={onSubmit}>
+      <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>New product to your registry</DialogTitle>
 
         <DialogContent>

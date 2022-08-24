@@ -9,6 +9,7 @@ const { getMongoDBUrl } = require('./utils')
 const authRoutes = require('./routes/authRoutes')
 const registriesRoutes = require('./routes/registriesRoutes')
 const usersRoutes = require('./routes/usersRoutes')
+const registryItemsRoutes = require('./routes/registryItemsRoutes')
 const { frontEndBaseURL } = require('./constants')
 
 dotenv.config()
@@ -53,6 +54,7 @@ MongoClient.connect(
     apiRouter.use('/auth', authRoutes)
     apiRouter.use('/registries', registriesRoutes)
     apiRouter.use('/users', usersRoutes)
+    apiRouter.use('/registryItems', registryItemsRoutes)
 
     app.listen(8080, () =>
       console.log('API is running on http://localhost:8080')
