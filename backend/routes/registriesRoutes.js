@@ -86,7 +86,7 @@ router.get(
 
 router.post(
   '/:registryId/items',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
 
@@ -124,7 +124,7 @@ router.post(
 
 router.patch(
   '/:registryId/share',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
     const registry = res.locals.registry

@@ -6,8 +6,13 @@ module.exports = async function isRegistryOwner(req, res, next) {
 
   const registryOwnerEmail = registry.users.find(u => u.role === 'owner').email
 
-  if (user.email === registryOwnerEmail) {
-    sendErrorResponse(res, 500, 'general', 'Only owners can edit')
+  if (user.email !== registryOwnerEmail) {
+    sendErrorResponse(
+      res,
+      500,
+      'general',
+      'Only owners can perform this action'
+    )
     return
   }
 

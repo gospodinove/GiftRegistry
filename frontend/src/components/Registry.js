@@ -238,26 +238,28 @@ const Registry = ({ registryId }) => {
 
           {maybeRenderOwner()}
 
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              icon-mode="start"
-              icon="add"
-              onClick={handleAddButtonClick}
-              color={registryData.color}
-            >
-              Add
-            </Button>
-            <Button
-              variant="contained"
-              icon-mode="start"
-              icon="share"
-              onClick={handleShareButtonClick}
-              color={registryData.color}
-            >
-              Share
-            </Button>
-          </Stack>
+          {isOwner ? (
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="outlined"
+                icon-mode="start"
+                icon="add"
+                onClick={handleAddButtonClick}
+                color={registryData.color}
+              >
+                Add
+              </Button>
+              <Button
+                variant="contained"
+                icon-mode="start"
+                icon="share"
+                onClick={handleShareButtonClick}
+                color={registryData.color}
+              >
+                Share
+              </Button>
+            </Stack>
+          ) : null}
         </>
       ) : null}
 
