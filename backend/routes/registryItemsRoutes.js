@@ -14,8 +14,10 @@ router.patch(
     const db = req.app.locals.db
     const item = res.locals.item
 
+    // TODO: check if the user is part of the item's list
+
     if (item.takenBy && item.takenBy !== req.session.user.id) {
-      sendErrorResponse(res, 401, 'This item is not taken by you')
+      sendErrorResponse(res, 401, 'general', 'This item is not taken by you')
       return
     }
 
@@ -23,14 +25,14 @@ router.patch(
       const result = await db
         .collection(COLLECTION_NAMES.registryItems)
         .findOneAndUpdate(
-          { _id: ObjectId(req.params.userId) },
+          { _id: ObjectId(req.params.registryItemId) },
           { $set: { takenBy: item.takenBy ? undefined : req.session.user.id } },
           { returnDocument: 'after' }
         )
 
       res.json({ item: replaceId(result.value) })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not update user')
+      sendErrorResponse(res, 500, 'general', 'Could not update registry item')
     }
   }
 )

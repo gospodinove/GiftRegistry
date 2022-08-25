@@ -80,16 +80,16 @@ const Registry = ({ registryId }) => {
 
   useEffect(() => {
     fetchItems()
-  }, [fetchItems])
+  }, [fetchItems, registryId])
 
   useEffect(() => {
     maybeFetchRegistryOwner()
-  }, [maybeFetchRegistryOwner])
+  }, [maybeFetchRegistryOwner, registryId])
 
   const maybeRenderOwner = useCallback(() => {
     const registryOwner = registryData.users.find(u => u.role === 'owner')
 
-    if (user.email === registryOwner.email) {
+    if (!owner || user.email === registryOwner.email) {
       return null
     }
 
@@ -109,18 +109,29 @@ const Registry = ({ registryId }) => {
         </Typography>
       </Stack>
     )
-  }, [
-    isLoadingOwner,
-    owner?.firstName,
-    owner?.lastName,
-    registryData?.users,
-    user?.email
-  ])
+  }, [isLoadingOwner, owner, registryData?.users, user?.email])
 
-  const handleItemToggle = useCallback(id => {
-    // TODO: update object
-    console.log(id)
-  }, [])
+  const handleItemToggle = useCallback(
+    async id => {
+      try {
+        const response = await api(
+          'registryItems/' + id + '/toggleTaken',
+          'patch'
+        )
+
+        dispatch({
+          type: 'registryItems/update',
+          payload: { registryId: registryData.id, item: response.item }
+        })
+      } catch (error) {
+        dispatch({
+          type: 'toast/show',
+          payload: { type: 'error', message: error.data }
+        })
+      }
+    },
+    [dispatch, registryData?.id]
+  )
 
   const handleAddButtonClick = useCallback(() => {
     if (!registryData?.id) {
@@ -222,6 +233,7 @@ const Registry = ({ registryId }) => {
             <RegistryItem
               key={item.id}
               data={item}
+              disabled={item.takenBy && item.takenBy !== user.id}
               color={registryData.color}
               onToggle={handleItemToggle}
             />

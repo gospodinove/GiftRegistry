@@ -1,26 +1,26 @@
 import { ListItem, ListItemIcon, ListItemText } from '@mui/material'
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import Checkbox from './Checkbox'
 
 // TODO: display the article link
-const RegistryItem = ({ data, onToggle, color }) => {
-  const [isChecked, setIsChecked] = useState(data.takenBy !== null)
-
+const RegistryItem = ({ data, color, disabled, onToggle }) => {
   const handleClick = useCallback(() => {
     onToggle(data.id)
-    setIsChecked(!isChecked)
-  }, [setIsChecked, onToggle, data.id, isChecked])
+  }, [onToggle, data.id])
+
+  const inputProps = useMemo(() => ({ 'aria-labelledby': data.id }), [data.id])
 
   return (
     <ListItem>
       <ListItemIcon>
         <Checkbox
-          checked={isChecked}
+          checked={data.takenBy !== null}
           tabIndex={-1}
           disableRipple
-          inputProps={{ 'aria-labelledby': data.id }}
+          inputProps={inputProps}
           onClick={handleClick}
           color={color}
+          disabled={disabled}
         />
       </ListItemIcon>
       <ListItemText
