@@ -177,7 +177,11 @@ function CreateRegistryItemModal({ open, onClose }) {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogTitle>New product to your registry</DialogTitle>
+        <DialogTitle>
+          {isUpdateVariant
+            ? 'Update registry product'
+            : ' New product to your registry'}
+        </DialogTitle>
 
         <DialogContent>
           <Grid container spacing={1}>
@@ -246,7 +250,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             Cancel
           </Button>
           <Button type="submit" color={initialData?.color} loading={isLoading}>
-            Add product
+            {isUpdateVariant ? 'Update' : 'Add product'}
           </Button>
         </DialogActions>
       </Box>

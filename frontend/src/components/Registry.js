@@ -17,21 +17,34 @@ const Registry = ({ registryId }) => {
   )
   const items = useSelector(state => state.registryItems[registryId])
 
+  const hasItems = useMemo(() => items?.length > 0, [items?.length])
+
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(
     state => state.registries.ownerByRegistryId[registryId]
   )
 
+  const getOwner = useMemo(
+    () => registryData?.users.find(user => user.role === 'owner'),
+    [registryData?.users]
+  )
+
+  const isOwner = useMemo(
+    () => user?.email === getOwner?.email,
+    [getOwner?.email, user?.email]
+  )
+
   const [isLoadingItems, setIsLoadingItems] = useState(true)
   const [isLoadingOwner, setIsLoadingOwner] = useState(true)
 
-  const itemsSortedByDate = useMemo(
-    () =>
-      [...items].sort(
-        (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
-      ),
-    [items]
-  )
+  const itemsSortedByDate = useMemo(() => {
+    if (!items) {
+      return []
+    }
+    return [...items].sort(
+      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+    )
+  }, [items])
 
   const fetchItems = useCallback(async () => {
     try {
@@ -210,15 +223,17 @@ const Registry = ({ registryId }) => {
         <>
           <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">{registryData.name}</Typography>
-            <Button
-              icon-mode="icon-only"
-              icon="edit"
-              color={COLORS.LIGHTGRAY}
-              component="div"
-              onClick={handleEditClick}
-            >
-              edit
-            </Button>
+            {isOwner ? (
+              <Button
+                icon-mode="icon-only"
+                icon="edit"
+                color={COLORS.LIGHTGRAY}
+                component="div"
+                onClick={handleEditClick}
+              >
+                edit
+              </Button>
+            ) : null}
           </Box>
 
           {maybeRenderOwner()}
@@ -251,7 +266,7 @@ const Registry = ({ registryId }) => {
           <RegistryItemSkeleton />
           <RegistryItemSkeleton />
         </>
-      ) : items?.length > 0 ? (
+      ) : hasItems ? (
         <List>
           {itemsSortedByDate.map(item => (
             <RegistryItem
@@ -260,6 +275,7 @@ const Registry = ({ registryId }) => {
               color={registryData.color}
               onToggle={handleItemToggle}
               onEditClick={handleItemEditClick}
+              isOwner={isOwner}
             />
           ))}
         </List>

@@ -5,7 +5,7 @@ import Checkbox from './Checkbox'
 import { styles } from './RegistryItem.styles'
 
 // TODO: display the article link
-const RegistryItem = ({ data, onToggle, color, onEditClick }) => {
+const RegistryItem = ({ data, onToggle, color, onEditClick, isOwner }) => {
   const [isChecked, setIsChecked] = useState(data.takenBy !== null)
   const [isEditButtonVisible, setIsEditButtonVisible] = useState(false)
 
@@ -15,8 +15,10 @@ const RegistryItem = ({ data, onToggle, color, onEditClick }) => {
   }, [setIsChecked, onToggle, data.id, isChecked])
 
   const handleEnterHover = useCallback(() => {
-    setIsEditButtonVisible(true)
-  }, [])
+    if (isOwner) {
+      setIsEditButtonVisible(true)
+    }
+  }, [isOwner])
 
   const handleLeaveHover = useCallback(() => {
     setIsEditButtonVisible(false)
