@@ -92,7 +92,8 @@ router.post(
     const item = {
       ...req.body,
       registryId: req.params.registryId,
-      takenBy: null
+      takenBy: null,
+      date: new Date()
     }
 
     try {

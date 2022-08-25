@@ -1,5 +1,5 @@
 import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
@@ -24,6 +24,14 @@ const Registry = ({ registryId }) => {
 
   const [isLoadingItems, setIsLoadingItems] = useState(true)
   const [isLoadingOwner, setIsLoadingOwner] = useState(true)
+
+  const itemsSortedByDate = useMemo(
+    () =>
+      [...items].sort(
+        (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+      ),
+    [items]
+  )
 
   const fetchItems = useCallback(async () => {
     try {
@@ -245,7 +253,7 @@ const Registry = ({ registryId }) => {
         </>
       ) : items?.length > 0 ? (
         <List>
-          {items.map(item => (
+          {itemsSortedByDate.map(item => (
             <RegistryItem
               key={item.id}
               data={item}
