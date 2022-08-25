@@ -7,6 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
+const isRegistryOwner = require('../middleware/isRegistryOwner')
 
 const router = express.Router()
 
@@ -226,10 +227,9 @@ router.get(
 
 router.put(
   '/:registryId',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
-
     const data = req.body
 
     const schema = {

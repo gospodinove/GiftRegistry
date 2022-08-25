@@ -7,6 +7,9 @@ const isAuthenticated = require('../middleware/isAuthenticated')
 const fetchUser = require('../middleware/fetchUser')
 const { ObjectId } = require('mongodb')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
+const isRegistryOwner = require('../middleware/isRegistryOwner')
+const fetchRegistry = require('../middleware/fetchRegistry')
+const fetchRegistryItem = require('../middleware/fetchRegistryItem')
 
 const router = express.Router()
 
@@ -14,10 +17,15 @@ extend('password', passwordValidator)
 
 router.put(
   '/:registryItemId',
-  [isAuthenticated, isRegistrationCompleted],
+  [
+    isAuthenticated,
+    isRegistrationCompleted,
+    fetchRegistryItem,
+    fetchRegistry,
+    isRegistryOwner
+  ],
   async (req, res) => {
     const db = req.app.locals.db
-
     const item = req.body
 
     try {
