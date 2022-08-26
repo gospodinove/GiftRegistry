@@ -165,6 +165,8 @@ function PopulateRegistryModal({ open, onClose }) {
     ]
   )
 
+  const typographyStyles = useMemo(() => styles(color), [color])
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
@@ -174,7 +176,7 @@ function PopulateRegistryModal({ open, onClose }) {
               <Typography component="span" variant="h6">
                 New product to{' '}
               </Typography>
-              <Typography component="span" variant="h6" sx={styles(color)}>
+              <Typography component="span" variant="h6" sx={typographyStyles}>
                 {initialData?.name}
               </Typography>
             </>

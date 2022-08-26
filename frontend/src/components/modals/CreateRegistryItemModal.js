@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useEffect } from 'react'
+import { memo, useState, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
@@ -175,6 +175,11 @@ function CreateRegistryItemModal({ open, onClose }) {
     ]
   )
 
+  const typographyStyles = useMemo(
+    () => styles(initialData?.color),
+    [initialData?.color]
+  )
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
@@ -188,11 +193,7 @@ function CreateRegistryItemModal({ open, onClose }) {
               <Typography component="span" variant="h6">
                 New product to{' '}
               </Typography>
-              <Typography
-                component="span"
-                variant="h6"
-                sx={styles(initialData?.color)}
-              >
+              <Typography component="span" variant="h6" sx={typographyStyles}>
                 {initialData?.registryName}
               </Typography>
             </>

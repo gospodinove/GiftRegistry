@@ -9,8 +9,8 @@ const RegistryItem = ({
   data,
   onToggle,
   color,
-  onEditClick,
-  isEditEnabled
+  isEditEnabled,
+  onEditClick
 }) => {
   const [isChecked, setIsChecked] = useState(data.takenBy !== null)
   const [isEditButtonVisible, setIsEditButtonVisible] = useState(false)
