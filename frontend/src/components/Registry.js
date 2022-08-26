@@ -1,5 +1,5 @@
 import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
@@ -17,13 +17,31 @@ const Registry = ({ registryId }) => {
   )
   const items = useSelector(state => state.registryItems[registryId])
 
+  const hasItems = useMemo(() => items?.length > 0, [items?.length])
+
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(
     state => state.registries.ownerByRegistryId[registryId]
   )
 
+  const isOwner = useMemo(
+    () =>
+      user?.email ===
+      registryData?.users.find(user => user.role === 'owner')?.email,
+    [registryData?.users, user?.email]
+  )
+
   const [isLoadingItems, setIsLoadingItems] = useState(true)
   const [isLoadingOwner, setIsLoadingOwner] = useState(true)
+
+  const itemsSortedByDate = useMemo(() => {
+    if (!items) {
+      return []
+    }
+    return [...items].sort(
+      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+    )
+  }, [items])
 
   const fetchItems = useCallback(async () => {
     try {
@@ -56,9 +74,7 @@ const Registry = ({ registryId }) => {
     try {
       setIsLoadingOwner(true)
 
-      const registryOwner = registryData.users.find(u => u.role === 'owner')
-
-      if (user.email === registryOwner.email || owner !== undefined) {
+      if (isOwner || owner !== undefined) {
         return
       }
 
@@ -76,7 +92,7 @@ const Registry = ({ registryId }) => {
     } finally {
       setIsLoadingOwner(false)
     }
-  }, [registryData?.users, owner, user?.email, registryId, dispatch])
+  }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
     fetchItems()
@@ -130,11 +146,16 @@ const Registry = ({ registryId }) => {
     dispatch({
       type: 'modals/show',
       payload: {
-        name: 'createRegistryItem',
-        data: { registryId: registryData.id, color: registryData.color }
+        name: 'populateRegistryItem',
+        data: {
+          registryId: registryData.id,
+          color: registryData.color,
+          registryName: registryData.name,
+          variant: 'create'
+        }
       }
     })
-  }, [dispatch, registryData?.id, registryData?.color])
+  }, [registryData.id, registryData.color, registryData.name, dispatch])
 
   const handleShareButtonClick = useCallback(() => {
     if (!registryData) {
@@ -154,7 +175,7 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
-  const onEditClick = useCallback(async () => {
+  const handleEditClick = useCallback(() => {
     if (!registryData) {
       return
     }
@@ -162,11 +183,35 @@ const Registry = ({ registryId }) => {
     dispatch({
       type: 'modals/show',
       payload: {
-        name: 'createRegistry',
+        name: 'populateRegistry',
         data: registryData
       }
     })
   }, [dispatch, registryData])
+
+  const handleItemEditClick = useCallback(
+    id => {
+      if (!registryData?.color) {
+        return
+      }
+
+      dispatch({
+        type: 'modals/show',
+        payload: {
+          name: 'populateRegistryItem',
+
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            registryName: registryData.name,
+            variant: 'update'
+          }
+        }
+      })
+    },
+    [dispatch, registryData, items]
+  )
 
   return (
     <>
@@ -175,39 +220,41 @@ const Registry = ({ registryId }) => {
         <>
           <Box display="flex" justifyContent="space-between">
             <Typography variant="h4">{registryData.name}</Typography>
-            <Button
-              icon-mode="icon-only"
-              icon="edit"
-              color={COLORS.LIGHTGRAY}
-              component="div"
-              onClick={onEditClick}
-            >
-              edit
-            </Button>
+            {isOwner ? (
+              <Button
+                icon-mode="icon-only"
+                icon="edit"
+                color={COLORS.LIGHTGRAY}
+                component="div"
+                onClick={handleEditClick}
+              />
+            ) : null}
           </Box>
 
           {maybeRenderOwner()}
 
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              icon-mode="start"
-              icon="add"
-              onClick={handleAddButtonClick}
-              color={registryData.color}
-            >
-              Add
-            </Button>
-            <Button
-              variant="contained"
-              icon-mode="start"
-              icon="share"
-              onClick={handleShareButtonClick}
-              color={registryData.color}
-            >
-              Share
-            </Button>
-          </Stack>
+          {isOwner && (
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="outlined"
+                icon-mode="start"
+                icon="add"
+                onClick={handleAddButtonClick}
+                color={registryData.color}
+              >
+                Add
+              </Button>
+              <Button
+                variant="contained"
+                icon-mode="start"
+                icon="share"
+                onClick={handleShareButtonClick}
+                color={registryData.color}
+              >
+                Share
+              </Button>
+            </Stack>
+          )}
         </>
       ) : null}
 
@@ -216,14 +263,16 @@ const Registry = ({ registryId }) => {
           <RegistryItemSkeleton />
           <RegistryItemSkeleton />
         </>
-      ) : items?.length > 0 ? (
+      ) : hasItems ? (
         <List>
-          {items.map(item => (
+          {itemsSortedByDate.map(item => (
             <RegistryItem
               key={item.id}
               data={item}
               color={registryData.color}
               onToggle={handleItemToggle}
+              onEditClick={handleItemEditClick}
+              isEditEnabled={isOwner}
             />
           ))}
         </List>

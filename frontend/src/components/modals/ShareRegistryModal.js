@@ -123,18 +123,18 @@ function ShareRegistryModal({ open, onClose }) {
       label={isInvited ? 'Invited' : 'Email ' + (index + 1)}
       value={email}
       disabled={isInvited}
-      onChange={handleEmailChange}
       type="email"
       inputProps={{ 'data-index': index }}
       autoFocus={index === emails.length - 1}
       error={isInvited ? undefined : errors['emails.' + index] !== undefined}
       helperText={isInvited ? undefined : errors['emails.' + index]}
       color={initialData?.color}
+      onChange={handleEmailChange}
     />
   )
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog maxWidth="xs" fullWidth open={open} onClose={handleClose}>
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>Share registry</DialogTitle>
         <DialogContent>
@@ -144,19 +144,19 @@ function ShareRegistryModal({ open, onClose }) {
           {emails.map((email, index) => renderTextField(index, email, false))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color={initialData?.color}>
+          <Button color={initialData?.color} onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color={initialData?.color}>
+          <Button color={initialData?.color} onClick={handleSubmit}>
             Add more
           </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
           <Button type="submit" sx={styles.hiddenButton}></Button>
           {/* this is used as the real submit button */}
           <Button
-            onClick={handleSendClick}
             color={initialData?.color}
             loading={isLoading}
+            onClick={handleSendClick}
           >
             Send
           </Button>

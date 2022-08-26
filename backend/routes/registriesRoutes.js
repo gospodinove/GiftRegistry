@@ -7,6 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
+const isRegistryOwner = require('../middleware/isRegistryOwner')
 
 const router = express.Router()
 
@@ -85,14 +86,15 @@ router.get(
 
 router.post(
   '/:registryId/items',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
 
     const item = {
       ...req.body,
       registryId: req.params.registryId,
-      takenBy: null
+      takenBy: null,
+      date: new Date()
     }
 
     try {
@@ -112,7 +114,7 @@ router.post(
 
         res.json({ item })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not add product')
+        sendErrorResponse(res, 500, 'general', 'Could not add registry item')
       }
     } catch (errors) {
       sendErrorResponse(res, 500, 'field-error', errors)
@@ -122,7 +124,7 @@ router.post(
 
 router.patch(
   '/:registryId/share',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
     const registry = res.locals.registry
@@ -225,10 +227,9 @@ router.get(
 
 router.put(
   '/:registryId',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
-
     const data = req.body
 
     const schema = {

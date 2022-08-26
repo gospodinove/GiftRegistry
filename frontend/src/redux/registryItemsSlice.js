@@ -16,6 +16,14 @@ export const registryItemsSlice = createSlice({
         action.payload.item
       ]
     },
+    update: (state, action) => {
+      state[action.payload.registryId] = [
+        ...state[action.payload.registryId].filter(
+          item => item.id !== action.payload.item.id
+        ),
+        action.payload.item
+      ]
+    },
     clear: () => initialState
   }
 })
