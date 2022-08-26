@@ -10,7 +10,7 @@ export const styles = {
   },
   gridContainer: {
     height: '100%',
-    pt: 3
+    mt: 0
   },
   gridItem: {
     height: '100%',
