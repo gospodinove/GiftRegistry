@@ -1,3 +1,4 @@
 export const styles = {
-  buttonSm: { display: { sm: 'none' } }
+  editButtonXs: { display: { sm: 'none' } },
+  editButton: { display: { xs: 'none', sm: 'inline' } }
 }

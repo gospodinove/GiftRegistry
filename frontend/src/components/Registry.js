@@ -24,14 +24,11 @@ const Registry = ({ registryId }) => {
     state => state.registries.ownerByRegistryId[registryId]
   )
 
-  const getOwner = useMemo(
-    () => registryData?.users.find(user => user.role === 'owner'),
-    [registryData?.users]
-  )
-
   const isOwner = useMemo(
-    () => user?.email === getOwner?.email,
-    [getOwner?.email, user?.email]
+    () =>
+      user?.email ===
+      registryData?.users.find(user => user.role === 'owner')?.email,
+    [registryData?.users, user?.email]
   )
 
   const [isLoadingItems, setIsLoadingItems] = useState(true)
@@ -77,9 +74,7 @@ const Registry = ({ registryId }) => {
     try {
       setIsLoadingOwner(true)
 
-      const registryOwner = registryData.users.find(u => u.role === 'owner')
-
-      if (user.email === registryOwner.email || owner !== undefined) {
+      if (isOwner || owner !== undefined) {
         return
       }
 
@@ -97,7 +92,7 @@ const Registry = ({ registryId }) => {
     } finally {
       setIsLoadingOwner(false)
     }
-  }, [registryData?.users, owner, user?.email, registryId, dispatch])
+  }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
     fetchItems()
@@ -155,11 +150,12 @@ const Registry = ({ registryId }) => {
         data: {
           registryId: registryData.id,
           color: registryData.color,
+          registryName: registryData.name,
           variant: 'create'
         }
       }
     })
-  }, [dispatch, registryData?.id, registryData?.color])
+  }, [registryData.id, registryData.color, registryData.name, dispatch])
 
   const handleShareButtonClick = useCallback(() => {
     if (!registryData) {
@@ -208,6 +204,7 @@ const Registry = ({ registryId }) => {
             item: items.find(item => item.id === id),
             color: registryData.color,
             registryId: registryData.id,
+            registryName: registryData.name,
             variant: 'update'
           }
         }
@@ -230,15 +227,13 @@ const Registry = ({ registryId }) => {
                 color={COLORS.LIGHTGRAY}
                 component="div"
                 onClick={handleEditClick}
-              >
-                edit
-              </Button>
+              />
             ) : null}
           </Box>
 
           {maybeRenderOwner()}
 
-          {isOwner ? (
+          {isOwner && (
             <Stack direction="row" spacing={1}>
               <Button
                 variant="outlined"
@@ -259,7 +254,7 @@ const Registry = ({ registryId }) => {
                 Share
               </Button>
             </Stack>
-          ) : null}
+          )}
         </>
       ) : null}
 
@@ -277,7 +272,7 @@ const Registry = ({ registryId }) => {
               color={registryData.color}
               onToggle={handleItemToggle}
               onEditClick={handleItemEditClick}
-              isOwner={isOwner}
+              isEditEnabled={isOwner}
             />
           ))}
         </List>

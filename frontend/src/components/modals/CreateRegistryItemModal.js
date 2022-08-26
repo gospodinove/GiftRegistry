@@ -8,7 +8,8 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
-import { Grid, InputAdornment } from '@mui/material'
+import { Grid, InputAdornment, Typography } from '@mui/material'
+import { styles } from './CreateRegistryItemModal.styles'
 
 function CreateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -178,9 +179,24 @@ function CreateRegistryItemModal({ open, onClose }) {
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>
-          {isUpdateVariant
-            ? 'Update registry product'
-            : ' New product to your registry'}
+          {isUpdateVariant ? (
+            <Typography component="span" variant="h6">
+              Edit {initialData?.item.name}
+            </Typography>
+          ) : (
+            <>
+              <Typography component="span" variant="h6">
+                New product to{' '}
+              </Typography>
+              <Typography
+                component="span"
+                variant="h6"
+                sx={styles(initialData?.color)}
+              >
+                {initialData?.registryName}
+              </Typography>
+            </>
+          )}
         </DialogTitle>
 
         <DialogContent>
@@ -250,7 +266,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             Cancel
           </Button>
           <Button type="submit" color={initialData?.color} loading={isLoading}>
-            {isUpdateVariant ? 'Update' : 'Add product'}
+            {isUpdateVariant ? 'Save' : 'Add'}
           </Button>
         </DialogActions>
       </Box>
