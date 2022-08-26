@@ -175,7 +175,7 @@ function CreateRegistryItemModal({ open, onClose }) {
     ]
   )
 
-  const typographyStyles = useMemo(
+  const componentStyles = useMemo(
     () => styles(initialData?.color),
     [initialData?.color]
   )
@@ -193,7 +193,11 @@ function CreateRegistryItemModal({ open, onClose }) {
               <Typography component="span" variant="h6">
                 New product to{' '}
               </Typography>
-              <Typography component="span" variant="h6" sx={typographyStyles}>
+              <Typography
+                component="span"
+                variant="h6"
+                sx={componentStyles.registryName}
+              >
                 {initialData?.registryName}
               </Typography>
             </>

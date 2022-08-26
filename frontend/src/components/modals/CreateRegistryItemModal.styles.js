@@ -1,1 +1,1 @@
-export const styles = color => ({ color })
+export const styles = color => ({ registryName: { color } })
