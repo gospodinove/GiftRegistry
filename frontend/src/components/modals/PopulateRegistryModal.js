@@ -174,7 +174,7 @@ function PopulateRegistryModal({ open, onClose }) {
           {initialData ? (
             <>
               <Typography component="span" variant="h6">
-                New product to{' '}
+                Edit{' '}
               </Typography>
               <Typography
                 component="span"

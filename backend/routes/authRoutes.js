@@ -10,6 +10,7 @@ const {
   comparePasswords
 } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
+const { COLLECTION_NAMES } = require('../constants')
 
 const router = express.Router()
 
@@ -30,7 +31,7 @@ router.post('/register', async (req, res) => {
 
     try {
       const registeredUser = await db
-        .collection('users')
+        .collection(COLLECTION_NAMES.users)
         .findOne({ email: req.body.email })
 
       if (registeredUser) {
@@ -50,7 +51,7 @@ router.post('/register', async (req, res) => {
         isRegistrationComplete: true
       }
 
-      await db.collection('users').insertOne(user)
+      await db.collection(COLLECTION_NAMES.users).insertOne(user)
 
       replaceId(user)
 
@@ -80,7 +81,7 @@ router.post('/login', async (req, res) => {
 
     try {
       const user = await db
-        .collection('users')
+        .collection(COLLECTION_NAMES.users)
         .findOne({ email: req.body.email })
 
       if (!user) {
@@ -146,7 +147,9 @@ router.post('/token', async (req, res) => {
   const db = req.app.locals.db
 
   try {
-    const user = await db.collection('users').findOne({ token: req.body.token })
+    const user = await db
+      .collection(COLLECTION_NAMES.users)
+      .findOne({ token: req.body.token })
 
     if (!user) {
       sendErrorResponse(

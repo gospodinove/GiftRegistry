@@ -1,21 +1,22 @@
 const { ObjectId } = require('mongodb')
+const { COLLECTION_NAMES } = require('../constants')
 const { sendErrorResponse, replaceId } = require('../utils')
 
 module.exports = async function fetchRegistryItem(req, res, next) {
   const db = req.app.locals.db
 
   try {
-    const registryItem = await db
-      .collection('registryItems')
+    const item = await db
+      .collection(COLLECTION_NAMES.registryItems)
       .findOne({ _id: ObjectId(req.params.registryItemId) })
 
-    if (!registryItem) {
+    if (!item) {
       sendErrorResponse(res, 404, 'general', 'Could not find registry item')
       return
     }
 
-    res.locals.registryItem = replaceId(registryItem)
-    res.locals.fetchRegistryOverrideId = registryItem.registryId
+    res.locals.item = replaceId(item)
+    res.locals.fetchRegistryOverrideId = item.registryId
 
     next()
   } catch {
