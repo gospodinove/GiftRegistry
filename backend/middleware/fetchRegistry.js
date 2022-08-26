@@ -6,8 +6,6 @@ module.exports = async function fetchRegistry(req, res, next) {
   const db = req.app.locals.db
   const registryId = res.locals.fetchRegistryOverrideId ?? req.params.registryId
 
-  console.log(registryId)
-
   try {
     const registry = await db
       .collection(COLLECTION_NAMES.registries)

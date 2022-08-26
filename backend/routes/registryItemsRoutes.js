@@ -91,7 +91,6 @@ router.put(
         sendErrorResponse(res, 500, 'general', 'Could not update registry item')
       }
     } catch (errors) {
-      console.log(errors)
       sendErrorResponse(res, 500, 'field-error', errors)
     }
   }
