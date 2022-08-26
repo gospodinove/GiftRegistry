@@ -146,7 +146,7 @@ const Registry = ({ registryId }) => {
     dispatch({
       type: 'modals/show',
       payload: {
-        name: 'createRegistryItem',
+        name: 'populateRegistryItem',
         data: {
           registryId: registryData.id,
           color: registryData.color,
@@ -183,7 +183,7 @@ const Registry = ({ registryId }) => {
     dispatch({
       type: 'modals/show',
       payload: {
-        name: 'createRegistry',
+        name: 'populateRegistry',
         data: registryData
       }
     })
@@ -198,7 +198,7 @@ const Registry = ({ registryId }) => {
       dispatch({
         type: 'modals/show',
         payload: {
-          name: 'createRegistryItem',
+          name: 'populateRegistryItem',
 
           data: {
             item: items.find(item => item.id === id),

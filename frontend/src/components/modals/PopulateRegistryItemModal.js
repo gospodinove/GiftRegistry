@@ -9,13 +9,13 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { Grid, InputAdornment, Typography } from '@mui/material'
-import { styles } from './CreateRegistryItemModal.styles'
+import { styles } from './PopulateRegistryItemModal.styles'
 
-function CreateRegistryItemModal({ open, onClose }) {
+function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const initialData = useSelector(
-    state => state.modals.createRegistryItem?.data
+    state => state.modals.populateRegistryItem?.data
   )
 
   const isUpdateVariant = initialData?.variant === 'update'
@@ -185,9 +185,19 @@ function CreateRegistryItemModal({ open, onClose }) {
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>
           {isUpdateVariant ? (
-            <Typography component="span" variant="h6">
-              Edit {initialData?.item.name}
-            </Typography>
+            <>
+              <Typography component="span" variant="h6">
+                Edit{' '}
+              </Typography>
+
+              <Typography
+                component="span"
+                variant="h6"
+                sx={componentStyles.highlightedName}
+              >
+                {initialData?.item.name}
+              </Typography>
+            </>
           ) : (
             <>
               <Typography component="span" variant="h6">
@@ -196,7 +206,7 @@ function CreateRegistryItemModal({ open, onClose }) {
               <Typography
                 component="span"
                 variant="h6"
-                sx={componentStyles.registryName}
+                sx={componentStyles.highlightedName}
               >
                 {initialData?.registryName}
               </Typography>
@@ -279,4 +289,4 @@ function CreateRegistryItemModal({ open, onClose }) {
   )
 }
 
-export default memo(CreateRegistryItemModal)
+export default memo(PopulateRegistryItemModal)

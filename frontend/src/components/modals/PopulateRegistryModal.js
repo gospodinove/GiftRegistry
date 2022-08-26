@@ -19,7 +19,7 @@ function PopulateRegistryModal({ open, onClose }) {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const initialData = useSelector(state => state.modals.createRegistry?.data)
+  const initialData = useSelector(state => state.modals.populateRegistry?.data)
 
   const isModalInUpdateMode = useMemo(
     () => initialData !== undefined,
