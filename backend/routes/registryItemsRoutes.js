@@ -14,12 +14,17 @@ const router = express.Router()
 
 router.patch(
   '/:registryItemId/toggleTaken',
-  [isAuthenticated, fetchRegistryItem],
+  [isAuthenticated, fetchRegistryItem, fetchRegistry],
   async (req, res) => {
     const db = req.app.locals.db
     const item = res.locals.item
 
-    // TODO: check if the user is part of the item's list
+    const registryUserEmails = res.locals.registry.users.map(u => u.email)
+
+    if (!registryUserEmails.includes(req.session.user.email)) {
+      sendErrorResponse(res, 401, 'general', 'Unauthorized action')
+      return
+    }
 
     if (item.takenBy && item.takenBy !== req.session.user.id) {
       sendErrorResponse(res, 401, 'general', 'This item is not taken by you')
