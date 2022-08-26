@@ -162,8 +162,8 @@ function MainLayout() {
             icon-mode="icon-only"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
             sx={styles.iconButton}
+            onClick={handleDrawerToggle}
           >
             <Icon type="menu" />
           </Button>

@@ -49,9 +49,9 @@ function Home() {
     }
   }, [isAuthenticated, prev?.isAuthenticated])
 
-  const handleCreateRegistryButtonClick = useCallback(
+  const handlePopulateRegistryButtonClick = useCallback(
     () =>
-      dispatch({ type: 'modals/show', payload: { name: 'createRegistry' } }),
+      dispatch({ type: 'modals/show', payload: { name: 'populateRegistry' } }),
     [dispatch]
   )
 
@@ -67,7 +67,7 @@ function Home() {
           <Button
             sx={styles.button}
             variant="outlined"
-            onClick={handleCreateRegistryButtonClick}
+            onClick={handlePopulateRegistryButtonClick}
             icon="add"
             icon-mode="start"
           >

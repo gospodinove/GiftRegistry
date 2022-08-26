@@ -35,8 +35,8 @@ function RegistriesListItem({ registry, isSelected, onClick }) {
       <ListItemButton
         component="button"
         className="listItemButton"
-        onClick={handleClick}
         sx={componentStyles.registryItemStyles}
+        onClick={handleClick}
       >
         <ListItemText primary={registry.name} secondary={registry.type} />
 

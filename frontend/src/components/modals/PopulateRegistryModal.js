@@ -11,13 +11,15 @@ import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
 import { COLORS, REGISTRY_TYPES } from '../../constants'
+import { Typography } from '@mui/material'
+import { styles } from './PopulateRegistryModal.styles'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const initialData = useSelector(state => state.modals.createRegistry?.data)
+  const initialData = useSelector(state => state.modals.populateRegistry?.data)
 
   const isModalInUpdateMode = useMemo(
     () => initialData !== undefined,
@@ -163,25 +165,42 @@ function PopulateRegistryModal({ open, onClose }) {
     ]
   )
 
+  const componentStyles = useMemo(() => styles(color), [color])
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>
-          {initialData ? 'Edit registry' : 'New registry'}
+          {initialData ? (
+            <>
+              <Typography component="span" variant="h6">
+                Edit{' '}
+              </Typography>
+              <Typography
+                component="span"
+                variant="h6"
+                sx={componentStyles.registryName}
+              >
+                {initialData?.name}
+              </Typography>
+            </>
+          ) : (
+            'New registry'
+          )}
         </DialogTitle>
 
         <DialogContent>
           <ColorSelector
-            onChange={handleColorChange}
             initialColor={initialData?.color}
+            onChange={handleColorChange}
           />
           <TextField
             select
             id="type"
             label="Type"
             value={type}
-            onChange={handleTypeChange}
             color={color}
+            onChange={handleTypeChange}
           >
             {REGISTRY_TYPES.map(option => (
               <MenuItem key={option} value={option}>
@@ -198,8 +217,8 @@ function PopulateRegistryModal({ open, onClose }) {
               id="custom-type"
               label="Type name"
               value={customType}
-              onChange={handleCustomTypeChange}
               color={color}
+              onChange={handleCustomTypeChange}
             />
           ) : null}
           <TextField
@@ -210,17 +229,17 @@ function PopulateRegistryModal({ open, onClose }) {
             id="name"
             label="Name"
             value={name}
-            onChange={handleNameChange}
             color={color}
+            onChange={handleNameChange}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color={color}>
+          <Button color={color} onClick={handleClose}>
             Cancel
           </Button>
 
           <Button type="submit" color={color} loading={isLoading}>
-            {initialData ? 'Update' : 'Create'}
+            {initialData ? 'Save' : 'Create'}
           </Button>
         </DialogActions>
       </Box>

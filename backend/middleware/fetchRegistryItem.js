@@ -16,6 +16,8 @@ module.exports = async function fetchRegistryItem(req, res, next) {
     }
 
     res.locals.item = replaceId(item)
+    res.locals.fetchRegistryOverrideId = item.registryId
+
     next()
   } catch {
     sendErrorResponse(res, 500, 'general', 'Something went wrong')

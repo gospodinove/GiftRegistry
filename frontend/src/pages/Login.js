@@ -100,10 +100,10 @@ function Login() {
             label="Email"
             variant="outlined"
             value={email}
-            onChange={handleEmailChange}
             error={errors.email !== undefined}
             helperText={errors.email}
             required
+            onChange={handleEmailChange}
           />
 
           <TextField
@@ -112,10 +112,10 @@ function Login() {
             label="Password"
             variant="outlined"
             value={password}
-            onChange={handlePasswordChange}
             error={errors.password !== undefined}
             helperText={errors.password}
             required
+            onChange={handlePasswordChange}
           />
 
           <Button
