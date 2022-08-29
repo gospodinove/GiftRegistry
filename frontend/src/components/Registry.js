@@ -1,13 +1,11 @@
-import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
+import { List } from '@mui/material'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
-import Button from './Button'
-import Icon from './Icon'
-import { COLORS } from '../constants'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
+import RegistryDetails from './RegistryDetails'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -20,6 +18,7 @@ const Registry = ({ registryId }) => {
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
 
   const user = useSelector(state => state.auth.user)
+
   const owner = useSelector(
     state => state.registries.ownerByRegistryId[registryId]
   )
@@ -102,31 +101,6 @@ const Registry = ({ registryId }) => {
     maybeFetchRegistryOwner()
   }, [maybeFetchRegistryOwner, registryId])
 
-  const maybeRenderOwner = useCallback(() => {
-    const registryOwner = registryData.users.find(u => u.role === 'owner')
-
-    if (!owner || user.email === registryOwner.email) {
-      return null
-    }
-
-    if (isLoadingOwner) {
-      return (
-        <Typography variant="h6">
-          <Skeleton width="250px" />
-        </Typography>
-      )
-    }
-
-    return (
-      <Stack direction="row" spacing={1}>
-        <Icon type="account-circle" />
-        <Typography variant="h6">
-          {owner.firstName + ' ' + owner.lastName}
-        </Typography>
-      </Stack>
-    )
-  }, [isLoadingOwner, owner, registryData?.users, user?.email])
-
   const handleItemToggle = useCallback(
     async id => {
       try {
@@ -149,7 +123,7 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData?.id]
   )
 
-  const handleAddButtonClick = useCallback(() => {
+  const handleAddClick = useCallback(() => {
     if (!registryData?.id) {
       return
     }
@@ -168,7 +142,7 @@ const Registry = ({ registryId }) => {
     })
   }, [registryData.id, registryData.color, registryData.name, dispatch])
 
-  const handleShareButtonClick = useCallback(() => {
+  const handleShareClick = useCallback(() => {
     if (!registryData) {
       return
     }
@@ -210,7 +184,6 @@ const Registry = ({ registryId }) => {
         type: 'modals/show',
         payload: {
           name: 'populateRegistryItem',
-
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
@@ -226,48 +199,22 @@ const Registry = ({ registryId }) => {
 
   return (
     <>
-      {registryData ? (
-        /* TODO: Create RegistryDetailsSummary component */
-        <>
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="h4">{registryData.name}</Typography>
-            {isOwner ? (
-              <Button
-                icon-mode="icon-only"
-                icon="edit"
-                color={COLORS.LIGHTGRAY}
-                component="div"
-                onClick={handleEditClick}
-              />
-            ) : null}
-          </Box>
-
-          {maybeRenderOwner()}
-
-          {isOwner && (
-            <Stack direction="row" spacing={1}>
-              <Button
-                variant="outlined"
-                icon-mode="start"
-                icon="add"
-                onClick={handleAddButtonClick}
-                color={registryData.color}
-              >
-                Add
-              </Button>
-              <Button
-                variant="contained"
-                icon-mode="start"
-                icon="share"
-                onClick={handleShareButtonClick}
-                color={registryData.color}
-              >
-                Share
-              </Button>
-            </Stack>
-          )}
-        </>
-      ) : null}
+      {registryData ?? (
+        <RegistryDetails
+          shouldShowActionButtons={isOwner}
+          name={registryData.name}
+          color={registryData.color}
+          owner={owner}
+          shouldShowOwner={
+            registryData.users.find(u => u.role === 'owner').email !==
+            user.email
+          }
+          isLoadingOwner={isLoadingOwner}
+          onEditClick={handleEditClick}
+          onAddClick={handleAddClick}
+          onShareClick={handleShareClick}
+        />
+      )}
 
       {isLoadingItems ? (
         <>
