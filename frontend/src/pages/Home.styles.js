@@ -15,6 +15,5 @@ export const styles = {
   gridItem: {
     height: '100%',
     overflow: 'auto'
-  },
-  button: { width: 'fit-content', height: 'fit-content' }
+  }
 }

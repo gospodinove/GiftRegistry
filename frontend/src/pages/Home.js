@@ -1,15 +1,22 @@
-import { memo, useEffect } from 'react'
-import { Box, Grid, Typography } from '@mui/material'
+import { memo, useEffect, useMemo } from 'react'
+import {
+  Box,
+  Grid,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Typography
+} from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
 import './Home.css'
-import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
+import Icon from '../components/Icon'
 
 function Home() {
   const dispatch = useDispatch()
@@ -60,21 +67,33 @@ function Home() {
     [setSelectedRegistryId]
   )
 
+  const newRegistryButton = useMemo(
+    () => (
+      <ListItem component="div" disablePadding>
+        <ListItemButton
+          component="button"
+          className="listItemButton"
+          sx={styles.button}
+          onClick={handlePopulateRegistryButtonClick}
+        >
+          <ListItemText primary="Create new registry" />
+
+          <Icon type="add"></Icon>
+        </ListItemButton>
+      </ListItem>
+    ),
+    [handlePopulateRegistryButtonClick]
+  )
+
   return (
     <Box sx={styles.box}>
-      <Grid container sx={styles.gridContainer} spacing={2}>
+      <Grid container sx={styles.gridContainer} spacing={0} columnSpacing={2}>
         <Grid item xs={3} sx={styles.gridItem}>
-          <Button
-            sx={styles.button}
-            variant="outlined"
-            onClick={handlePopulateRegistryButtonClick}
-            icon="add"
-            icon-mode="start"
-          >
-            Create new registry
-          </Button>
           {isAuthenticated && (
-            <RegistriesList onSelectedChange={onSelectedChange} />
+            <RegistriesList
+              onSelectedChange={onSelectedChange}
+              newRegistryButton={newRegistryButton}
+            />
           )}
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
