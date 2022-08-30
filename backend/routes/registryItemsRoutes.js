@@ -1,19 +1,51 @@
 const express = require('express')
-const { validateAll } = require('indicative/validator')
-const { extend } = require('indicative/validator')
 const { replaceId, sendErrorResponse, hashPassword } = require('../utils')
-const { passwordValidator, validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
-const fetchUser = require('../middleware/fetchUser')
 const { ObjectId } = require('mongodb')
+const fetchRegistryItem = require('../middleware/fetchRegistryItem')
+const { COLLECTION_NAMES } = require('../constants')
+const fetchRegistry = require('../middleware/fetchRegistry')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const isRegistryOwner = require('../middleware/isRegistryOwner')
-const fetchRegistry = require('../middleware/fetchRegistry')
-const fetchRegistryItem = require('../middleware/fetchRegistryItem')
+const { validateAll } = require('indicative/validator')
+const { validationMessages } = require('../validation')
 
 const router = express.Router()
 
-extend('password', passwordValidator)
+router.patch(
+  '/:registryItemId/toggleTaken',
+  [isAuthenticated, fetchRegistryItem, fetchRegistry],
+  async (req, res) => {
+    const db = req.app.locals.db
+    const item = res.locals.item
+
+    const registryUserEmails = res.locals.registry.users.map(u => u.email)
+
+    if (!registryUserEmails.includes(req.session.user.email)) {
+      sendErrorResponse(res, 401, 'general', 'Unauthorized action')
+      return
+    }
+
+    if (item.takenBy && item.takenBy !== req.session.user.id) {
+      sendErrorResponse(res, 401, 'general', 'This item is not taken by you')
+      return
+    }
+
+    try {
+      const result = await db
+        .collection(COLLECTION_NAMES.registryItems)
+        .findOneAndUpdate(
+          { _id: ObjectId(req.params.registryItemId) },
+          { $set: { takenBy: item.takenBy ? undefined : req.session.user.id } },
+          { returnDocument: 'after' }
+        )
+
+      res.json({ item: replaceId(result.value) })
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not update registry item')
+    }
+  }
+)
 
 router.put(
   '/:registryItemId',
@@ -39,18 +71,20 @@ router.put(
       await validateAll(item, schema, validationMessages)
 
       try {
-        const result = await db.collection('registryItems').findOneAndUpdate(
-          { _id: ObjectId(req.params.registryItemId) },
-          {
-            $set: {
-              name: item.name,
-              price: item.price,
-              description: item.description,
-              link: item.link
-            }
-          },
-          { returnDocument: 'after' }
-        )
+        const result = await db
+          .collection(COLLECTION_NAMES.registryItems)
+          .findOneAndUpdate(
+            { _id: ObjectId(req.params.registryItemId) },
+            {
+              $set: {
+                name: item.name,
+                price: item.price,
+                description: item.description,
+                link: item.link
+              }
+            },
+            { returnDocument: 'after' }
+          )
 
         res.json({ item: replaceId(result.value) })
       } catch {

@@ -10,7 +10,7 @@ const authRoutes = require('./routes/authRoutes')
 const registriesRoutes = require('./routes/registriesRoutes')
 const usersRoutes = require('./routes/usersRoutes')
 const registryItemsRoutes = require('./routes/registryItemsRoutes')
-const { frontEndBaseURL } = require('./constants')
+const { FRONT_END_BASE_URL } = require('./constants')
 
 dotenv.config()
 
@@ -19,7 +19,7 @@ const apiRouter = express.Router()
 
 app.use(
   cors({
-    origin: frontEndBaseURL,
+    origin: FRONT_END_BASE_URL,
     credentials: true
   })
 )

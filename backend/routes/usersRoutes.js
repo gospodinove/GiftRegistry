@@ -6,6 +6,7 @@ const { passwordValidator, validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const fetchUser = require('../middleware/fetchUser')
 const { ObjectId } = require('mongodb')
+const { COLLECTION_NAMES } = require('../constants')
 
 const router = express.Router()
 
@@ -30,7 +31,7 @@ router.put('/:userId', [isAuthenticated, fetchUser], async (req, res) => {
       const newValue = { ...req.body, password, isRegistrationComplete: true }
 
       const result = await db
-        .collection('users')
+        .collection(COLLECTION_NAMES.users)
         .findOneAndUpdate(
           { _id: ObjectId(req.params.userId) },
           { $set: newValue },

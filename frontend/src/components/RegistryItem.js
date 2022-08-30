@@ -9,16 +9,17 @@ const RegistryItem = ({
   data,
   onToggle,
   color,
+  disabled,
   isEditEnabled,
   onEditClick
 }) => {
-  const [isChecked, setIsChecked] = useState(data.takenBy !== null)
   const [isEditButtonVisible, setIsEditButtonVisible] = useState(false)
 
   const handleClick = useCallback(() => {
     onToggle(data.id)
-    setIsChecked(!isChecked)
-  }, [setIsChecked, onToggle, data.id, isChecked])
+  }, [onToggle, data.id])
+
+  const inputProps = useMemo(() => ({ 'aria-labelledby': data.id }), [data.id])
 
   const handleEnterHover = useCallback(() => {
     if (!isEditEnabled) {
@@ -73,11 +74,12 @@ const RegistryItem = ({
     >
       <ListItemIcon>
         <Checkbox
-          checked={isChecked}
+          checked={data.takenBy !== null}
           tabIndex={-1}
           disableRipple
-          inputProps={{ 'aria-labelledby': data.id }}
+          inputProps={inputProps}
           color={color}
+          disabled={disabled}
           onClick={handleClick}
         />
       </ListItemIcon>
