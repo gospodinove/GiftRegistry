@@ -199,7 +199,7 @@ const Registry = ({ registryId }) => {
 
   return (
     <>
-      {registryData ?? (
+      {registryData ? (
         <RegistryDetails
           shouldShowActionButtons={isOwner}
           name={registryData.name}
@@ -214,7 +214,7 @@ const Registry = ({ registryId }) => {
           onAddClick={handleAddClick}
           onShareClick={handleShareClick}
         />
-      )}
+      ) : null}
 
       {isLoadingItems ? (
         <>
