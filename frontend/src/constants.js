@@ -5,6 +5,7 @@ export const COLORS = {
   LIGHTGRAY: '#a9a9a9',
   SLIDER_INITIAL: '#ff0300',
   ICON_DEFAULT: '#000000',
+  BLACK: '#000000',
   WHITE: '#ffffff'
 }
 
