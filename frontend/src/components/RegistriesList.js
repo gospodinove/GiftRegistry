@@ -1,4 +1,10 @@
-import { List, ListSubheader } from '@mui/material'
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListSubheader
+} from '@mui/material'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
@@ -6,13 +12,31 @@ import { api } from '../utils/api'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 import Empty from './Empty'
 import { styles } from './RegistriesList.styles'
+import Icon from './Icon'
 
-const RegistriesList = ({ onSelectedChange, newRegistryButton }) => {
+const RegistriesList = ({ onSelectedChange, onNewRegistryButtonClick }) => {
   const registries = useSelector(state => state.registries.data)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const [isLoading, setIsLoading] = useState(true)
+
+  const newRegistryButton = useMemo(
+    () => (
+      <ListItem component="div" disablePadding>
+        <ListItemButton
+          component="button"
+          className="listItemButton"
+          onClick={onNewRegistryButtonClick}
+        >
+          <ListItemText primary="Create new registry" />
+
+          <Icon type="add" />
+        </ListItemButton>
+      </ListItem>
+    ),
+    [onNewRegistryButtonClick]
+  )
 
   const registriesSortedByDate = useMemo(
     () =>

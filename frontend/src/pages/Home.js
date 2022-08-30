@@ -1,12 +1,5 @@
 import { memo, useEffect, useMemo } from 'react'
-import {
-  Box,
-  Grid,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Typography
-} from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
@@ -16,7 +9,6 @@ import './Home.css'
 import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
-import Icon from '../components/Icon'
 
 function Home() {
   const dispatch = useDispatch()
@@ -56,7 +48,7 @@ function Home() {
     }
   }, [isAuthenticated, prev?.isAuthenticated])
 
-  const handlePopulateRegistryButtonClick = useCallback(
+  const handleCreateRegistryButtonClick = useCallback(
     () =>
       dispatch({ type: 'modals/show', payload: { name: 'populateRegistry' } }),
     [dispatch]
@@ -67,24 +59,6 @@ function Home() {
     [setSelectedRegistryId]
   )
 
-  const newRegistryButton = useMemo(
-    () => (
-      <ListItem component="div" disablePadding>
-        <ListItemButton
-          component="button"
-          className="listItemButton"
-          sx={styles.button}
-          onClick={handlePopulateRegistryButtonClick}
-        >
-          <ListItemText primary="Create new registry" />
-
-          <Icon type="add"></Icon>
-        </ListItemButton>
-      </ListItem>
-    ),
-    [handlePopulateRegistryButtonClick]
-  )
-
   return (
     <Box sx={styles.box}>
       <Grid container sx={styles.gridContainer} spacing={0} columnSpacing={2}>
@@ -92,7 +66,7 @@ function Home() {
           {isAuthenticated && (
             <RegistriesList
               onSelectedChange={onSelectedChange}
-              newRegistryButton={newRegistryButton}
+              onNewRegistryButtonClick={handleCreateRegistryButtonClick}
             />
           )}
         </Grid>
