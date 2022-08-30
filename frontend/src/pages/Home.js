@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react'
+import { memo, useEffect } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -61,12 +61,12 @@ function Home() {
 
   return (
     <Box sx={styles.box}>
-      <Grid container sx={styles.gridContainer} spacing={0} columnSpacing={2}>
+      <Grid container sx={styles.gridContainer} columnSpacing={2}>
         <Grid item xs={3} sx={styles.gridItem}>
           {isAuthenticated && (
             <RegistriesList
               onSelectedChange={onSelectedChange}
-              onNewRegistryButtonClick={handleCreateRegistryButtonClick}
+              onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
             />
           )}
         </Grid>

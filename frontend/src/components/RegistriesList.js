@@ -14,29 +14,12 @@ import Empty from './Empty'
 import { styles } from './RegistriesList.styles'
 import Icon from './Icon'
 
-const RegistriesList = ({ onSelectedChange, onNewRegistryButtonClick }) => {
+const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
   const registries = useSelector(state => state.registries.data)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const [isLoading, setIsLoading] = useState(true)
-
-  const newRegistryButton = useMemo(
-    () => (
-      <ListItem component="div" disablePadding>
-        <ListItemButton
-          component="button"
-          className="listItemButton"
-          onClick={onNewRegistryButtonClick}
-        >
-          <ListItemText primary="Create new registry" />
-
-          <Icon type="add" />
-        </ListItemButton>
-      </ListItem>
-    ),
-    [onNewRegistryButtonClick]
-  )
 
   const registriesSortedByDate = useMemo(
     () =>
@@ -94,7 +77,17 @@ const RegistriesList = ({ onSelectedChange, onNewRegistryButtonClick }) => {
   return registriesSortedByDate.length > 0 ? (
     <List subheader={<div />}>
       <ListSubheader disableGutters sx={styles.subheader}>
-        {newRegistryButton}
+        <ListItem component="div" disablePadding>
+          <ListItemButton
+            component="button"
+            className="listItemButton"
+            onClick={onCreateRegistryButtonClick}
+          >
+            <ListItemText primary="Create new registry" />
+
+            <Icon type="add" />
+          </ListItemButton>
+        </ListItem>
       </ListSubheader>
       {registriesSortedByDate.map(registry => (
         <RegistriesListItem
