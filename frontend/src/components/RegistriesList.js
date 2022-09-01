@@ -5,6 +5,7 @@ import RegistriesListItem from './RegistriesListItem'
 import { api } from '../utils/api'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 import Empty from './Empty'
+import { addRegistryData } from '../redux/registriesSlice'
 
 const RegistriesList = ({ onSelectedChange }) => {
   const registries = useSelector(state => state.registries.data)
@@ -34,7 +35,7 @@ const RegistriesList = ({ onSelectedChange }) => {
 
       const response = await api('registries')
 
-      dispatch({ type: 'registries/add', payload: response.registries })
+      dispatch(addRegistryData(response.registries))
     } catch (error) {
       dispatch({
         type: 'toast/show',

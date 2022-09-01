@@ -13,6 +13,10 @@ import ColorSelector from '../ColorSelector'
 import { COLORS, REGISTRY_TYPES } from '../../constants'
 import { Typography } from '@mui/material'
 import { styles } from './PopulateRegistryModal.styles'
+import {
+  addRegistryData,
+  updateRegistryData
+} from '../../redux/registriesSlice'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -112,10 +116,12 @@ function PopulateRegistryModal({ open, onClose }) {
           isModalInUpdateMode ? 'put' : 'post',
           data
         )
-        dispatch({
-          type: isModalInUpdateMode ? 'registries/update' : 'registries/add',
-          payload: isModalInUpdateMode ? result.registry : [result.registry]
-        })
+
+        if (isModalInUpdateMode) {
+          dispatch(updateRegistryData(result.registry))
+        } else {
+          dispatch(addRegistryData([result.registry]))
+        }
 
         handleClose()
       } catch (error) {

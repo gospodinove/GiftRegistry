@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { styles } from './ShareRegistryModal.styles'
+import { updateRegistryData } from '../../redux/registriesSlice'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -75,7 +76,7 @@ function ShareRegistryModal({ open, onClose }) {
           data
         )
 
-        dispatch({ type: 'registries/update', payload: response.registry })
+        dispatch(updateRegistryData(response.registry))
 
         handleClose()
       } catch (error) {

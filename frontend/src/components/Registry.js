@@ -7,6 +7,7 @@ import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import { addRegistryOwner } from '../redux/registriesSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -80,10 +81,9 @@ const Registry = ({ registryId }) => {
 
       const response = await api('registries/' + registryId + '/owner')
 
-      dispatch({
-        type: 'registries/addOwner',
-        payload: { registryId: registryId, owner: response.owner }
-      })
+      dispatch(
+        addRegistryOwner({ registryId: registryId, owner: response.owner })
+      )
     } catch (error) {
       dispatch({
         type: 'toast/show',

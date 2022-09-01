@@ -9,21 +9,25 @@ export const registriesSlice = createSlice({
   name: 'registries',
   initialState,
   reducers: {
-    add: (state, action) => {
+    addRegistryData: (state, action) => {
       state.data = [...state.data, ...action.payload]
     },
-    update: (state, action) => {
+    updateRegistryData: (state, action) => {
       state.data = [
         ...state.data.filter(r => r.id !== action.payload.id),
         action.payload
       ]
     },
-    addOwner: (state, action) => {
+    addRegistryOwner: (state, action) => {
       state.ownerByRegistryId[action.payload.registryId] = action.payload.owner
     },
-    removeOwner: (state, action) => {
-      state.ownerByRegistryId[action.payload.registryId] = undefined
-    },
-    clear: () => initialState
+    resetRegistriesSlice: () => initialState
   }
 })
+
+export const {
+  addRegistryData,
+  updateRegistryData,
+  addRegistryOwner,
+  resetRegistriesSlice
+} = registriesSlice.actions
