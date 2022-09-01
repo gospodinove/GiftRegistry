@@ -20,6 +20,7 @@ import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
 import { resetAuthSlice, USER_SESSION_STATE } from '../redux/authSlice'
 import { resetRegistriesSlice } from '../redux/registriesSlice'
+import { resetRegistryItemsSlice } from '../redux/registryItemsSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
@@ -49,7 +50,7 @@ function MainLayout() {
 
       dispatch(resetAuthSlice())
       dispatch(resetRegistriesSlice())
-      dispatch({ type: 'registryItems/clear' })
+      dispatch(resetRegistryItemsSlice())
 
       dispatch({
         type: 'toast/show',

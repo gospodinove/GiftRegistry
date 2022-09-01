@@ -10,6 +10,10 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { Grid, InputAdornment, Typography } from '@mui/material'
 import { styles } from './PopulateRegistryItemModal.styles'
+import {
+  addRegistryItem,
+  updateRegistryItem
+} from '../../redux/registryItemsSlice'
 
 function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -118,13 +122,16 @@ function PopulateRegistryItemModal({ open, onClose }) {
           data
         )
 
-        dispatch({
-          type: isUpdateVariant ? 'registryItems/update' : 'registryItems/add',
-          payload: {
-            registryId: initialData.registryId,
-            item: response.item
-          }
-        })
+        const dispatchPayload = {
+          registryId: initialData.registryId,
+          item: response.item
+        }
+
+        if (isUpdateVariant) {
+          dispatch(updateRegistryItem(dispatchPayload))
+        } else {
+          dispatch(addRegistryItem(dispatchPayload))
+        }
 
         handleClose()
       } catch (error) {

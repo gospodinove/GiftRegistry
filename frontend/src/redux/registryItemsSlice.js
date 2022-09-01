@@ -7,16 +7,16 @@ export const registryItemsSlice = createSlice({
   name: 'registryItems',
   initialState,
   reducers: {
-    set: (state, action) => {
+    setRegistryItems: (state, action) => {
       state[action.payload.registryId] = action.payload.items
     },
-    add: (state, action) => {
+    addRegistryItem: (state, action) => {
       state[action.payload.registryId] = [
         ...state[action.payload.registryId],
         action.payload.item
       ]
     },
-    update: (state, action) => {
+    updateRegistryItem: (state, action) => {
       state[action.payload.registryId] = [
         ...state[action.payload.registryId].filter(
           item => item.id !== action.payload.item.id
@@ -24,6 +24,13 @@ export const registryItemsSlice = createSlice({
         action.payload.item
       ]
     },
-    clear: () => initialState
+    resetRegistryItemsSlice: () => initialState
   }
 })
+
+export const {
+  setRegistryItems,
+  addRegistryItem,
+  updateRegistryItem,
+  resetRegistryItemsSlice
+} = registryItemsSlice.actions

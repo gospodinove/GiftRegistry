@@ -8,6 +8,10 @@ import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import { addRegistryOwner } from '../redux/registriesSlice'
+import {
+  setRegistryItems,
+  updateRegistryItem
+} from '../redux/registryItemsSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -54,10 +58,7 @@ const Registry = ({ registryId }) => {
 
       const response = await api('registries/' + registryId + '/items')
 
-      dispatch({
-        type: 'registryItems/set',
-        payload: { registryId, items: response.items }
-      })
+      dispatch(setRegistryItems({ registryId, items: response.items }))
     } catch (error) {
       dispatch({
         type: 'toast/show',
@@ -110,10 +111,12 @@ const Registry = ({ registryId }) => {
           'patch'
         )
 
-        dispatch({
-          type: 'registryItems/update',
-          payload: { registryId: registryData.id, item: response.item }
-        })
+        dispatch(
+          updateRegistryItem({
+            registryId: registryData.id,
+            item: response.item
+          })
+        )
       } catch (error) {
         dispatch({
           type: 'toast/show',
