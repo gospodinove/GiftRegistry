@@ -6,6 +6,7 @@ import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
+import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -128,18 +129,17 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'populateRegistryItem',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistryItem,
         data: {
           registryId: registryData.id,
           color: registryData.color,
           registryName: registryData.name,
           variant: 'create'
         }
-      }
-    })
+      })
+    )
   }, [registryData.id, registryData.color, registryData.name, dispatch])
 
   const handleShareClick = useCallback(() => {
@@ -147,17 +147,16 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'shareRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.shareRegistry,
         data: {
           registryId: registryData.id,
           users: registryData.users.filter(user => user.role !== 'owner'),
           color: registryData.color
         }
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
 
   const handleEditClick = useCallback(() => {
@@ -165,13 +164,12 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'populateRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistry,
         data: registryData
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
 
   const handleItemEditClick = useCallback(
@@ -180,10 +178,9 @@ const Registry = ({ registryId }) => {
         return
       }
 
-      dispatch({
-        type: 'modals/show',
-        payload: {
-          name: 'populateRegistryItem',
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.populateRegistryItem,
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
@@ -191,8 +188,8 @@ const Registry = ({ registryId }) => {
             registryName: registryData.name,
             variant: 'update'
           }
-        }
-      })
+        })
+      )
     },
     [dispatch, registryData, items]
   )

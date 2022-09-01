@@ -10,6 +10,8 @@ import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
+import { setUser } from '../redux/authSlice'
+import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 
 function Home() {
   const dispatch = useDispatch()
@@ -26,7 +28,7 @@ function Home() {
       try {
         const response = await api('auth/token', 'post', { token })
 
-        dispatch({ type: 'auth/setUser', payload: response.user })
+        dispatch(setUser(response.user))
       } catch (error) {
         dispatch({
           type: 'toast/show',
@@ -50,8 +52,7 @@ function Home() {
   }, [isAuthenticated, prev?.isAuthenticated])
 
   const handlePopulateRegistryButtonClick = useCallback(
-    () =>
-      dispatch({ type: 'modals/show', payload: { name: 'populateRegistry' } }),
+    () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
 

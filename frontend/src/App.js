@@ -9,6 +9,11 @@ import Register from './pages/Register'
 import { api } from './utils/api'
 import { isEmptyObject } from './utils/objects'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
+import {
+  setUser,
+  setUserSessionFetched,
+  setUserSessionFetching
+} from './redux/authSlice'
 
 function App() {
   const dispatch = useDispatch()
@@ -16,17 +21,17 @@ function App() {
   const user = useSelector(state => state.auth.user)
 
   const checkUserSession = useCallback(async () => {
-    dispatch({ type: 'auth/setUserSessionFetching' })
+    dispatch(setUserSessionFetching())
 
     try {
       const user = await api('auth/session-user')
 
       if (user && !isEmptyObject(user)) {
-        dispatch({ type: 'auth/setUser', payload: user })
+        dispatch(setUser(user))
       }
     } catch {
     } finally {
-      dispatch({ type: 'auth/setUserSessionFetched' })
+      dispatch(setUserSessionFetched())
     }
   }, [dispatch])
 

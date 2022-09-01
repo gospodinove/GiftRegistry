@@ -20,6 +20,13 @@ export const authSlice = createSlice({
     setUserSessionFetched: state => {
       state.userSessionState = USER_SESSION_STATE.FETCHED
     },
-    clear: () => initialState
+    resetAuthSlice: () => initialState
   }
 })
+
+export const {
+  setUser,
+  setUserSessionFetching,
+  setUserSessionFetched,
+  resetAuthSlice
+} = authSlice.actions

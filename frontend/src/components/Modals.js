@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { hideModal, MODAL_NAMES } from '../redux/modalsSlice'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareRegistryModal from './modals/ShareRegistryModal'
@@ -11,8 +12,7 @@ const Modals = () => {
     state => state.modals.populateRegistry !== undefined
   )
   const handlePopulateRegistryModalClose = useCallback(
-    () =>
-      dispatch({ type: 'modals/hide', payload: { name: 'populateRegistry' } }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
 
@@ -20,11 +20,7 @@ const Modals = () => {
     state => state.modals.populateRegistryItem !== undefined
   )
   const handlePopulateRegistryItemModalClose = useCallback(
-    () =>
-      dispatch({
-        type: 'modals/hide',
-        payload: { name: 'populateRegistryItem' }
-      }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.populateRegistryItem })),
     [dispatch]
   )
 
@@ -32,7 +28,7 @@ const Modals = () => {
     state => state.modals.shareRegistry !== undefined
   )
   const handleShareRegistryModalClose = useCallback(
-    () => dispatch({ type: 'modals/hide', payload: { name: 'shareRegistry' } }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.shareRegistry })),
     [dispatch]
   )
 

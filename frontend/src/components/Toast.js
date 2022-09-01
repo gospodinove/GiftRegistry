@@ -2,6 +2,7 @@ import { Alert, Button, Snackbar } from '@mui/material'
 import { memo, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { resetModalsSlice } from '../redux/modalsSlice'
 import { styles } from './Toast.styles'
 
 const Toast = () => {
@@ -16,7 +17,7 @@ const Toast = () => {
   )
 
   const handleActionClick = useCallback(() => {
-    dispatch({ type: 'modals/clear' })
+    dispatch(resetModalsSlice())
     navigate(data.navigation.target)
     handleClose()
   }, [data.navigation?.target, dispatch, handleClose, navigate])

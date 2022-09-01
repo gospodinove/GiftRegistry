@@ -6,6 +6,7 @@ import { api } from '../utils/api'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
+import { setUser } from '../redux/authSlice'
 
 function Login() {
   const dispatch = useDispatch()
@@ -54,7 +55,7 @@ function Login() {
           password
         })
 
-        dispatch({ type: 'auth/setUser', payload: response.user })
+        dispatch(setUser(response.user))
         navigate('/')
       } catch (error) {
         switch (error.type) {

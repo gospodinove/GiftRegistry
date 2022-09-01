@@ -18,7 +18,7 @@ import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
 import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { USER_SESSION_STATE } from '../redux/authSlice'
+import { resetAuthSlice, USER_SESSION_STATE } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
@@ -46,7 +46,7 @@ function MainLayout() {
     try {
       await api('auth/logout')
 
-      dispatch({ type: 'auth/clear' })
+      dispatch(resetAuthSlice())
       dispatch({ type: 'registries/clear' })
       dispatch({ type: 'registryItems/clear' })
 
