@@ -21,6 +21,7 @@ import MainLayoutDrawer from './components/MainLayoutDrawer'
 import { resetAuthSlice, USER_SESSION_STATE } from '../redux/authSlice'
 import { resetRegistriesSlice } from '../redux/registriesSlice'
 import { resetRegistryItemsSlice } from '../redux/registryItemsSlice'
+import { showToast } from '../redux/toastSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
@@ -52,15 +53,9 @@ function MainLayout() {
       dispatch(resetRegistriesSlice())
       dispatch(resetRegistryItemsSlice())
 
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'success', message: 'Logged out!' }
-      })
+      dispatch(showToast({ type: 'success', message: 'Logged out!' }))
     } catch {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: 'Something went wrong' }
-      })
+      dispatch(showToast({ type: 'error', message: 'Something went wrong' }))
     }
   }, [dispatch])
 

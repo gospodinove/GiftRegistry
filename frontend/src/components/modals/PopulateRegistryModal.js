@@ -17,6 +17,7 @@ import {
   addRegistryData,
   updateRegistryData
 } from '../../redux/registriesSlice'
+import { showToast } from '../../redux/toastSlice'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -127,14 +128,13 @@ function PopulateRegistryModal({ open, onClose }) {
       } catch (error) {
         switch (error.type) {
           case 'incomplete-registration':
-            dispatch({
-              type: 'toast/show',
-              payload: {
+            dispatch(
+              showToast({
                 type: 'error',
                 message: error.data,
                 navigation: { title: 'Register', target: '/register' }
-              }
-            })
+              })
+            )
             break
 
           case 'field-error':
@@ -142,17 +142,13 @@ function PopulateRegistryModal({ open, onClose }) {
             break
 
           case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
+            dispatch(showToast({ type: 'error', message: error.data }))
             break
 
           default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
+            dispatch(
+              showToast({ type: 'error', message: 'Something went wrong' })
+            )
             break
         }
       } finally {

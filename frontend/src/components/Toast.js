@@ -3,6 +3,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { resetModalsSlice } from '../redux/modalsSlice'
+import { hideToast } from '../redux/toastSlice'
 import { styles } from './Toast.styles'
 
 const Toast = () => {
@@ -11,10 +12,7 @@ const Toast = () => {
 
   const data = useSelector(state => state.toast)
 
-  const handleClose = useCallback(
-    () => dispatch({ type: 'toast/hide' }),
-    [dispatch]
-  )
+  const handleClose = useCallback(() => dispatch(hideToast()), [dispatch])
 
   const handleActionClick = useCallback(() => {
     dispatch(resetModalsSlice())

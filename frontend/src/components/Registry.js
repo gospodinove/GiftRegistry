@@ -12,6 +12,7 @@ import {
   setRegistryItems,
   updateRegistryItem
 } from '../redux/registryItemsSlice'
+import { showToast } from '../redux/toastSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -60,13 +61,12 @@ const Registry = ({ registryId }) => {
 
       dispatch(setRegistryItems({ registryId, items: response.items }))
     } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: {
+      dispatch(
+        showToast({
           type: 'error',
           message: error.data
-        }
-      })
+        })
+      )
     } finally {
       setIsLoadingItems(false)
     }
@@ -86,10 +86,12 @@ const Registry = ({ registryId }) => {
         addRegistryOwner({ registryId: registryId, owner: response.owner })
       )
     } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: error.data }
-      })
+      dispatch(
+        showToast({
+          type: 'error',
+          message: error.data
+        })
+      )
     } finally {
       setIsLoadingOwner(false)
     }
@@ -118,10 +120,12 @@ const Registry = ({ registryId }) => {
           })
         )
       } catch (error) {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: error.data }
-        })
+        dispatch(
+          showToast({
+            type: 'error',
+            message: error.data
+          })
+        )
       }
     },
     [dispatch, registryData?.id]

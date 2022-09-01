@@ -12,6 +12,7 @@ import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
 import { setUser } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import { showToast } from '../redux/toastSlice'
 
 function Home() {
   const dispatch = useDispatch()
@@ -30,10 +31,7 @@ function Home() {
 
         dispatch(setUser(response.user))
       } catch (error) {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: error.data }
-        })
+        dispatch(showToast({ type: 'error', message: error.data }))
       }
     },
     [dispatch]

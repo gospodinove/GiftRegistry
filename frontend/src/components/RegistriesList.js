@@ -6,6 +6,7 @@ import { api } from '../utils/api'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 import Empty from './Empty'
 import { addRegistryData } from '../redux/registriesSlice'
+import { showToast } from '../redux/toastSlice'
 
 const RegistriesList = ({ onSelectedChange }) => {
   const registries = useSelector(state => state.registries.data)
@@ -37,10 +38,7 @@ const RegistriesList = ({ onSelectedChange }) => {
 
       dispatch(addRegistryData(response.registries))
     } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: error.data }
-      })
+      dispatch(showToast({ type: 'error', message: error.data }))
     } finally {
       setIsLoading(false)
     }

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import { setUser } from '../redux/authSlice'
+import { showToast } from '../redux/toastSlice'
 
 function Login() {
   const dispatch = useDispatch()
@@ -64,17 +65,13 @@ function Login() {
             return
 
           case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
+            dispatch(showToast({ type: 'error', message: error.data }))
             return
 
           default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
+            dispatch(
+              showToast({ type: 'error', message: 'Something went wrong' })
+            )
             return
         }
       } finally {
