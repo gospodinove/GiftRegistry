@@ -140,7 +140,7 @@ const Registry = ({ registryId }) => {
         }
       }
     })
-  }, [registryData.id, registryData.color, registryData.name, dispatch])
+  }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
   const handleShareClick = useCallback(() => {
     if (!registryData) {

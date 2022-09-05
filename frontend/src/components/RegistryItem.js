@@ -15,10 +15,20 @@ import Checkbox from './Checkbox'
 import { styles } from './RegistryItem.styles'
 
 // TODO: display the article link
-const RegistryItem = ({ data, onToggle, color, disabled, onEditClick }) => {
-  const [isCardExpanded, setIsCardExpanded] = useState(false)
+const RegistryItem = ({
+  data,
+  onToggle,
+  color,
+  disabled,
+  isEditEnabled,
+  onEditClick
+}) => {
+  // const [isCardExpanded, setIsCardExpanded] = useState(false)
 
-  const registryItemStyles = useMemo(() => styles(color), [color])
+  const registryItemStyles = useMemo(
+    () => styles(color, disabled),
+    [color, disabled]
+  )
 
   const handleClick = useCallback(() => {
     onToggle(data.id)
@@ -30,13 +40,13 @@ const RegistryItem = ({ data, onToggle, color, disabled, onEditClick }) => {
     onEditClick(data.id)
   }, [onEditClick, data.id])
 
-  const handleCardExpandClick = useCallback(() => {
-    setIsCardExpanded(!isCardExpanded)
-  }, [isCardExpanded])
+  // const handleCardExpandClick = useCallback(() => {
+  //   setIsCardExpanded(!isCardExpanded)
+  // }, [isCardExpanded])
 
   return (
     <Grid item xs={2} sm={4} md={4}>
-      <Card>
+      <Card sx={registryItemStyles.cardStyles}>
         <CardHeader
           title={
             <Box display="flex">
@@ -59,11 +69,15 @@ const RegistryItem = ({ data, onToggle, color, disabled, onEditClick }) => {
           }
         ></CardHeader>
 
-        <CardMedia
-          component="img"
-          height="150"
-          sx={registryItemStyles.cardMedia}
-        />
+        {data.image ? (
+          <CardMedia
+            component="img"
+            src={data.image}
+            height="150"
+            sx={registryItemStyles.cardMedia}
+          />
+        ) : null}
+
         {data.description ? (
           <CardContent>
             <Box display="flex" alignItems="center">
@@ -77,31 +91,34 @@ const RegistryItem = ({ data, onToggle, color, disabled, onEditClick }) => {
             checked={data.takenBy !== null}
             tabIndex={-1}
             inputProps={inputProps}
-            color={color}
+            color={!disabled ? color : null}
             disabled={disabled}
             onClick={handleClick}
           />
-          <Button
-            icon-mode="icon-only"
-            icon="edit"
-            color={color}
-            onClick={handleEditClick}
-          />
+          {isEditEnabled ? (
+            <Button
+              icon-mode="icon-only"
+              icon="edit"
+              color={color}
+              onClick={handleEditClick}
+            />
+          ) : null}
 
           <Button disabled sx={registryItemStyles.hiddenButton} />
 
-          <Button
+          {/* <Button
             icon-mode="icon-only"
             icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
             color={color}
+            disabled={disabled}
             onClick={handleCardExpandClick}
-          />
+          /> */}
         </CardActions>
-        <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
+        {/* <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography>Some data </Typography>
           </CardContent>
-        </Collapse>
+        </Collapse> */}
       </Card>
     </Grid>
   )
