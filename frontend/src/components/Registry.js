@@ -6,6 +6,7 @@ import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
+import { Masonry } from '@mui/lab'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -223,11 +224,9 @@ const Registry = ({ registryId }) => {
         </>
       ) : hasItems ? (
         <List>
-          <Grid
-            container
-            direction="row"
-            spacing={{ xs: 2, md: 3 }}
-            columns={{ xs: 4, sm: 8, md: 12 }}
+          <Masonry
+            columns={{ xs: 1, sm: 2, md: 3 }}
+            spacing={{ xs: 2, sm: 2, md: 3 }}
           >
             {itemsSortedByDate.map(item => (
               <RegistryItem
@@ -240,7 +239,7 @@ const Registry = ({ registryId }) => {
                 isEditEnabled={isOwner}
               />
             ))}
-          </Grid>
+          </Masonry>
         </List>
       ) : (
         <Empty text="No products in the registry" />
