@@ -1,4 +1,4 @@
-import { List } from '@mui/material'
+import { Grid, List } from '@mui/material'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
@@ -223,17 +223,24 @@ const Registry = ({ registryId }) => {
         </>
       ) : hasItems ? (
         <List>
-          {itemsSortedByDate.map(item => (
-            <RegistryItem
-              key={item.id}
-              data={item}
-              disabled={item.takenBy && item.takenBy !== user.id}
-              color={registryData.color}
-              onToggle={handleItemToggle}
-              onEditClick={handleItemEditClick}
-              isEditEnabled={isOwner}
-            />
-          ))}
+          <Grid
+            container
+            direction="row"
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            {itemsSortedByDate.map(item => (
+              <RegistryItem
+                key={item.id}
+                data={item}
+                disabled={item.takenBy && item.takenBy !== user.id}
+                color={registryData.color}
+                onToggle={handleItemToggle}
+                onEditClick={handleItemEditClick}
+                isEditEnabled={isOwner}
+              />
+            ))}
+          </Grid>
         </List>
       ) : (
         <Empty text="No products in the registry" />
