@@ -1,4 +1,3 @@
-import { List } from '@mui/material'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
@@ -6,6 +5,7 @@ import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
+import { Masonry } from '@mui/lab'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -140,7 +140,7 @@ const Registry = ({ registryId }) => {
         }
       }
     })
-  }, [registryData.id, registryData.color, registryData.name, dispatch])
+  }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
   const handleShareClick = useCallback(() => {
     if (!registryData) {
@@ -197,9 +197,14 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData, items]
   )
 
+  const masonryConfig = useMemo(() => ({
+    columns: { xs: 1, sm: 2, md: 3 },
+    spacing: { xs: 2, sm: 2, md: 3 }
+  }))
+
   return (
     <>
-      {registryData ?? (
+      {registryData && (
         <RegistryDetails
           shouldShowActionButtons={isOwner}
           name={registryData.name}
@@ -222,7 +227,10 @@ const Registry = ({ registryId }) => {
           <RegistryItemSkeleton />
         </>
       ) : hasItems ? (
-        <List>
+        <Masonry
+          columns={masonryConfig.columns}
+          spacing={masonryConfig.spacing}
+        >
           {itemsSortedByDate.map(item => (
             <RegistryItem
               key={item.id}
@@ -234,7 +242,7 @@ const Registry = ({ registryId }) => {
               isEditEnabled={isOwner}
             />
           ))}
-        </List>
+        </Masonry>
       ) : (
         <Empty text="No products in the registry" />
       )}

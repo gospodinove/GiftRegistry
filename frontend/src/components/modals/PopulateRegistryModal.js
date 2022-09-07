@@ -208,7 +208,7 @@ function PopulateRegistryModal({ open, onClose }) {
               </MenuItem>
             ))}
           </TextField>
-          {type === 'Custom' ? (
+          {type === 'Custom' && (
             <TextField
               error={errors.type !== undefined}
               helperText={errors.type}
@@ -220,7 +220,7 @@ function PopulateRegistryModal({ open, onClose }) {
               color={color}
               onChange={handleCustomTypeChange}
             />
-          ) : null}
+          )}
           <TextField
             error={errors.name !== undefined}
             helperText={errors.name}

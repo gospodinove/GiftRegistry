@@ -48,7 +48,7 @@ const RegistryDetails = ({
     <>
       <Box display="flex" justifyContent="space-between">
         <Typography variant="h4">{name}</Typography>
-        {shouldShowActionButtons ? (
+        {shouldShowActionButtons && (
           <Button
             icon-mode="icon-only"
             icon="edit"
@@ -56,7 +56,7 @@ const RegistryDetails = ({
             component="div"
             onClick={handleEditClick}
           />
-        ) : null}
+        )}
       </Box>
 
       {maybeRenderOwner()}
