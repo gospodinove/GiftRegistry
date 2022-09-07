@@ -9,9 +9,12 @@ import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button'
 import { api } from '../../utils/api'
+import { useState } from 'react'
 
 function RemoveRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const initialData = useSelector(state => state.modals.removeRegistry?.data)
 
@@ -19,23 +22,25 @@ function RemoveRegistryModal({ open, onClose }) {
     onClose()
   }, [onClose])
 
+  // FIXME: After the registry gets removed an error message appears as fetchRegistry is still looking for the registry id which is no longer available
+
   const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
-      // setIsLoading(true)
+      setIsLoading(true)
 
       try {
-        const result = await api('registries/' + initialData.id, 'delete')
-
-        console.log(result)
+        await api('registries/' + initialData.id, 'delete')
 
         dispatch({
-          type: 'registries/remove'
+          type: 'registries/remove',
+          payload: { id: initialData.id }
         })
 
         handleClose()
       } catch (error) {
+        console.log(error)
         switch (error.type) {
           case 'incomplete-registration':
             dispatch({
@@ -63,29 +68,15 @@ function RemoveRegistryModal({ open, onClose }) {
             break
         }
       } finally {
-        // setIsLoading(false)
+        setIsLoading(false)
       }
     },
     [dispatch, handleClose, initialData?.id]
   )
 
-  // useEffect(() => {
-  //   const listener = event => {
-  //     if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-  //       handleSubmit()
-  //       event.preventDefault()
-  //     }
-  //   }
-  //   document.addEventListener('keydown', listener)
-  //   return () => {
-  //     document.removeEventListener('keydown', listener)
-  //   }
-  // }, [handleSubmit])
-
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
-        {/* onSubmit={handleSubmit} */}
         <DialogTitle>
           Delete{' '}
           <Typography
@@ -115,7 +106,12 @@ function RemoveRegistryModal({ open, onClose }) {
           <Button color={initialData?.color} onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color={initialData?.color} autoFocus>
+          <Button
+            onClick={handleSubmit}
+            color={initialData?.color}
+            loading={isLoading}
+            autoFocus
+          >
             Continue
           </Button>
         </DialogActions>

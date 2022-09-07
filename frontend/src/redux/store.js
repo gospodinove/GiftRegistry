@@ -4,6 +4,7 @@ import { registryItemsSlice } from './registryItemsSlice'
 import { registriesSlice } from './registriesSlice'
 import { modalsSlice } from './modalsSlice'
 import { toastSlice } from './toastSlice'
+// import { actionReducer } from 'use-redux-effect'
 
 export const slices = {
   auth: authSlice,
@@ -18,6 +19,7 @@ const reducers = Object.values(slices).reduce((acc, slice) => {
   return acc
 }, {})
 
+// { ...reducers, action: actionReducer }
 export const reducer = combineReducers(reducers)
 
 const store = configureStore({ reducer })

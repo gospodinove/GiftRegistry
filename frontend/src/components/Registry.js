@@ -184,11 +184,13 @@ const Registry = ({ registryId, onDelete }) => {
       payload: {
         name: 'removeRegistry',
         data: {
-          id: registryData.id
+          id: registryData.id,
+          name: registryData.name,
+          color: registryData.color
         }
       }
     })
-  }, [dispatch, registryData?.id])
+  }, [dispatch, registryData?.id, registryData?.name])
 
   const handleItemEditClick = useCallback(
     id => {
@@ -213,10 +215,13 @@ const Registry = ({ registryId, onDelete }) => {
     [dispatch, registryData, items]
   )
 
-  const masonryConfig = useMemo(() => ({
-    columns: { xs: 1, sm: 2, md: 3 },
-    spacing: { xs: 2, sm: 2, md: 3 }
-  }))
+  const masonryConfig = useMemo(
+    () => ({
+      columns: { xs: 1, sm: 2, md: 3 },
+      spacing: { xs: 2, sm: 2, md: 3 }
+    }),
+    []
+  )
 
   return (
     <>
@@ -236,7 +241,7 @@ const Registry = ({ registryId, onDelete }) => {
           onAddClick={handleAddClick}
           onShareClick={handleShareClick}
         />
-      ) : null}
+      )}
 
       {isLoadingItems ? (
         <>

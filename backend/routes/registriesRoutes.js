@@ -272,10 +272,7 @@ router.delete(
     try {
       await db
         .collection(COLLECTION_NAMES.registries)
-        .findOneAndDelete(
-          { _id: ObjectId(req.params.registryId) },
-          { returnDocument: 'after' }
-        )
+        .findOneAndDelete({ _id: ObjectId(req.params.registryId) })
 
       res.send()
     } catch {

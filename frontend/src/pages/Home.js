@@ -9,6 +9,7 @@ import './Home.css'
 import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
+import { useReduxEffect } from 'use-redux-effect'
 
 function Home() {
   const dispatch = useDispatch()
@@ -47,6 +48,14 @@ function Home() {
       setSelectedRegistryId(null)
     }
   }, [isAuthenticated, prev?.isAuthenticated])
+
+  // useReduxEffect(
+  //   e => {
+  //     console.log(e)
+  //   },
+  //   'registries/remove',
+  //   []
+  // )
 
   const handleCreateRegistryButtonClick = useCallback(
     () =>
