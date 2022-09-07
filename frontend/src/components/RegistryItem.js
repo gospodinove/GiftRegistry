@@ -4,10 +4,11 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
+  Collapse,
   Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import Button from './Button'
 import Checkbox from './Checkbox'
 import { styles } from './RegistryItem.styles'
@@ -21,14 +22,14 @@ const RegistryItem = ({
   isEditEnabled,
   onEditClick
 }) => {
-  // const [isCardExpanded, setIsCardExpanded] = useState(false)
+  const [isCardExpanded, setIsCardExpanded] = useState(false)
 
   const registryItemStyles = useMemo(
     () => styles(color, disabled),
     [color, disabled]
   )
 
-  const handleClick = useCallback(() => {
+  const handleCheckboxClick = useCallback(() => {
     onToggle(data.id)
   }, [onToggle, data.id])
 
@@ -38,9 +39,9 @@ const RegistryItem = ({
     onEditClick(data.id)
   }, [onEditClick, data.id])
 
-  // const handleCardExpandClick = useCallback(() => {
-  //   setIsCardExpanded(!isCardExpanded)
-  // }, [isCardExpanded])
+  const handleCardExpandClick = useCallback(() => {
+    setIsCardExpanded(!isCardExpanded)
+  }, [isCardExpanded])
 
   return (
     <Card sx={registryItemStyles.cardStyles}>
@@ -64,7 +65,7 @@ const RegistryItem = ({
             )}
           </Box>
         }
-      ></CardHeader>
+      />
 
       {data.image && (
         <CardMedia
@@ -89,7 +90,7 @@ const RegistryItem = ({
             inputProps={inputProps}
             color={!disabled && color}
             disabled={disabled}
-            onClick={handleClick}
+            onClick={handleCheckboxClick}
           />
           {isEditEnabled && (
             <Button
@@ -101,6 +102,8 @@ const RegistryItem = ({
           )}
         </Box>
 
+        {/* Hidden until a use case is found. (most likely for further information about a product) */}
+
         {/* <Button
           icon-mode="icon-only"
           icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
@@ -109,11 +112,11 @@ const RegistryItem = ({
           onClick={handleCardExpandClick}
         /> */}
       </CardActions>
-      {/* <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography>Some data </Typography>
-          </CardContent>
-        </Collapse> */}
+      <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography>Some data </Typography>
+        </CardContent>
+      </Collapse>
     </Card>
   )
 }
