@@ -18,6 +18,9 @@ export const registriesSlice = createSlice({
         action.payload
       ]
     },
+    remove: (state, action) => {
+      state.data = [...state.data.filter(r => r.id === action.payload.id)]
+    },
     addOwner: (state, action) => {
       state.ownerByRegistryId[action.payload.registryId] = action.payload.owner
     },

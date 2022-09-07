@@ -151,7 +151,7 @@ function ShareRegistryModal({ open, onClose }) {
             Add more
           </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
-          <Button type="submit" sx={styles.hiddenButton}></Button>
+          <Button type="submit" sx={styles.hiddenButton} />
           {/* this is used as the real submit button */}
           <Button
             color={initialData?.color}

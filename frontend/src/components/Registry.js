@@ -7,7 +7,7 @@ import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { Masonry } from '@mui/lab'
 
-const Registry = ({ registryId }) => {
+const Registry = ({ registryId, onDelete }) => {
   const dispatch = useDispatch()
 
   const registryData = useSelector(state =>
@@ -174,6 +174,22 @@ const Registry = ({ registryId }) => {
     })
   }, [dispatch, registryData])
 
+  const handleRemoveClick = useCallback(() => {
+    if (!registryData?.id) {
+      return
+    }
+
+    dispatch({
+      type: 'modals/show',
+      payload: {
+        name: 'removeRegistry',
+        data: {
+          id: registryData.id
+        }
+      }
+    })
+  }, [dispatch, registryData?.id])
+
   const handleItemEditClick = useCallback(
     id => {
       if (!registryData) {
@@ -216,10 +232,11 @@ const Registry = ({ registryId }) => {
           }
           isLoadingOwner={isLoadingOwner}
           onEditClick={handleEditClick}
+          onRemoveClick={handleRemoveClick}
           onAddClick={handleAddClick}
           onShareClick={handleShareClick}
         />
-      )}
+      ) : null}
 
       {isLoadingItems ? (
         <>

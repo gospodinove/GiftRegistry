@@ -12,10 +12,13 @@ const RegistryDetails = ({
   owner,
   isLoadingOwner,
   onEditClick,
+  onRemoveClick,
   onAddClick,
   onShareClick
 }) => {
   const handleEditClick = useCallback(() => onEditClick(), [onEditClick])
+
+  const handleRemoveClick = useCallback(() => onRemoveClick(), [onRemoveClick])
 
   const handleAddClick = useCallback(() => onAddClick(), [onAddClick])
 
@@ -49,13 +52,20 @@ const RegistryDetails = ({
       <Box display="flex" justifyContent="space-between">
         <Typography variant="h4">{name}</Typography>
         {shouldShowActionButtons && (
-          <Button
-            icon-mode="icon-only"
-            icon="edit"
-            color={COLORS.LIGHTGRAY}
-            component="div"
-            onClick={handleEditClick}
-          />
+          <Box>
+            <Button
+              icon-mode="icon-only"
+              icon="edit"
+              color={COLORS.LIGHTGRAY}
+              onClick={handleEditClick}
+            />
+            <Button
+              icon-mode="icon-only"
+              icon="delete"
+              color={COLORS.LIGHTGRAY}
+              onClick={handleRemoveClick}
+            />
+          </Box>
         )}
       </Box>
 
