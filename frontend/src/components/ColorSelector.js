@@ -68,7 +68,7 @@ function ColorSelector({ onChange, initialColor }) {
           onClick={toggleSlider}
         />
       </Box>
-      {isSliderVisible ? (
+      {isSliderVisible && (
         <Box pt="10px" pb="10px">
           <HuePicker
             color={sliderColor}
@@ -76,7 +76,7 @@ function ColorSelector({ onChange, initialColor }) {
             onChange={handleSliderColorChange}
           />
         </Box>
-      ) : null}
+      )}
     </>
   )
 }

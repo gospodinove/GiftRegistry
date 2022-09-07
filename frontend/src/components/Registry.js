@@ -1,4 +1,3 @@
-import { Grid, List } from '@mui/material'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../utils/api'
@@ -198,9 +197,14 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData, items]
   )
 
+  const masonryConfig = useMemo(() => ({
+    columns: { xs: 1, sm: 2, md: 3 },
+    spacing: { xs: 2, sm: 2, md: 3 }
+  }))
+
   return (
     <>
-      {registryData ? (
+      {registryData && (
         <RegistryDetails
           shouldShowActionButtons={isOwner}
           name={registryData.name}
@@ -215,7 +219,7 @@ const Registry = ({ registryId }) => {
           onAddClick={handleAddClick}
           onShareClick={handleShareClick}
         />
-      ) : null}
+      )}
 
       {isLoadingItems ? (
         <>
@@ -223,24 +227,22 @@ const Registry = ({ registryId }) => {
           <RegistryItemSkeleton />
         </>
       ) : hasItems ? (
-        <List>
-          <Masonry
-            columns={{ xs: 1, sm: 2, md: 3 }}
-            spacing={{ xs: 2, sm: 2, md: 3 }}
-          >
-            {itemsSortedByDate.map(item => (
-              <RegistryItem
-                key={item.id}
-                data={item}
-                disabled={item.takenBy && item.takenBy !== user.id}
-                color={registryData.color}
-                onToggle={handleItemToggle}
-                onEditClick={handleItemEditClick}
-                isEditEnabled={isOwner}
-              />
-            ))}
-          </Masonry>
-        </List>
+        <Masonry
+          columns={masonryConfig.columns}
+          spacing={masonryConfig.spacing}
+        >
+          {itemsSortedByDate.map(item => (
+            <RegistryItem
+              key={item.id}
+              data={item}
+              disabled={item.takenBy && item.takenBy !== user.id}
+              color={registryData.color}
+              onToggle={handleItemToggle}
+              onEditClick={handleItemEditClick}
+              isEditEnabled={isOwner}
+            />
+          ))}
+        </Masonry>
       ) : (
         <Empty text="No products in the registry" />
       )}

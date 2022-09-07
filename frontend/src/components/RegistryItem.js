@@ -46,7 +46,7 @@ const RegistryItem = ({
     <Card sx={registryItemStyles.cardStyles}>
       <CardHeader
         title={
-          <Box display="flex">
+          <Box display="flex" justifyContent="space-between">
             <Typography
               component={data.link ? 'a' : 'div'}
               href={data.link || null}
@@ -57,59 +57,57 @@ const RegistryItem = ({
               {data.name}
             </Typography>
 
-            {data.price ? (
+            {data.price && (
               <Typography sx={registryItemStyles.priceTypography}>
                 {data.price}$
               </Typography>
-            ) : null}
+            )}
           </Box>
         }
       ></CardHeader>
 
-      {data.image ? (
+      {data.image && (
         <CardMedia
           component="img"
           src={data.image}
           height="150"
           sx={registryItemStyles.cardMedia}
         />
-      ) : null}
+      )}
 
-      {data.description ? (
+      {data.description && (
         <CardContent>
-          <Box display="flex" alignItems="center">
-            <Typography>{data.description}</Typography>
-          </Box>
+          <Typography>{data.description}</Typography>
         </CardContent>
-      ) : null}
+      )}
 
-      <CardActions>
-        <Checkbox
-          checked={data.takenBy !== null}
-          tabIndex={-1}
-          inputProps={inputProps}
-          color={!disabled ? color : null}
-          disabled={disabled}
-          onClick={handleClick}
-        />
-        {isEditEnabled ? (
-          <Button
-            icon-mode="icon-only"
-            icon="edit"
-            color={color}
-            onClick={handleEditClick}
+      <CardActions sx={registryItemStyles.cardActions}>
+        <Box>
+          <Checkbox
+            checked={data.takenBy !== null}
+            tabIndex={-1}
+            inputProps={inputProps}
+            color={!disabled && color}
+            disabled={disabled}
+            onClick={handleClick}
           />
-        ) : null}
-
-        <Button disabled sx={registryItemStyles.hiddenButton} />
+          {isEditEnabled && (
+            <Button
+              icon-mode="icon-only"
+              icon="edit"
+              color={color}
+              onClick={handleEditClick}
+            />
+          )}
+        </Box>
 
         {/* <Button
-            icon-mode="icon-only"
-            icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
-            color={color}
-            disabled={disabled}
-            onClick={handleCardExpandClick}
-          /> */}
+          icon-mode="icon-only"
+          icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
+          color={color}
+          disabled={disabled}
+          onClick={handleCardExpandClick}
+        /> */}
       </CardActions>
       {/* <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
           <CardContent>
