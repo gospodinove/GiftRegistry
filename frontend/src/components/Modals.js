@@ -1,6 +1,7 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
+import RemoveRegistryItemModal from './modals/RemoveRegistryItemModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareRegistryModal from './modals/ShareRegistryModal'
 
@@ -28,6 +29,18 @@ const Modals = () => {
     [dispatch]
   )
 
+  const isRemoveRegistryItemModalOpen = useSelector(
+    state => state.modals.removeRegistryItem !== undefined
+  )
+  const handleRemoveRegistryItemModalClose = useCallback(
+    () =>
+      dispatch({
+        type: 'modals/hide',
+        payload: { name: 'removeRegistryItem' }
+      }),
+    [dispatch]
+  )
+
   const isShareRegistryModalOpen = useSelector(
     state => state.modals.shareRegistry !== undefined
   )
@@ -46,6 +59,11 @@ const Modals = () => {
       <PopulateRegistryItemModal
         open={isPopulateRegistryItemModalOpen}
         onClose={handlePopulateRegistryItemModalClose}
+      />
+
+      <RemoveRegistryItemModal
+        open={isRemoveRegistryItemModalOpen}
+        onClose={handleRemoveRegistryItemModalClose}
       />
 
       <ShareRegistryModal
