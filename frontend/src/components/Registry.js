@@ -197,10 +197,35 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData, items]
   )
 
-  const masonryConfig = useMemo(() => ({
-    columns: { xs: 1, sm: 2, md: 3 },
-    spacing: { xs: 2, sm: 2, md: 3 }
-  }))
+  const handleItemRemoveClick = useCallback(
+    id => {
+      if (!registryData) {
+        return
+      }
+
+      dispatch({
+        type: 'modals/show',
+        payload: {
+          name: 'removeRegistryItemConfirmation',
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            registryName: registryData.name
+          }
+        }
+      })
+    },
+    [dispatch, registryData, items]
+  )
+
+  const masonryConfig = useMemo(
+    () => ({
+      columns: { xs: 1, sm: 2, md: 3 },
+      spacing: { xs: 2, sm: 2, md: 3 }
+    }),
+    []
+  )
 
   return (
     <>
@@ -239,7 +264,8 @@ const Registry = ({ registryId }) => {
               color={registryData.color}
               onToggle={handleItemToggle}
               onEditClick={handleItemEditClick}
-              isEditEnabled={isOwner}
+              onRemoveClick={handleItemRemoveClick}
+              areActionsEnabled={isOwner}
             />
           ))}
         </Masonry>

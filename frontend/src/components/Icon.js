@@ -20,6 +20,7 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { memo } from 'react'
 
 const getIcon = (type, color, sx) => {
@@ -88,6 +89,9 @@ const getIcon = (type, color, sx) => {
 
     case 'edit':
       return <EditIcon sx={styles} />
+
+    case 'delete':
+      return <DeleteIcon sx={styles} />
 
     default:
       return <QuestionMarkIcon sx={styles} />

@@ -19,8 +19,9 @@ const RegistryItem = ({
   onToggle,
   color,
   disabled,
-  isEditEnabled,
-  onEditClick
+  areActionsEnabled,
+  onEditClick,
+  onRemoveClick
 }) => {
   const [isCardExpanded, setIsCardExpanded] = useState(false)
 
@@ -38,6 +39,10 @@ const RegistryItem = ({
   const handleEditClick = useCallback(() => {
     onEditClick(data.id)
   }, [onEditClick, data.id])
+
+  const handleRemoveClick = useCallback(() => {
+    onRemoveClick(data.id)
+  }, [data.id, onRemoveClick])
 
   const handleCardExpandClick = useCallback(() => {
     setIsCardExpanded(!isCardExpanded)
@@ -92,13 +97,21 @@ const RegistryItem = ({
             disabled={disabled}
             onClick={handleCheckboxClick}
           />
-          {isEditEnabled && (
-            <Button
-              icon-mode="icon-only"
-              icon="edit"
-              color={color}
-              onClick={handleEditClick}
-            />
+          {areActionsEnabled && (
+            <>
+              <Button
+                icon-mode="icon-only"
+                icon="edit"
+                color={color}
+                onClick={handleEditClick}
+              />
+              <Button
+                icon-mode="icon-only"
+                icon="delete"
+                color={color}
+                onClick={handleRemoveClick}
+              />
+            </>
           )}
         </Box>
 
