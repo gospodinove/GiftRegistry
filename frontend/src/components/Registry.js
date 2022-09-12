@@ -206,7 +206,7 @@ const Registry = ({ registryId }) => {
       dispatch({
         type: 'modals/show',
         payload: {
-          name: 'removeRegistryItem',
+          name: 'removeRegistryItemConfirmation',
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
@@ -265,7 +265,7 @@ const Registry = ({ registryId }) => {
               onToggle={handleItemToggle}
               onEditClick={handleItemEditClick}
               onRemoveClick={handleItemRemoveClick}
-              isEditEnabled={isOwner}
+              areActionsEnabled={isOwner}
             />
           ))}
         </Masonry>

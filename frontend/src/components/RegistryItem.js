@@ -19,7 +19,7 @@ const RegistryItem = ({
   onToggle,
   color,
   disabled,
-  isEditEnabled,
+  areActionsEnabled,
   onEditClick,
   onRemoveClick
 }) => {
@@ -97,7 +97,7 @@ const RegistryItem = ({
             disabled={disabled}
             onClick={handleCheckboxClick}
           />
-          {isEditEnabled && (
+          {areActionsEnabled && (
             <>
               <Button
                 icon-mode="icon-only"

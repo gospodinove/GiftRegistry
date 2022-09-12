@@ -5,19 +5,25 @@ import {
   DialogTitle,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../../utils/api'
 import Button from '../Button'
+import { styles } from './RemoveRegistryItemConfirmationModal.styles'
 
-function RemoveRegistryItemModal({ open, onClose }) {
+function RemoveRegistryItemConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const [isLoading, setIsLoading] = useState(false)
 
   const initialData = useSelector(
-    state => state.modals.removeRegistryItem?.data
+    state => state.modals.removeRegistryItemConfirmation?.data
+  )
+
+  const removeRegistryItemConfirmationStyles = useMemo(
+    () => styles(initialData?.color),
+    [initialData?.color]
   )
 
   const handleClose = useCallback(() => {
@@ -85,7 +91,7 @@ function RemoveRegistryItemModal({ open, onClose }) {
         <Typography
           component="span"
           variant="h6"
-          sx={{ color: initialData?.color }}
+          sx={removeRegistryItemConfirmationStyles.typography}
         >
           {initialData?.item.name}
         </Typography>
@@ -98,7 +104,7 @@ function RemoveRegistryItemModal({ open, onClose }) {
         <Typography
           component="span"
           variant="h6"
-          sx={{ color: initialData?.color }}
+          sx={removeRegistryItemConfirmationStyles.button}
         >
           {initialData?.item.name}
         </Typography>
@@ -124,4 +130,4 @@ function RemoveRegistryItemModal({ open, onClose }) {
   )
 }
 
-export default memo(RemoveRegistryItemModal)
+export default memo(RemoveRegistryItemConfirmationModal)

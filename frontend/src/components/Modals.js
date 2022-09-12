@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
-import RemoveRegistryItemModal from './modals/RemoveRegistryItemModal'
+import RemoveRegistryItemConfirmationModal from './modals/RemoveRegistryItemConfirmationModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareRegistryModal from './modals/ShareRegistryModal'
 
@@ -29,14 +29,14 @@ const Modals = () => {
     [dispatch]
   )
 
-  const isRemoveRegistryItemModalOpen = useSelector(
-    state => state.modals.removeRegistryItem !== undefined
+  const isRemoveRegistryItemConfirmationModalOpen = useSelector(
+    state => state.modals.removeRegistryItemConfirmation !== undefined
   )
-  const handleRemoveRegistryItemModalClose = useCallback(
+  const handleRemoveRegistryItemConfirmationModalClose = useCallback(
     () =>
       dispatch({
         type: 'modals/hide',
-        payload: { name: 'removeRegistryItem' }
+        payload: { name: 'removeRegistryItemConfirmation' }
       }),
     [dispatch]
   )
@@ -61,9 +61,9 @@ const Modals = () => {
         onClose={handlePopulateRegistryItemModalClose}
       />
 
-      <RemoveRegistryItemModal
-        open={isRemoveRegistryItemModalOpen}
-        onClose={handleRemoveRegistryItemModalClose}
+      <RemoveRegistryItemConfirmationModal
+        open={isRemoveRegistryItemConfirmationModalOpen}
+        onClose={handleRemoveRegistryItemConfirmationModalClose}
       />
 
       <ShareRegistryModal
