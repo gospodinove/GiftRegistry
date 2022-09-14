@@ -21,6 +21,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import EmailIcon from '@mui/icons-material/Email'
 import { memo } from 'react'
 
 const getIcon = (type, color, sx) => {
@@ -92,6 +93,9 @@ const getIcon = (type, color, sx) => {
 
     case 'delete':
       return <DeleteIcon sx={styles} />
+
+    case 'email':
+      return <EmailIcon sx={styles} />
 
     default:
       return <QuestionMarkIcon sx={styles} />

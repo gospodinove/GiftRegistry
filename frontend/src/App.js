@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import { api } from './utils/api'
 import { isEmptyObject } from './utils/objects'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
+import Profile from './pages/Profile'
 
 function App() {
   const dispatch = useDispatch()
@@ -40,6 +41,18 @@ function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="invite/:token" element={<Home />} />
+
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute
+              condition={user !== undefined && user.isRegistrationComplete}
+              fallbackRoute="/login"
+            >
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Auth */}
         <Route

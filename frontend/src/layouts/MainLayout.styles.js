@@ -1,7 +1,7 @@
 import { NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
-  logoutIcon: { pr: 1 },
+  icons: { pr: 1 },
   rootBox: { flexGrow: 1, height: '100%' },
   appBar: { height: `${NAVBAR_HEIGHT}px` },
   toolbar: { height: `${NAVBAR_HEIGHT}px` },
