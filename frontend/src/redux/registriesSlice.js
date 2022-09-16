@@ -13,18 +13,13 @@ const initialState = {
   // ERRORS
   createErrors: undefined,
   updateErrors: undefined,
-  shareErrors: undefined,
-  // TODO: move in own slice
-  ownerByRegistryId: {}
+  shareErrors: undefined
 }
 
 export const registriesSlice = createSlice({
   name: 'registries',
   initialState,
   reducers: {
-    addRegistryOwner: (state, action) => {
-      state.ownerByRegistryId[action.payload.registryId] = action.payload.owner
-    },
     resetRegistriesSlice: () => initialState
   },
   extraReducers: builder => {
@@ -85,8 +80,7 @@ export const registriesSlice = createSlice({
   }
 })
 
-export const { addRegistryOwner, resetRegistriesSlice } =
-  registriesSlice.actions
+export const { resetRegistriesSlice } = registriesSlice.actions
 
 export const fetchRegistries = createAsyncThunk(
   'registries/fetch',

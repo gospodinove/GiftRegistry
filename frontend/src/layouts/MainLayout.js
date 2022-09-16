@@ -22,6 +22,7 @@ import { resetAuthSlice } from '../redux/authSlice'
 import { resetRegistriesSlice } from '../redux/registriesSlice'
 import { resetRegistryItemsSlice } from '../redux/registryItemsSlice'
 import { showToast } from '../redux/toastSlice'
+import { resetRegistryOwnersSlice } from '../redux/registryOwnersSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
@@ -53,6 +54,7 @@ function MainLayout() {
       dispatch(resetAuthSlice())
       dispatch(resetRegistriesSlice())
       dispatch(resetRegistryItemsSlice())
+      dispatch(resetRegistryOwnersSlice())
 
       dispatch(showToast({ type: 'success', message: 'Logged out!' }))
     } catch {

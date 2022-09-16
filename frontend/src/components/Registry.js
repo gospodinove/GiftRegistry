@@ -7,12 +7,13 @@ import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
-import { addRegistryOwner } from '../redux/registriesSlice'
 import {
   setRegistryItems,
   updateRegistryItem
 } from '../redux/registryItemsSlice'
 import { showToast } from '../redux/toastSlice'
+import { fetchOwner } from '../redux/registryOwnersSlice'
+import { DATA_STATUS } from '../constants'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -26,9 +27,7 @@ const Registry = ({ registryId }) => {
 
   const user = useSelector(state => state.auth.user)
 
-  const owner = useSelector(
-    state => state.registries.ownerByRegistryId[registryId]
-  )
+  const owner = useSelector(state => state.registryOwners.data[registryId])
 
   const isOwner = useMemo(
     () =>
@@ -38,7 +37,9 @@ const Registry = ({ registryId }) => {
   )
 
   const [isLoadingItems, setIsLoadingItems] = useState(true)
-  const [isLoadingOwner, setIsLoadingOwner] = useState(true)
+  const isLoadingOwner = useSelector(
+    state => state.registryOwners.status === DATA_STATUS.loading
+  )
 
   const itemsSortedByDate = useMemo(() => {
     if (!items) {
@@ -73,28 +74,11 @@ const Registry = ({ registryId }) => {
   }, [registryId, items, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    try {
-      setIsLoadingOwner(true)
-
-      if (isOwner || owner !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/owner')
-
-      dispatch(
-        addRegistryOwner({ registryId: registryId, owner: response.owner })
-      )
-    } catch (error) {
-      dispatch(
-        showToast({
-          type: 'error',
-          message: error.data
-        })
-      )
-    } finally {
-      setIsLoadingOwner(false)
+    if (isOwner || owner !== undefined) {
+      return
     }
+
+    dispatch(fetchOwner(registryId))
   }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
@@ -203,7 +187,7 @@ const Registry = ({ registryId }) => {
 
   return (
     <>
-      {registryData ?? (
+      {registryData && (
         <RegistryDetails
           shouldShowActionButtons={isOwner}
           name={registryData.name}
