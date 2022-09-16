@@ -1,10 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
-
-export const USER_SESSION_STATE = { FETCHED: 'fetched', FETCHING: 'fetching' }
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { DATA_STATUS } from '../constants'
+import { api } from '../utils/api'
+import { isEmptyObject } from '../utils/objects'
 
 const initialState = {
   user: undefined,
-  userSessionState: undefined
+  status: DATA_STATUS.idle
 }
 
 export const authSlice = createSlice({
@@ -15,18 +16,41 @@ export const authSlice = createSlice({
       state.user = action.payload
     },
     setUserSessionFetching: state => {
-      state.userSessionState = USER_SESSION_STATE.FETCHING
+      state.status = DATA_STATUS.loading
     },
     setUserSessionFetched: state => {
-      state.userSessionState = USER_SESSION_STATE.FETCHED
+      state.status = DATA_STATUS.succeeded
     },
     resetAuthSlice: () => initialState
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchUserSession.pending, (state, _) => {
+        state.status = DATA_STATUS.loading
+      })
+      .addCase(fetchUserSession.fulfilled, (state, _) => {
+        state.status = DATA_STATUS.succeeded
+      })
+      .addCase(fetchUserSession.rejected, (state, action) => {
+        state.status = DATA_STATUS.failed
+        state.error = action.payload
+      })
   }
 })
 
-export const {
-  setUser,
-  setUserSessionFetching,
-  setUserSessionFetched,
-  resetAuthSlice
-} = authSlice.actions
+export const { setUser, resetAuthSlice } = authSlice.actions
+
+export const fetchUserSession = createAsyncThunk(
+  'auth/fetchUserSession',
+  async (_, thunkAPI) => {
+    try {
+      const user = await api('auth/session-user')
+
+      if (user && !isEmptyObject(user)) {
+        thunkAPI.dispatch(setUser(user))
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)

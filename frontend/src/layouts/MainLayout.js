@@ -16,9 +16,9 @@ import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
 import { api } from '../utils/api'
-import { AUTH_NAV_ITEMS, COLORS } from '../constants'
+import { AUTH_NAV_ITEMS, COLORS, DATA_STATUS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { resetAuthSlice, USER_SESSION_STATE } from '../redux/authSlice'
+import { resetAuthSlice } from '../redux/authSlice'
 import { resetRegistriesSlice } from '../redux/registriesSlice'
 import { resetRegistryItemsSlice } from '../redux/registryItemsSlice'
 import { showToast } from '../redux/toastSlice'
@@ -27,8 +27,8 @@ function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const userSessionState = useSelector(state => state.auth.userSessionState)
-  const isFetchingSession = userSessionState === USER_SESSION_STATE.FETCHING
+  const isFetchingSession =
+    useSelector(state => state.auth.status) === DATA_STATUS.loading
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
