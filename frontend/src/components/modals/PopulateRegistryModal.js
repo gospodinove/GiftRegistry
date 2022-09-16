@@ -1,6 +1,5 @@
 import { memo, useState, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
@@ -10,19 +9,13 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
-import { COLORS, REGISTRY_TYPES } from '../../constants'
+import { COLORS, DATA_STATUS, REGISTRY_TYPES } from '../../constants'
 import { Typography } from '@mui/material'
 import { styles } from './PopulateRegistryModal.styles'
-import {
-  addRegistryData,
-  updateRegistryData
-} from '../../redux/registriesSlice'
-import { showToast } from '../../redux/toastSlice'
+import { createRegistry, updateRegistry } from '../../redux/registriesSlice'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
-
-  const [isLoading, setIsLoading] = useState(false)
 
   const initialData = useSelector(state => state.modals.populateRegistry?.data)
 
@@ -31,11 +24,33 @@ function PopulateRegistryModal({ open, onClose }) {
     [initialData]
   )
 
+  const reduxErrors = useSelector(state =>
+    isModalInUpdateMode
+      ? state.registries.updateErrors
+      : state.registries.createErrors
+  )
+
+  const isLoading = useSelector(
+    state =>
+      state.registries.createStatus === DATA_STATUS.loading ||
+      state.registries.updateStatus === DATA_STATUS.loading
+  )
+
+  const shouldCloseModal = useSelector(state =>
+    isModalInUpdateMode
+      ? state.registries.updateStatus === DATA_STATUS.succeeded
+      : state.registries.createStatus === DATA_STATUS.succeeded
+  )
+
   const [color, setColor] = useState(COLORS.APP[0])
   const [type, setType] = useState('Birthday')
   const [name, setName] = useState('')
   const [errors, setErrors] = useState({})
   const [customType, setCustomType] = useState('Custom')
+
+  useEffect(() => {
+    setErrors(reduxErrors ?? {})
+  }, [reduxErrors])
 
   useEffect(() => {
     if (isModalInUpdateMode) {
@@ -60,6 +75,12 @@ function PopulateRegistryModal({ open, onClose }) {
       setColor(COLORS.APP[0])
     }, 100)
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldCloseModal) {
+      handleClose()
+    }
+  }, [handleClose, shouldCloseModal])
 
   const handleColorChange = useCallback(color => {
     setColor(color)
@@ -102,7 +123,6 @@ function PopulateRegistryModal({ open, onClose }) {
     async e => {
       e.preventDefault()
 
-      setIsLoading(true)
       setErrors({})
 
       const data = {
@@ -111,60 +131,13 @@ function PopulateRegistryModal({ open, onClose }) {
         color
       }
 
-      try {
-        const result = await api(
-          isModalInUpdateMode ? 'registries/' + initialData.id : 'registries',
-          isModalInUpdateMode ? 'put' : 'post',
-          data
-        )
-
-        if (isModalInUpdateMode) {
-          dispatch(updateRegistryData(result.registry))
-        } else {
-          dispatch(addRegistryData([result.registry]))
-        }
-
-        handleClose()
-      } catch (error) {
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch(
-              showToast({
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              })
-            )
-            break
-
-          case 'field-error':
-            setErrors(error.data)
-            break
-
-          case 'general':
-            dispatch(showToast({ type: 'error', message: error.data }))
-            break
-
-          default:
-            dispatch(
-              showToast({ type: 'error', message: 'Something went wrong' })
-            )
-            break
-        }
-      } finally {
-        setIsLoading(false)
+      if (isModalInUpdateMode) {
+        dispatch(updateRegistry({ id: initialData.id, data }))
+      } else {
+        dispatch(createRegistry(data))
       }
     },
-    [
-      type,
-      customType,
-      name,
-      color,
-      isModalInUpdateMode,
-      handleClose,
-      dispatch,
-      initialData
-    ]
+    [type, customType, name, color, isModalInUpdateMode, dispatch, initialData]
   )
 
   const componentStyles = useMemo(() => styles(color), [color])

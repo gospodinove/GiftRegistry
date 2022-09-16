@@ -28,8 +28,9 @@ export const authSlice = createSlice({
       .addCase(fetchUserSession.pending, (state, _) => {
         state.status = DATA_STATUS.loading
       })
-      .addCase(fetchUserSession.fulfilled, (state, _) => {
+      .addCase(fetchUserSession.fulfilled, (state, action) => {
         state.status = DATA_STATUS.succeeded
+        state.user = action.payload
       })
       .addCase(fetchUserSession.rejected, (state, action) => {
         state.status = DATA_STATUS.failed
@@ -47,7 +48,7 @@ export const fetchUserSession = createAsyncThunk(
       const user = await api('auth/session-user')
 
       if (user && !isEmptyObject(user)) {
-        thunkAPI.dispatch(setUser(user))
+        return user
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error)

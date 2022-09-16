@@ -27,8 +27,9 @@ function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const isFetchingSession =
-    useSelector(state => state.auth.status) === DATA_STATUS.loading
+  const isFetchingSession = useSelector(
+    state => state.auth.status === DATA_STATUS.loading
+  )
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined

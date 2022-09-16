@@ -1,6 +1,5 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
@@ -9,18 +8,30 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { styles } from './ShareRegistryModal.styles'
-import { updateRegistryData } from '../../redux/registriesSlice'
-import { showToast } from '../../redux/toastSlice'
+import { shareRegistry } from '../../redux/registriesSlice'
+import { DATA_STATUS } from '../../constants'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const initialData = useSelector(state => state.modals.shareRegistry?.data)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isLoading = useSelector(
+    state => state.registries.shareStatus === DATA_STATUS.loading
+  )
+
+  const shouldCloseModal = useSelector(
+    state => state.registries.shareStatus === DATA_STATUS.succeeded
+  )
+
+  const reduxErrors = useSelector(state => state.registries.shareErrors)
 
   const [emails, setEmails] = useState([''])
   const [errors, setErrors] = useState([])
+
+  useEffect(() => {
+    setErrors(reduxErrors ?? [])
+  }, [reduxErrors])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -30,6 +41,12 @@ function ShareRegistryModal({ open, onClose }) {
       setErrors([])
     }, 100)
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldCloseModal) {
+      handleClose()
+    }
+  }, [shouldCloseModal, handleClose])
 
   const handleEmailChange = useCallback(
     e => {
@@ -57,60 +74,19 @@ function ShareRegistryModal({ open, onClose }) {
   )
 
   const handleSendClick = useCallback(
-    async e => {
+    e => {
       e.preventDefault()
 
       if (!initialData?.registryId) {
         return
       }
 
-      setIsLoading(true)
-
       setErrors([])
 
       const data = { emails: emails.filter(e => e !== '') }
-
-      try {
-        const response = await api(
-          'registries/' + initialData.registryId + '/share',
-          'patch',
-          data
-        )
-
-        dispatch(updateRegistryData(response.registry))
-
-        handleClose()
-      } catch (error) {
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch(
-              showToast({
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              })
-            )
-            return
-
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch(showToast({ type: 'error', message: error.data }))
-            return
-
-          default:
-            dispatch(
-              showToast({ type: 'error', message: 'Something went wrong' })
-            )
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
+      dispatch(shareRegistry({ id: initialData.registryId, data }))
     },
-    [emails, initialData?.registryId, dispatch, handleClose]
+    [emails, initialData, dispatch]
   )
 
   const renderTextField = (index, email, isInvited) => (
