@@ -1,6 +1,5 @@
 import { memo, useState, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
@@ -10,11 +9,16 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { Grid, InputAdornment, Typography } from '@mui/material'
 import { styles } from './PopulateRegistryItemModal.styles'
+import { DATA_STATUS } from '../../constants'
 import {
-  addRegistryItem,
+  createRegistryItem,
   updateRegistryItem
 } from '../../redux/registryItemsSlice'
-import { showToast } from '../../redux/toastSlice'
+
+export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
+  update: 'update',
+  create: 'create'
+}
 
 function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -23,9 +27,26 @@ function PopulateRegistryItemModal({ open, onClose }) {
     state => state.modals.populateRegistryItem?.data
   )
 
-  const isUpdateVariant = initialData?.variant === 'update'
+  const isUpdateVariant =
+    initialData?.variant === POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isLoading = useSelector(
+    state =>
+      state.registryItems.createStatus === DATA_STATUS.loading ||
+      state.registryItems.updateStatus === DATA_STATUS.loading
+  )
+
+  const reduxErrors = useSelector(state =>
+    isUpdateVariant
+      ? state.registryItems.updateErrors
+      : state.registryItems.createErrors
+  )
+
+  const shouldCloseModal = useSelector(state =>
+    isUpdateVariant
+      ? state.registryItems.updateStatus === DATA_STATUS.loading
+      : state.registryItems.createStatus === DATA_STATUS.loading
+  )
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
@@ -42,6 +63,12 @@ function PopulateRegistryItemModal({ open, onClose }) {
     }
   }, [initialData, isUpdateVariant])
 
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
+
   const handleClose = useCallback(() => {
     onClose()
 
@@ -53,6 +80,12 @@ function PopulateRegistryItemModal({ open, onClose }) {
       setDescription('')
     }, 100)
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldCloseModal) {
+      handleClose()
+    }
+  }, [shouldCloseModal, handleClose])
 
   const handleNameChange = useCallback(
     e => {
@@ -105,7 +138,6 @@ function PopulateRegistryItemModal({ open, onClose }) {
       e.preventDefault()
 
       setErrors({})
-      setIsLoading(true)
 
       const data = {
         name,
@@ -114,56 +146,24 @@ function PopulateRegistryItemModal({ open, onClose }) {
         link
       }
 
-      try {
-        const response = await api(
-          isUpdateVariant
-            ? 'registryItems/' + initialData.item.id
-            : 'registries/' + initialData.registryId + '/items',
-          isUpdateVariant ? 'put' : 'post',
-          data
+      if (isUpdateVariant) {
+        dispatch(
+          updateRegistryItem({
+            registryId: initialData.registryId,
+            itemId: initialData.item.id,
+            data
+          })
         )
-
-        const dispatchPayload = {
-          registryId: initialData.registryId,
-          item: response.item
-        }
-
-        if (isUpdateVariant) {
-          dispatch(updateRegistryItem(dispatchPayload))
-        } else {
-          dispatch(addRegistryItem(dispatchPayload))
-        }
-
-        handleClose()
-      } catch (error) {
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch(
-              showToast({
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              })
-            )
-            return
-
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch(showToast({ type: 'error', message: error.data }))
-            return
-
-          default:
-            dispatch(
-              showToast({ type: 'error', message: 'Something went wrong' })
-            )
-            return
-        }
-      } finally {
-        setIsLoading(false)
+      } else {
+        dispatch(
+          createRegistryItem({
+            registryId: initialData.registryId,
+            data
+          })
+        )
       }
+
+      handleClose()
     },
     [
       name,

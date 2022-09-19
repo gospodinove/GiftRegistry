@@ -1,19 +1,18 @@
 import { List } from '@mui/material'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
-  setRegistryItems,
-  updateRegistryItem
+  fetchRegistryItems,
+  toggleRegistryItem
 } from '../redux/registryItemsSlice'
-import { showToast } from '../redux/toastSlice'
 import { fetchOwner } from '../redux/registryOwnersSlice'
 import { DATA_STATUS } from '../constants'
+import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -21,7 +20,7 @@ const Registry = ({ registryId }) => {
   const registryData = useSelector(state =>
     state.registries.data.find(registry => registry.id === registryId)
   )
-  const items = useSelector(state => state.registryItems[registryId])
+  const items = useSelector(state => state.registryItems.data[registryId])
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
 
@@ -36,7 +35,9 @@ const Registry = ({ registryId }) => {
     [registryData?.users, user?.email]
   )
 
-  const [isLoadingItems, setIsLoadingItems] = useState(true)
+  const isLoadingItems = useSelector(
+    state => state.registryItems.fetchStatus === DATA_STATUS.loading
+  )
   const isLoadingOwner = useSelector(
     state => state.registryOwners.status === DATA_STATUS.loading
   )
@@ -50,27 +51,12 @@ const Registry = ({ registryId }) => {
     )
   }, [items])
 
-  const fetchItems = useCallback(async () => {
-    try {
-      setIsLoadingItems(true)
-
-      if (!registryId || items !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/items')
-
-      dispatch(setRegistryItems({ registryId, items: response.items }))
-    } catch (error) {
-      dispatch(
-        showToast({
-          type: 'error',
-          message: error.data
-        })
-      )
-    } finally {
-      setIsLoadingItems(false)
+  const maybeFetchItems = useCallback(async () => {
+    if (!registryId || items !== undefined) {
+      return
     }
+
+    dispatch(fetchRegistryItems(registryId))
   }, [registryId, items, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
@@ -82,36 +68,18 @@ const Registry = ({ registryId }) => {
   }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
-    fetchItems()
-  }, [fetchItems, registryId])
+    maybeFetchItems()
+  }, [maybeFetchItems, registryId])
 
   useEffect(() => {
     maybeFetchRegistryOwner()
   }, [maybeFetchRegistryOwner, registryId])
 
   const handleItemToggle = useCallback(
-    async id => {
-      try {
-        const response = await api(
-          'registryItems/' + id + '/toggleTaken',
-          'patch'
-        )
-
-        dispatch(
-          updateRegistryItem({
-            registryId: registryData.id,
-            item: response.item
-          })
-        )
-      } catch (error) {
-        dispatch(
-          showToast({
-            type: 'error',
-            message: error.data
-          })
-        )
-      }
-    },
+    async id =>
+      dispatch(
+        toggleRegistryItem({ regisrtyId: registryData?.id, itemId: id })
+      ),
     [dispatch, registryData?.id]
   )
 
@@ -127,7 +95,7 @@ const Registry = ({ registryId }) => {
           registryId: registryData.id,
           color: registryData.color,
           registryName: registryData.name,
-          variant: 'create'
+          variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.create
         }
       })
     )
@@ -177,7 +145,7 @@ const Registry = ({ registryId }) => {
             color: registryData.color,
             registryId: registryData.id,
             registryName: registryData.name,
-            variant: 'update'
+            variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
           }
         })
       )
