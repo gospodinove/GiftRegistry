@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
-import { showToast } from './toastSlice'
+import { handleErrors } from '../utils/redux'
 
 const initialState = {
   data: [],
@@ -89,7 +89,7 @@ export const fetchRegistries = createAsyncThunk(
       const response = await api('registries')
       return response.registries
     } catch (error) {
-      thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -101,30 +101,7 @@ export const createRegistry = createAsyncThunk(
       const response = await api('registries', 'post', data)
       return response.registry
     } catch (error) {
-      switch (error.type) {
-        case 'incomplete-registration':
-          thunkAPI.dispatch(
-            showToast({
-              type: 'error',
-              message: error.data,
-              navigation: { title: 'Register', target: '/register' }
-            })
-          )
-          break
-
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          break
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          break
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -136,30 +113,7 @@ export const updateRegistry = createAsyncThunk(
       const response = await api('registries/' + id, 'put', data)
       return response.registry
     } catch (error) {
-      switch (error.type) {
-        case 'incomplete-registration':
-          thunkAPI.dispatch(
-            showToast({
-              type: 'error',
-              message: error.data,
-              navigation: { title: 'Register', target: '/register' }
-            })
-          )
-          break
-
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          break
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          break
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -171,30 +125,7 @@ export const shareRegistry = createAsyncThunk(
       const response = await api('registries/' + id + '/share', 'patch', data)
       return response.registry
     } catch (error) {
-      switch (error.type) {
-        case 'incomplete-registration':
-          thunkAPI.dispatch(
-            showToast({
-              type: 'error',
-              message: error.data,
-              navigation: { title: 'Register', target: '/register' }
-            })
-          )
-          return
-
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )

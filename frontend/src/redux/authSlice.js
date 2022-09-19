@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { isEmptyObject } from '../utils/objects'
+import { handleErrors } from '../utils/redux'
 import { resetRegistriesSlice } from './registriesSlice'
 import { resetRegistryItemsSlice } from './registryItemsSlice'
 import { resetRegistryOwnersSlice } from './registryOwnersSlice'
@@ -112,20 +113,7 @@ export const register = createAsyncThunk(
       const response = await api('auth/register', 'post', data)
       return response.user
     } catch (error) {
-      switch (error.type) {
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error.data)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -137,20 +125,7 @@ export const completeRegistration = createAsyncThunk(
       const response = await api('users/' + userId, 'put', data)
       return response.user
     } catch (error) {
-      switch (error.type) {
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error.data)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -162,20 +137,7 @@ export const login = createAsyncThunk(
       const response = await api('auth/login', 'POST', credentials)
       return response.user
     } catch (error) {
-      switch (error.type) {
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error.data)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -187,7 +149,7 @@ export const loginViaToken = createAsyncThunk(
       const response = await api('auth/token', 'post', { token })
       return response.user
     } catch (error) {
-      thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -202,9 +164,7 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
     thunkAPI.dispatch(resetRegistryOwnersSlice())
 
     thunkAPI.dispatch(showToast({ type: 'success', message: 'Logged out!' }))
-  } catch {
-    thunkAPI.dispatch(
-      showToast({ type: 'error', message: 'Something went wrong' })
-    )
+  } catch (error) {
+    return handleErrors(error, thunkAPI)
   }
 })

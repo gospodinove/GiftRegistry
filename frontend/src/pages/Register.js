@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
@@ -18,6 +18,17 @@ function Register() {
       state.auth.completeRegistrationStatus === DATA_STATUS.loading
   )
 
+  const isCompleteRegistrationVariant = useMemo(
+    () => user !== undefined && !user.isRegistrationComplete,
+    [user]
+  )
+
+  const reduxErrors = useSelector(state =>
+    isCompleteRegistrationVariant
+      ? state.auth.completeRegistrationErrors
+      : state.auth.registerErrors
+  )
+
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -26,13 +37,19 @@ function Register() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    if (user === undefined || user.isRegistrationComplete) {
+    if (!isCompleteRegistrationVariant) {
       return
     }
 
     // fill the form with the data from the partially registered user
     setEmail(user.email)
-  }, [user])
+  }, [isCompleteRegistrationVariant, user])
+
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
 
   const handleEmailChange = useCallback(
     e => {

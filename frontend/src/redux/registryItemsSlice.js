@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
-import { showToast } from './toastSlice'
+import { handleErrors } from '../utils/redux'
 
 const initialState = {
   // registry id => array of items
@@ -89,12 +89,7 @@ export const fetchRegistryItems = createAsyncThunk(
       const response = await api('registries/' + registryId + '/items')
       return { registryId, items: response.items }
     } catch (error) {
-      thunkAPI.dispatch(
-        showToast({
-          type: 'error',
-          message: error.data
-        })
-      )
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -109,12 +104,7 @@ export const toggleRegistryItem = createAsyncThunk(
       )
       return { registryId, item: response.item }
     } catch (error) {
-      thunkAPI.dispatch(
-        showToast({
-          type: 'error',
-          message: error.data
-        })
-      )
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -130,30 +120,7 @@ export const createRegistryItem = createAsyncThunk(
       )
       return { registryId, item: response.item }
     } catch (error) {
-      switch (error.type) {
-        case 'incomplete-registration':
-          thunkAPI.dispatch(
-            showToast({
-              type: 'error',
-              message: error.data,
-              navigation: { title: 'Register', target: '/register' }
-            })
-          )
-          return
-
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error.data)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )
@@ -165,30 +132,7 @@ export const updateRegistryItem = createAsyncThunk(
       const response = await api('registryItems/' + itemId, 'put', data)
       return { registryId, item: response.item }
     } catch (error) {
-      switch (error.type) {
-        case 'incomplete-registration':
-          thunkAPI.dispatch(
-            showToast({
-              type: 'error',
-              message: error.data,
-              navigation: { title: 'Register', target: '/register' }
-            })
-          )
-          return
-
-        case 'field-error':
-          return thunkAPI.rejectWithValue(error.data)
-
-        case 'general':
-          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-          return
-
-        default:
-          thunkAPI.dispatch(
-            showToast({ type: 'error', message: 'Something went wrong' })
-          )
-          return
-      }
+      return handleErrors(error, thunkAPI)
     }
   }
 )

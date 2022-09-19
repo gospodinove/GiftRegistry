@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
-import { showToast } from './toastSlice'
+import { handleErrors } from '../utils/redux'
 
 const initialState = {
   // registry id => owner
@@ -40,12 +40,7 @@ export const fetchOwner = createAsyncThunk(
       const response = await api('registries/' + id + '/owner')
       return { registryId: id, owner: response.owner }
     } catch (error) {
-      thunkAPI.dispatch(
-        showToast({
-          type: 'error',
-          message: error.data
-        })
-      )
+      return handleErrors(error, thunkAPI)
     }
   }
 )
