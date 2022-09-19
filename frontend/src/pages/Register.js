@@ -2,20 +2,21 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
-import { api } from '../utils/api'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
-import { setUser } from '../redux/authSlice'
-import { showToast } from '../redux/toastSlice'
+import { completeRegistration, register } from '../redux/authSlice'
+import { DATA_STATUS } from '../constants'
 
 function Register() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   const user = useSelector(state => state.auth.user)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isLoading = useSelector(
+    state =>
+      state.auth.registerStatus === DATA_STATUS.loading ||
+      state.auth.completeRegistrationStatus === DATA_STATUS.loading
+  )
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -77,58 +78,26 @@ function Register() {
     [errors]
   )
 
-  const makeRequest = useCallback(
-    async (endpoint, method) => {
-      const user = {
+  const handleSubmit = useCallback(
+    e => {
+      e.preventDefault()
+
+      const data = {
         firstName,
         lastName,
         email,
         password
       }
 
-      setIsLoading(true)
-
-      try {
-        const response = await api(endpoint, method, user)
-
-        dispatch(setUser(response.user))
-        navigate('/')
-      } catch (error) {
-        switch (error.type) {
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch(showToast({ type: 'error', message: error.data }))
-            return
-
-          default:
-            dispatch(
-              showToast({ type: 'error', message: 'Something went wrong' })
-            )
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [dispatch, email, firstName, lastName, navigate, password]
-  )
-
-  const handleSubmit = useCallback(
-    e => {
-      e.preventDefault()
-
       setErrors({})
 
       if (user === undefined) {
-        makeRequest('auth/register', 'post')
+        dispatch(register(data))
       } else {
-        makeRequest('users/' + user.id, 'put')
+        dispatch(completeRegistration(data))
       }
     },
-    [makeRequest, user]
+    [dispatch, email, firstName, lastName, password, user]
   )
 
   return (

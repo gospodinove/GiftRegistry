@@ -2,10 +2,22 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { isEmptyObject } from '../utils/objects'
+import { resetRegistriesSlice } from './registriesSlice'
+import { resetRegistryItemsSlice } from './registryItemsSlice'
+import { resetRegistryOwnersSlice } from './registryOwnersSlice'
+import { showToast } from './toastSlice'
 
 const initialState = {
   user: undefined,
-  status: DATA_STATUS.idle
+  // STATUS
+  userSessionStatus: DATA_STATUS.idle,
+  loginStatus: DATA_STATUS.idle,
+  registerStatus: DATA_STATUS.idle,
+  completeRegistrationStatus: DATA_STATUS.idle,
+  // ERRORS
+  loginErrors: undefined,
+  registerErrors: undefined,
+  completeRegistrationErrors: undefined
 }
 
 export const authSlice = createSlice({
@@ -15,27 +27,64 @@ export const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload
     },
-    setUserSessionFetching: state => {
-      state.status = DATA_STATUS.loading
-    },
-    setUserSessionFetched: state => {
-      state.status = DATA_STATUS.succeeded
-    },
     resetAuthSlice: () => initialState
   },
   extraReducers: builder => {
     builder
+      // USER SESSION
       .addCase(fetchUserSession.pending, (state, _) => {
-        state.status = DATA_STATUS.loading
+        state.userSessionStatus = DATA_STATUS.loading
       })
       .addCase(fetchUserSession.fulfilled, (state, action) => {
-        state.status = DATA_STATUS.succeeded
+        state.userSessionStatus = DATA_STATUS.succeeded
         state.user = action.payload
       })
       .addCase(fetchUserSession.rejected, (state, action) => {
-        state.status = DATA_STATUS.failed
+        state.userSessionStatus = DATA_STATUS.failed
         state.error = action.payload
       })
+      // REGISTER
+      .addCase(register.pending, state => {
+        state.registerStatus = DATA_STATUS.loading
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.registerStatus = DATA_STATUS.succeeded
+        state.user = action.payload
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.registerStatus = DATA_STATUS.failed
+        state.registerErrors = action.payload
+      })
+      // COMPLETE REGISTRATION
+      .addCase(completeRegistration.pending, state => {
+        state.completeRegistrationStatus = DATA_STATUS.loading
+      })
+      .addCase(completeRegistration.fulfilled, (state, action) => {
+        state.completeRegistrationStatus = DATA_STATUS.succeeded
+        state.user = action.payload
+      })
+      .addCase(completeRegistration.rejected, (state, action) => {
+        state.completeRegistrationStatus = DATA_STATUS.failed
+        state.completeRegistrationErrors = action.payload
+      })
+      // LOGIN
+      .addCase(login.pending, state => {
+        state.loginStatus = DATA_STATUS.loading
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loginStatus = DATA_STATUS.succeeded
+        state.user = action.payload
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loginStatus = DATA_STATUS.failed
+        state.loginErrors = action.payload
+      })
+      // LOGIN VIA TOKEN
+      .addCase(loginViaToken.pending, () => {})
+      .addCase(loginViaToken.fulfilled, (state, action) => {
+        state.user = action.payload
+      })
+      .addCase(loginViaToken.rejected, () => {})
   }
 })
 
@@ -55,3 +104,107 @@ export const fetchUserSession = createAsyncThunk(
     }
   }
 )
+
+export const register = createAsyncThunk(
+  'auth/register',
+  async (data, thunkAPI) => {
+    try {
+      const response = await api('auth/register', 'post', data)
+      return response.user
+    } catch (error) {
+      switch (error.type) {
+        case 'field-error':
+          return thunkAPI.rejectWithValue(error.data)
+
+        case 'general':
+          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+          return
+
+        default:
+          thunkAPI.dispatch(
+            showToast({ type: 'error', message: 'Something went wrong' })
+          )
+          return
+      }
+    }
+  }
+)
+
+export const completeRegistration = createAsyncThunk(
+  'auth/completeRegistration',
+  async ({ userId, data }, thunkAPI) => {
+    try {
+      const response = await api('users/' + userId, 'put', data)
+      return response.user
+    } catch (error) {
+      switch (error.type) {
+        case 'field-error':
+          return thunkAPI.rejectWithValue(error.data)
+
+        case 'general':
+          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+          return
+
+        default:
+          thunkAPI.dispatch(
+            showToast({ type: 'error', message: 'Something went wrong' })
+          )
+          return
+      }
+    }
+  }
+)
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials, thunkAPI) => {
+    try {
+      const response = await api('auth/login', 'POST', credentials)
+      return response.user
+    } catch (error) {
+      switch (error.type) {
+        case 'field-error':
+          return thunkAPI.rejectWithValue(error.data)
+
+        case 'general':
+          thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+          return
+
+        default:
+          thunkAPI.dispatch(
+            showToast({ type: 'error', message: 'Something went wrong' })
+          )
+          return
+      }
+    }
+  }
+)
+
+export const loginViaToken = createAsyncThunk(
+  'auth/loginViaToken',
+  async (token, thunkAPI) => {
+    try {
+      const response = await api('auth/token', 'post', { token })
+      return response.user
+    } catch (error) {
+      thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+    }
+  }
+)
+
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    await api('auth/logout')
+
+    thunkAPI.dispatch(resetAuthSlice())
+    thunkAPI.dispatch(resetRegistriesSlice())
+    thunkAPI.dispatch(resetRegistryItemsSlice())
+    thunkAPI.dispatch(resetRegistryOwnersSlice())
+
+    thunkAPI.dispatch(showToast({ type: 'success', message: 'Logged out!' }))
+  } catch {
+    thunkAPI.dispatch(
+      showToast({ type: 'error', message: 'Something went wrong' })
+    )
+  }
+})

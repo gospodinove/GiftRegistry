@@ -1,19 +1,26 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
-import { api } from '../utils/api'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from '../components/Button'
-import { setUser } from '../redux/authSlice'
-import { showToast } from '../redux/toastSlice'
+import { login } from '../redux/authSlice'
+import { DATA_STATUS } from '../constants'
 
 function Login() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isLoading = useSelector(
+    state => state.auth.loginStatus === DATA_STATUS.loading
+  )
+
+  const reduxErrors = useSelector(state => state.auth.loginErrors)
+
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -45,40 +52,10 @@ function Login() {
   const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
-
-      setIsLoading(true)
-
       setErrors({})
-
-      try {
-        const response = await api('auth/login', 'POST', {
-          email,
-          password
-        })
-
-        dispatch(setUser(response.user))
-        navigate('/')
-      } catch (error) {
-        switch (error.type) {
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch(showToast({ type: 'error', message: error.data }))
-            return
-
-          default:
-            dispatch(
-              showToast({ type: 'error', message: 'Something went wrong' })
-            )
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
+      dispatch(login({ email, password }))
     },
-    [email, password, navigate, dispatch]
+    [email, password, dispatch]
   )
 
   return (

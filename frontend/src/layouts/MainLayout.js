@@ -15,21 +15,16 @@ import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
-import { api } from '../utils/api'
 import { AUTH_NAV_ITEMS, COLORS, DATA_STATUS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { resetAuthSlice } from '../redux/authSlice'
-import { resetRegistriesSlice } from '../redux/registriesSlice'
-import { resetRegistryItemsSlice } from '../redux/registryItemsSlice'
-import { showToast } from '../redux/toastSlice'
-import { resetRegistryOwnersSlice } from '../redux/registryOwnersSlice'
+import { logout } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const isFetchingSession = useSelector(
-    state => state.auth.status === DATA_STATUS.loading
+    state => state.auth.userSessionStatus === DATA_STATUS.loading
   )
 
   const user = useSelector(state => state.auth.user)
@@ -48,18 +43,7 @@ function MainLayout() {
     setIsAvatarDropdownOpen(false)
     setAvatarDropdownAnchorElement(null)
 
-    try {
-      await api('auth/logout')
-
-      dispatch(resetAuthSlice())
-      dispatch(resetRegistriesSlice())
-      dispatch(resetRegistryItemsSlice())
-      dispatch(resetRegistryOwnersSlice())
-
-      dispatch(showToast({ type: 'success', message: 'Logged out!' }))
-    } catch {
-      dispatch(showToast({ type: 'error', message: 'Something went wrong' }))
-    }
+    dispatch(logout())
   }, [dispatch])
 
   const container = useMemo(

@@ -8,11 +8,9 @@ import { styles } from './Home.styles'
 import './Home.css'
 import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
-import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
-import { setUser } from '../redux/authSlice'
+import { loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
-import { showToast } from '../redux/toastSlice'
 
 function Home() {
   const dispatch = useDispatch()
@@ -24,24 +22,11 @@ function Home() {
 
   const prev = usePrevious({ isAuthenticated })
 
-  const authenticateWithToken = useCallback(
-    async token => {
-      try {
-        const response = await api('auth/token', 'post', { token })
-
-        dispatch(setUser(response.user))
-      } catch (error) {
-        dispatch(showToast({ type: 'error', message: error.data }))
-      }
-    },
-    [dispatch]
-  )
-
   useEffect(() => {
     if (params?.token && !isAuthenticated) {
-      authenticateWithToken(params.token)
+      dispatch(loginViaToken(params.token))
     }
-  }, [params, isAuthenticated, authenticateWithToken])
+  }, [params, isAuthenticated, dispatch])
 
   useEffect(() => {
     if (prev?.isAuthenticated !== isAuthenticated) {
