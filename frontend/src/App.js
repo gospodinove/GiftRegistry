@@ -6,29 +6,18 @@ import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Home from './pages/Home'
 import Register from './pages/Register'
-import { api } from './utils/api'
-import { isEmptyObject } from './utils/objects'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
+import { fetchUserSession } from './redux/authSlice'
 
 function App() {
   const dispatch = useDispatch()
 
   const user = useSelector(state => state.auth.user)
 
-  const checkUserSession = useCallback(async () => {
-    dispatch({ type: 'auth/setUserSessionFetching' })
-
-    try {
-      const user = await api('auth/session-user')
-
-      if (user && !isEmptyObject(user)) {
-        dispatch({ type: 'auth/setUser', payload: user })
-      }
-    } catch {
-    } finally {
-      dispatch({ type: 'auth/setUserSessionFetched' })
-    }
-  }, [dispatch])
+  const checkUserSession = useCallback(
+    async () => dispatch(fetchUserSession()),
+    [dispatch]
+  )
 
   useEffect(() => {
     checkUserSession()

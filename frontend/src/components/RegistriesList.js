@@ -5,53 +5,34 @@ import {
   ListItemText,
   ListSubheader
 } from '@mui/material'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
-import { api } from '../utils/api'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 import Empty from './Empty'
 import { styles } from './RegistriesList.styles'
 import Icon from './Icon'
+import {
+  areRegistriesFetched,
+  fetchRegistries,
+  isFetchingRegistry,
+  registriesSortedByDate
+} from '../redux/registriesSlice'
 
 const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
-  const registries = useSelector(state => state.registries.data)
+  const dispatch = useDispatch()
+
+  const registries = useSelector(registriesSortedByDate)
+  const isLoading = useSelector(isFetchingRegistry)
+  const isDataFetched = useSelector(areRegistriesFetched)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
-  const [isLoading, setIsLoading] = useState(true)
-
-  const registriesSortedByDate = useMemo(
-    () =>
-      [...registries].sort(
-        (registryOne, registryTwo) =>
-          new Date(registryTwo.date) - new Date(registryOne.date)
-      ),
-    [registries]
-  )
-
-  const dispatch = useDispatch()
-
   const maybeFetchRegistries = useCallback(async () => {
-    setIsLoading(true)
-
-    try {
-      if (registries.length > 0) {
-        return
-      }
-
-      const response = await api('registries')
-
-      dispatch({ type: 'registries/add', payload: response.registries })
-    } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: error.data }
-      })
-    } finally {
-      setIsLoading(false)
+    if (!isDataFetched) {
+      dispatch(fetchRegistries())
     }
-  }, [dispatch, registries.length])
+  }, [dispatch, isDataFetched])
 
   useEffect(() => {
     maybeFetchRegistries()
@@ -74,7 +55,7 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
     )
   }
 
-  return registriesSortedByDate.length > 0 ? (
+  return registries.length > 0 ? (
     <List subheader={<div />}>
       <ListSubheader disableGutters sx={styles.subheader}>
         <ListItem component="div" disablePadding>
@@ -89,7 +70,7 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
           </ListItemButton>
         </ListItem>
       </ListSubheader>
-      {registriesSortedByDate.map(registry => (
+      {registries.map(registry => (
         <RegistriesListItem
           key={registry.id}
           registry={registry}

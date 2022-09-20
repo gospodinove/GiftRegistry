@@ -1,19 +1,37 @@
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
-import { api } from '../utils/api'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
+import {
+  completeRegistration,
+  isCompletingRegistration,
+  isRegistering,
+  register
+} from '../redux/authSlice'
 
 function Register() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   const user = useSelector(state => state.auth.user)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isCompleteRegistrationVariant = useMemo(
+    () => user !== undefined && !user.isRegistrationComplete,
+    [user]
+  )
+
+  const isLoading = useSelector(state =>
+    isCompleteRegistrationVariant
+      ? isCompletingRegistration(state)
+      : isRegistering(state)
+  )
+
+  const reduxErrors = useSelector(state =>
+    isCompleteRegistrationVariant
+      ? state.auth.completeRegistrationErrors
+      : state.auth.registerErrors
+  )
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -23,13 +41,19 @@ function Register() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    if (user === undefined || user.isRegistrationComplete) {
+    if (!isCompleteRegistrationVariant) {
       return
     }
 
     // fill the form with the data from the partially registered user
     setEmail(user.email)
-  }, [user])
+  }, [isCompleteRegistrationVariant, user])
+
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
 
   const handleEmailChange = useCallback(
     e => {
@@ -75,62 +99,26 @@ function Register() {
     [errors]
   )
 
-  const makeRequest = useCallback(
-    async (endpoint, method) => {
-      const user = {
+  const handleSubmit = useCallback(
+    e => {
+      e.preventDefault()
+
+      const data = {
         firstName,
         lastName,
         email,
         password
       }
 
-      setIsLoading(true)
-
-      try {
-        const response = await api(endpoint, method, user)
-
-        dispatch({ type: 'auth/setUser', payload: response.user })
-        navigate('/')
-      } catch (error) {
-        switch (error.type) {
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
-            return
-
-          default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [dispatch, email, firstName, lastName, navigate, password]
-  )
-
-  const handleSubmit = useCallback(
-    e => {
-      e.preventDefault()
-
       setErrors({})
 
       if (user === undefined) {
-        makeRequest('auth/register', 'post')
+        dispatch(register(data))
       } else {
-        makeRequest('users/' + user.id, 'put')
+        dispatch(completeRegistration(data))
       }
     },
-    [makeRequest, user]
+    [dispatch, email, firstName, lastName, password, user]
   )
 
   return (
