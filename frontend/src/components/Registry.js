@@ -74,7 +74,7 @@ const Registry = ({ registryId }) => {
   const handleItemToggle = useCallback(
     async id =>
       dispatch(
-        toggleRegistryItem({ regisrtyId: registryData?.id, itemId: id })
+        toggleRegistryItem({ registryId: registryData?.id, itemId: id })
       ),
     [dispatch, registryData?.id]
   )
@@ -155,18 +155,17 @@ const Registry = ({ registryId }) => {
         return
       }
 
-      dispatch({
-        type: 'modals/show',
-        payload: {
-          name: 'removeRegistryItemConfirmation',
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.removeRegistryItemConfirmation,
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
             registryId: registryData.id,
             registryName: registryData.name
           }
-        }
-      })
+        })
+      )
     },
     [dispatch, registryData, items]
   )

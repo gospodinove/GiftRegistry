@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 export const MODAL_NAMES = {
   populateRegistryItem: 'populateRegistryItem',
   shareRegistry: 'shareRegistry',
-  populateRegistry: 'populateRegistry'
+  populateRegistry: 'populateRegistry',
+  removeRegistryItemConfirmation: 'removeRegistryItemConfirmation'
 }
 
 // modal name => data

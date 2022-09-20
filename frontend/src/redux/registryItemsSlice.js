@@ -10,9 +10,11 @@ const initialState = {
   fetchStatus: DATA_STATUS.idle,
   createStatus: DATA_STATUS.idle,
   updateStatus: DATA_STATUS.idle,
+  removeStatus: DATA_STATUS.idle,
   // ERRORS
   createErrors: undefined,
-  udpateErrors: undefined
+  udpateErrors: undefined,
+  removeErrors: undefined
 }
 
 export const registryItemsSlice = createSlice({
@@ -21,13 +23,6 @@ export const registryItemsSlice = createSlice({
   reducers: {
     resetFetchStatus: state => {
       state.fetchStatus = DATA_STATUS.idle
-    },
-    remove: (state, action) => {
-      state[action.payload.registryId] = [
-        ...state[action.payload.registryId].filter(
-          item => item.id !== action.payload.id
-        )
-      ]
     },
     resetRegistryItemsSlice: () => initialState
   },
@@ -86,6 +81,22 @@ export const registryItemsSlice = createSlice({
       .addCase(updateRegistryItem.rejected, (state, action) => {
         state.updateStatus = DATA_STATUS.failed
         state.udpateErrors = action.payload
+      })
+      // REMOVE
+      .addCase(removeRegistryItem.pending, state => {
+        state.removeStatus = DATA_STATUS.loading
+      })
+      .addCase(removeRegistryItem.fulfilled, (state, action) => {
+        state.removeStatus = DATA_STATUS.succeeded
+        state.data[action.payload.registryId] = [
+          ...state.data[action.payload.registryId].filter(
+            item => item.id !== action.payload.itemId
+          )
+        ]
+      })
+      .addCase(removeRegistryItem.rejected, (state, action) => {
+        state.removeStatus = DATA_STATUS.failed
+        state.removeErrors = action.payload
       })
   }
 })
@@ -148,6 +159,18 @@ export const updateRegistryItem = createAsyncThunk(
   }
 )
 
+export const removeRegistryItem = createAsyncThunk(
+  'registryItems/remove',
+  async ({ registryId, itemId }, thunkAPI) => {
+    try {
+      await api('registryItems/' + itemId, 'delete')
+      return { registryId, itemId }
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
 // SELECTORS
 export const itemsSortedByDate = (state, registryId) => {
   const items = state.registryItems.data[registryId]
@@ -174,6 +197,9 @@ export const isCreatingItem = state =>
 
 export const isUpdatingItem = state =>
   state.registryItems.updateStatus === DATA_STATUS.loading
+
+export const isRemovingItem = state =>
+  state.registryItems.removeStatus === DATA_STATUS.loading
 
 export const isItemUpdated = state =>
   state.registryItems.updateStatus === DATA_STATUS.succeeded

@@ -20,6 +20,6 @@ export const styles = (color, disabled) => ({
     filter: disabled ? 'grayscale(1)' : null,
     '-webkit-filter': disabled && 'grayscale(1)'
   },
-
-  cardActions: { display: 'flex', justifyContent: 'space-between' }
+  cardActions: { display: 'flex', justifyContent: 'space-between' },
+  hidden: { display: 'none' }
 })

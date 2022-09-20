@@ -13,7 +13,6 @@ import Button from './Button'
 import Checkbox from './Checkbox'
 import { styles } from './RegistryItem.styles'
 
-// TODO: display the article link
 const RegistryItem = ({
   data,
   onToggle,
@@ -116,14 +115,14 @@ const RegistryItem = ({
         </Box>
 
         {/* Hidden until a use case is found. (most likely for further information about a product) */}
-
-        {/* <Button
+        <Button
           icon-mode="icon-only"
           icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
           color={color}
           disabled={disabled}
           onClick={handleCardExpandClick}
-        /> */}
+          sx={registryItemStyles.hidden}
+        />
       </CardActions>
       <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
         <CardContent>

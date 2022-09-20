@@ -25,15 +25,12 @@ const Modals = () => {
     [dispatch]
   )
 
-  const isRemoveRegistryItemConfirmationModalOpen = useSelector(
-    state => state.modals.removeRegistryItemConfirmation !== undefined
+  const isRemoveRegistryItemConfirmationModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.removeRegistryItemConfirmation)
   )
   const handleRemoveRegistryItemConfirmationModalClose = useCallback(
     () =>
-      dispatch({
-        type: 'modals/hide',
-        payload: { name: 'removeRegistryItemConfirmation' }
-      }),
+      dispatch(hideModal({ name: MODAL_NAMES.removeRegistryItemConfirmation })),
     [dispatch]
   )
 
