@@ -168,3 +168,18 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
     return handleErrors(error, thunkAPI)
   }
 })
+
+// SELECTORS
+export const isFetchingUserSession = state =>
+  state.auth.userSessionStatus === DATA_STATUS.loading
+
+export const hasUser = state => state.auth.user !== undefined && state.auth.user
+
+export const isLggingIn = state =>
+  state.auth.loginStatus === DATA_STATUS.loading
+
+export const isRegistering = state =>
+  state.auth.registerStatus === DATA_STATUS.loading
+
+export const isCompletingRegistration = state =>
+  state.auth.completeRegistrationStatus === DATA_STATUS.loading

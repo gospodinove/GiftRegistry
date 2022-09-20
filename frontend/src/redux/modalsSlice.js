@@ -24,3 +24,8 @@ export const modalsSlice = createSlice({
 })
 
 export const { showModal, hideModal, resetModalsSlice } = modalsSlice.actions
+
+// SELECTORS
+export const isModalOpen = (state, name) => state.modals[name] !== undefined
+
+export const modalInitialDataForName = (state, name) => state.modals[name]?.data

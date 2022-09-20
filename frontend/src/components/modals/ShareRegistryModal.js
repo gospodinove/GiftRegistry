@@ -8,22 +8,21 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { styles } from './ShareRegistryModal.styles'
-import { shareRegistry } from '../../redux/registriesSlice'
-import { DATA_STATUS } from '../../constants'
+import {
+  isRegistryShared,
+  isSharingRegistry,
+  shareRegistry
+} from '../../redux/registriesSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(state => state.modals.shareRegistry?.data)
-
-  const isLoading = useSelector(
-    state => state.registries.shareStatus === DATA_STATUS.loading
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.shareRegistry)
   )
-
-  const shouldCloseModal = useSelector(
-    state => state.registries.shareStatus === DATA_STATUS.succeeded
-  )
-
+  const isLoading = useSelector(isSharingRegistry)
+  const shouldCloseModal = useSelector(isRegistryShared)
   const reduxErrors = useSelector(state => state.registries.shareErrors)
 
   const [emails, setEmails] = useState([''])

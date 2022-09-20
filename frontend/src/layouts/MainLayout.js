@@ -15,17 +15,15 @@ import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
-import { AUTH_NAV_ITEMS, COLORS, DATA_STATUS } from '../constants'
+import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { logout } from '../redux/authSlice'
+import { isFetchingUserSession, logout } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const isFetchingSession = useSelector(
-    state => state.auth.userSessionStatus === DATA_STATUS.loading
-  )
+  const isFetchingSession = useSelector(isFetchingUserSession)
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined

@@ -9,14 +9,14 @@ import './Home.css'
 import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
-import { loginViaToken } from '../redux/authSlice'
+import { hasUser, loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 
 function Home() {
   const dispatch = useDispatch()
   const params = useParams()
 
-  const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+  const isAuthenticated = useSelector(hasUser)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 

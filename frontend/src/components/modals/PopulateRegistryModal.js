@@ -9,15 +9,25 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
-import { COLORS, DATA_STATUS, REGISTRY_TYPES } from '../../constants'
+import { COLORS, REGISTRY_TYPES } from '../../constants'
 import { Typography } from '@mui/material'
 import { styles } from './PopulateRegistryModal.styles'
-import { createRegistry, updateRegistry } from '../../redux/registriesSlice'
+import {
+  createRegistry,
+  isCreatingRegistry,
+  isRegistryCreated,
+  isRegistryUpdated,
+  isUpdatingRegistry,
+  updateRegistry
+} from '../../redux/registriesSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(state => state.modals.populateRegistry?.data)
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.populateRegistry)
+  )
 
   const isModalInUpdateMode = useMemo(
     () => initialData !== undefined,
@@ -30,16 +40,12 @@ function PopulateRegistryModal({ open, onClose }) {
       : state.registries.createErrors
   )
 
-  const isLoading = useSelector(
-    state =>
-      state.registries.createStatus === DATA_STATUS.loading ||
-      state.registries.updateStatus === DATA_STATUS.loading
+  const isLoading = useSelector(state =>
+    isModalInUpdateMode ? isUpdatingRegistry(state) : isCreatingRegistry(state)
   )
 
   const shouldCloseModal = useSelector(state =>
-    isModalInUpdateMode
-      ? state.registries.updateStatus === DATA_STATUS.succeeded
-      : state.registries.createStatus === DATA_STATUS.succeeded
+    isModalInUpdateMode ? isRegistryUpdated(state) : isRegistryCreated(state)
   )
 
   const [color, setColor] = useState(COLORS.APP[0])

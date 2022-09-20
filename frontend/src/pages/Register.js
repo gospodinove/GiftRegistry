@@ -4,23 +4,27 @@ import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../components/Button'
-import { completeRegistration, register } from '../redux/authSlice'
-import { DATA_STATUS } from '../constants'
+import {
+  completeRegistration,
+  isCompletingRegistration,
+  isRegistering,
+  register
+} from '../redux/authSlice'
 
 function Register() {
   const dispatch = useDispatch()
 
   const user = useSelector(state => state.auth.user)
 
-  const isLoading = useSelector(
-    state =>
-      state.auth.registerStatus === DATA_STATUS.loading ||
-      state.auth.completeRegistrationStatus === DATA_STATUS.loading
-  )
-
   const isCompleteRegistrationVariant = useMemo(
     () => user !== undefined && !user.isRegistrationComplete,
     [user]
+  )
+
+  const isLoading = useSelector(state =>
+    isCompleteRegistrationVariant
+      ? isCompletingRegistration(state)
+      : isRegistering(state)
   )
 
   const reduxErrors = useSelector(state =>

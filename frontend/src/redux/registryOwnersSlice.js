@@ -44,3 +44,10 @@ export const fetchOwner = createAsyncThunk(
     }
   }
 )
+
+// SELECTORS
+export const isFetchingOwner = state =>
+  state.registryOwners.status === DATA_STATUS.loading
+
+export const ownerByRegistryId = (state, registryId) =>
+  state.registryOwners.data[registryId]

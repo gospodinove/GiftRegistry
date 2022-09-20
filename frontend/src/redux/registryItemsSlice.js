@@ -136,3 +136,31 @@ export const updateRegistryItem = createAsyncThunk(
     }
   }
 )
+
+// SELECTORS
+export const itemsSortedByDate = (state, registryId) => {
+  const items = state.registryItems.data[registryId]
+
+  if (!items) {
+    return undefined
+  }
+
+  return [...items].sort(
+    (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+  )
+}
+
+export const isFetchingItems = state =>
+  state.registryItems.fetchStatus === DATA_STATUS.loading
+
+export const isCreatingItem = state =>
+  state.registryItems.createStatus === DATA_STATUS.loading
+
+export const isUpdatingItem = state =>
+  state.registryItems.updateStatus === DATA_STATUS.loading
+
+export const isItemUpdated = state =>
+  state.registryItems.updateStatus === DATA_STATUS.succeeded
+
+export const isItemCreated = state =>
+  state.registryItems.createStatus === DATA_STATUS.succeeded

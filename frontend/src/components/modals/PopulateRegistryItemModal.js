@@ -9,11 +9,15 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { Grid, InputAdornment, Typography } from '@mui/material'
 import { styles } from './PopulateRegistryItemModal.styles'
-import { DATA_STATUS } from '../../constants'
 import {
   createRegistryItem,
+  isCreatingItem,
+  isItemCreated,
+  isItemUpdated,
+  isUpdatingItem,
   updateRegistryItem
 } from '../../redux/registryItemsSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
 export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
   update: 'update',
@@ -23,17 +27,15 @@ export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
 function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(
-    state => state.modals.populateRegistryItem?.data
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.populateRegistryItem)
   )
 
   const isUpdateVariant =
     initialData?.variant === POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
 
-  const isLoading = useSelector(
-    state =>
-      state.registryItems.createStatus === DATA_STATUS.loading ||
-      state.registryItems.updateStatus === DATA_STATUS.loading
+  const isLoading = useSelector(state =>
+    isUpdateVariant ? isUpdatingItem(state) : isCreatingItem(state)
   )
 
   const reduxErrors = useSelector(state =>
@@ -43,9 +45,7 @@ function PopulateRegistryItemModal({ open, onClose }) {
   )
 
   const shouldCloseModal = useSelector(state =>
-    isUpdateVariant
-      ? state.registryItems.updateStatus === DATA_STATUS.loading
-      : state.registryItems.createStatus === DATA_STATUS.loading
+    isUpdateVariant ? isItemUpdated(state) : isItemCreated(state)
   )
 
   const [name, setName] = useState('')

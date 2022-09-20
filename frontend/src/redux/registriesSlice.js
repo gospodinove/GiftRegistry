@@ -129,3 +129,34 @@ export const shareRegistry = createAsyncThunk(
     }
   }
 )
+
+// SELECTORS
+export const registriesSortedByDate = state =>
+  [...state.registries.data].sort(
+    (registryOne, registryTwo) =>
+      new Date(registryTwo.date) - new Date(registryOne.date)
+  )
+
+export const dataByRegistryId = (state, registryId) =>
+  state.registries.data.find(registry => registry.id === registryId)
+
+export const isFetchingRegistry = state =>
+  state.registries.fetchStatus === DATA_STATUS.loading
+
+export const isCreatingRegistry = state =>
+  state.registries.createStatus === DATA_STATUS.loading
+
+export const isUpdatingRegistry = state =>
+  state.registries.updateStatus === DATA_STATUS.loading
+
+export const isSharingRegistry = state =>
+  state.registries.shareStatus === DATA_STATUS.loading
+
+export const isRegistryCreated = state =>
+  state.registries.createStatus === DATA_STATUS.succeeded
+
+export const isRegistryUpdated = state =>
+  state.registries.updateStatus === DATA_STATUS.succeeded
+
+export const isRegistryShared = state =>
+  state.registries.shareStatus === DATA_STATUS.succeeded

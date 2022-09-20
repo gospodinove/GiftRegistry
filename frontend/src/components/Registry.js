@@ -8,25 +8,30 @@ import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
   fetchRegistryItems,
+  isFetchingItems,
+  itemsSortedByDate,
   toggleRegistryItem
 } from '../redux/registryItemsSlice'
-import { fetchOwner } from '../redux/registryOwnersSlice'
-import { DATA_STATUS } from '../constants'
+import {
+  fetchOwner,
+  isFetchingOwner,
+  ownerByRegistryId
+} from '../redux/registryOwnersSlice'
 import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
+import { dataByRegistryId } from '../redux/registriesSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const registryData = useSelector(state =>
-    state.registries.data.find(registry => registry.id === registryId)
-  )
-  const items = useSelector(state => state.registryItems.data[registryId])
+  const registryData = useSelector(state => dataByRegistryId(state, registryId))
+  const items = useSelector(state => itemsSortedByDate(state, registryId))
+  const user = useSelector(state => state.auth.user)
+  const owner = useSelector(state => ownerByRegistryId(state, registryId))
+
+  const isLoadingItems = useSelector(isFetchingItems)
+  const isLoadingOwner = useSelector(isFetchingOwner)
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
-
-  const user = useSelector(state => state.auth.user)
-
-  const owner = useSelector(state => state.registryOwners.data[registryId])
 
   const isOwner = useMemo(
     () =>
@@ -35,23 +40,8 @@ const Registry = ({ registryId }) => {
     [registryData?.users, user?.email]
   )
 
-  const isLoadingItems = useSelector(
-    state => state.registryItems.fetchStatus === DATA_STATUS.loading
-  )
-  const isLoadingOwner = useSelector(
-    state => state.registryOwners.status === DATA_STATUS.loading
-  )
-
-  const itemsSortedByDate = useMemo(() => {
-    if (!items) {
-      return []
-    }
-    return [...items].sort(
-      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
-    )
-  }, [items])
-
   const maybeFetchItems = useCallback(async () => {
+    // TODO: use idle status
     if (!registryId || items !== undefined) {
       return
     }
@@ -99,7 +89,7 @@ const Registry = ({ registryId }) => {
         }
       })
     )
-  }, [registryData.id, registryData.color, registryData.name, dispatch])
+  }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
   const handleShareClick = useCallback(() => {
     if (!registryData) {
@@ -179,7 +169,7 @@ const Registry = ({ registryId }) => {
         </>
       ) : hasItems ? (
         <List>
-          {itemsSortedByDate.map(item => (
+          {items.map(item => (
             <RegistryItem
               key={item.id}
               data={item}

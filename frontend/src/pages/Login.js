@@ -4,15 +4,12 @@ import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../components/Button'
-import { login } from '../redux/authSlice'
-import { DATA_STATUS } from '../constants'
+import { isLggingIn, login } from '../redux/authSlice'
 
 function Login() {
   const dispatch = useDispatch()
 
-  const isLoading = useSelector(
-    state => state.auth.loginStatus === DATA_STATUS.loading
-  )
+  const isLoading = useSelector(isLggingIn)
 
   const reduxErrors = useSelector(state => state.auth.loginErrors)
 
