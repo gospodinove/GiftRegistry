@@ -22,6 +22,13 @@ export const registryItemsSlice = createSlice({
     resetFetchStatus: state => {
       state.fetchStatus = DATA_STATUS.idle
     },
+    remove: (state, action) => {
+      state[action.payload.registryId] = [
+        ...state[action.payload.registryId].filter(
+          item => item.id !== action.payload.id
+        )
+      ]
+    },
     resetRegistryItemsSlice: () => initialState
   },
   extraReducers: builder => {

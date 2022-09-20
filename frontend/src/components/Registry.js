@@ -1,10 +1,10 @@
-import { List } from '@mui/material'
 import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
+import { Masonry } from '@mui/lab'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
   areItemsFetched,
@@ -149,6 +149,36 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData, items]
   )
 
+  const handleItemRemoveClick = useCallback(
+    id => {
+      if (!registryData) {
+        return
+      }
+
+      dispatch({
+        type: 'modals/show',
+        payload: {
+          name: 'removeRegistryItemConfirmation',
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            registryName: registryData.name
+          }
+        }
+      })
+    },
+    [dispatch, registryData, items]
+  )
+
+  const masonryConfig = useMemo(
+    () => ({
+      columns: { xs: 1, sm: 2, md: 3 },
+      spacing: { xs: 2, sm: 2, md: 3 }
+    }),
+    []
+  )
+
   return (
     <>
       {registryData && (
@@ -174,7 +204,10 @@ const Registry = ({ registryId }) => {
           <RegistryItemSkeleton />
         </>
       ) : hasItems ? (
-        <List>
+        <Masonry
+          columns={masonryConfig.columns}
+          spacing={masonryConfig.spacing}
+        >
           {items.map(item => (
             <RegistryItem
               key={item.id}
@@ -183,10 +216,11 @@ const Registry = ({ registryId }) => {
               color={registryData.color}
               onToggle={handleItemToggle}
               onEditClick={handleItemEditClick}
-              isEditEnabled={isOwner}
+              onRemoveClick={handleItemRemoveClick}
+              areActionsEnabled={isOwner}
             />
           ))}
-        </List>
+        </Masonry>
       ) : (
         <Empty text="No products in the registry" />
       )}

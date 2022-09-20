@@ -6,7 +6,6 @@ import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
 import './Home.css'
-import Button from '../components/Button'
 import { useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser, loginViaToken } from '../redux/authSlice'
@@ -34,7 +33,7 @@ function Home() {
     }
   }, [isAuthenticated, prev?.isAuthenticated])
 
-  const handlePopulateRegistryButtonClick = useCallback(
+  const handleCreateRegistryButtonClick = useCallback(
     () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
@@ -46,19 +45,13 @@ function Home() {
 
   return (
     <Box sx={styles.box}>
-      <Grid container sx={styles.gridContainer} spacing={2}>
+      <Grid container sx={styles.gridContainer} columnSpacing={2}>
         <Grid item xs={3} sx={styles.gridItem}>
-          <Button
-            sx={styles.button}
-            variant="outlined"
-            onClick={handlePopulateRegistryButtonClick}
-            icon="add"
-            icon-mode="start"
-          >
-            Create new registry
-          </Button>
           {isAuthenticated && (
-            <RegistriesList onSelectedChange={onSelectedChange} />
+            <RegistriesList
+              onSelectedChange={onSelectedChange}
+              onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
+            />
           )}
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
