@@ -5,12 +5,13 @@ import {
   DialogTitle,
   Typography
 } from '@mui/material'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 import {
-  isRemovingItem,
+  isRegistryItemRemoved,
+  isRemovingRegistryItem,
   removeRegistryItem
 } from '../../redux/registryItemsSlice'
 import Button from '../Button'
@@ -19,20 +20,26 @@ import { styles } from './RemoveRegistryItemConfirmationModal.styles'
 function RemoveRegistryItemConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const isLoading = useSelector(isRemovingItem)
+  const isLoading = useSelector(isRemovingRegistryItem)
 
   const initialData = useSelector(state =>
     modalInitialDataForName(state, MODAL_NAMES.removeRegistryItemConfirmation)
   )
+
+  const shouldClose = useSelector(isRegistryItemRemoved)
 
   const removeRegistryItemConfirmationStyles = useMemo(
     () => styles(initialData?.color),
     [initialData?.color]
   )
 
-  const handleClose = useCallback(() => {
-    onClose()
-  }, [onClose])
+  const handleClose = useCallback(() => onClose(), [onClose])
+
+  useEffect(() => {
+    if (shouldClose) {
+      handleClose()
+    }
+  }, [shouldClose, handleClose])
 
   const handleSubmit = useCallback(
     async e => {
@@ -44,9 +51,8 @@ function RemoveRegistryItemConfirmationModal({ open, onClose }) {
           registryId: initialData.registryId
         })
       )
-      handleClose()
     },
-    [dispatch, handleClose, initialData?.item?.id, initialData?.registryId]
+    [dispatch, initialData?.item?.id, initialData?.registryId]
   )
 
   return (

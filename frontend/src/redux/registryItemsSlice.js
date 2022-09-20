@@ -189,20 +189,23 @@ export const areItemsFetched = (state, registryId) =>
   (state.registryItems.fetchStatus !== DATA_STATUS.idle &&
     state.registryItems.fetchStatus !== DATA_STATUS.loading)
 
-export const isFetchingItems = state =>
+export const isFetchingRegistryItems = state =>
   state.registryItems.fetchStatus === DATA_STATUS.loading
 
-export const isCreatingItem = state =>
+export const isCreatingRegistryItem = state =>
   state.registryItems.createStatus === DATA_STATUS.loading
 
-export const isUpdatingItem = state =>
+export const isUpdatingRegistryItem = state =>
   state.registryItems.updateStatus === DATA_STATUS.loading
 
-export const isRemovingItem = state =>
+export const isRemovingRegistryItem = state =>
   state.registryItems.removeStatus === DATA_STATUS.loading
 
-export const isItemUpdated = state =>
+export const isRegistryItemUpdated = state =>
   state.registryItems.updateStatus === DATA_STATUS.succeeded
 
-export const isItemCreated = state =>
+export const isRegistryItemCreated = state =>
   state.registryItems.createStatus === DATA_STATUS.succeeded
+
+export const isRegistryItemRemoved = state =>
+  state.registryItems.removeStatus === DATA_STATUS.succeeded

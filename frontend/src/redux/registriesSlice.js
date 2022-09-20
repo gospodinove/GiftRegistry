@@ -137,7 +137,7 @@ export const registriesSortedByDate = state =>
       new Date(registryTwo.date) - new Date(registryOne.date)
   )
 
-export const dataByRegistryId = (state, registryId) =>
+export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
 
 export const areRegistriesFetched = state =>

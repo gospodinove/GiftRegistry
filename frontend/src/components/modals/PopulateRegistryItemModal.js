@@ -11,10 +11,10 @@ import { Grid, InputAdornment, Typography } from '@mui/material'
 import { styles } from './PopulateRegistryItemModal.styles'
 import {
   createRegistryItem,
-  isCreatingItem,
-  isItemCreated,
-  isItemUpdated,
-  isUpdatingItem,
+  isCreatingRegistryItem,
+  isRegistryItemCreated,
+  isRegistryItemUpdated,
+  isUpdatingRegistryItem,
   updateRegistryItem
 } from '../../redux/registryItemsSlice'
 import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
@@ -35,7 +35,9 @@ function PopulateRegistryItemModal({ open, onClose }) {
     initialData?.variant === POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
 
   const isLoading = useSelector(state =>
-    isUpdateVariant ? isUpdatingItem(state) : isCreatingItem(state)
+    isUpdateVariant
+      ? isUpdatingRegistryItem(state)
+      : isCreatingRegistryItem(state)
   )
 
   const reduxErrors = useSelector(state =>
@@ -45,7 +47,9 @@ function PopulateRegistryItemModal({ open, onClose }) {
   )
 
   const shouldCloseModal = useSelector(state =>
-    isUpdateVariant ? isItemUpdated(state) : isItemCreated(state)
+    isUpdateVariant
+      ? isRegistryItemUpdated(state)
+      : isRegistryItemCreated(state)
   )
 
   const [name, setName] = useState('')

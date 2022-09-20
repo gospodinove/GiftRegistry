@@ -9,7 +9,7 @@ import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
   areItemsFetched,
   fetchRegistryItems,
-  isFetchingItems,
+  isFetchingRegistryItems,
   itemsSortedByDate,
   resetFetchStatus,
   toggleRegistryItem
@@ -20,12 +20,12 @@ import {
   ownerByRegistryId
 } from '../redux/registryOwnersSlice'
 import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
-import { dataByRegistryId } from '../redux/registriesSlice'
+import { registryDataById } from '../redux/registriesSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const registryData = useSelector(state => dataByRegistryId(state, registryId))
+  const registryData = useSelector(state => registryDataById(state, registryId))
   const items = useSelector(state => itemsSortedByDate(state, registryId))
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(state => ownerByRegistryId(state, registryId))
@@ -33,7 +33,7 @@ const Registry = ({ registryId }) => {
   const shouldPreventFetch = useSelector(state =>
     areItemsFetched(state, registryId)
   )
-  const isLoadingItems = useSelector(isFetchingItems)
+  const isLoadingItems = useSelector(isFetchingRegistryItems)
   const isLoadingOwner = useSelector(isFetchingOwner)
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
@@ -52,11 +52,9 @@ const Registry = ({ registryId }) => {
   }, [registryId, shouldPreventFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    if (isOwner || owner !== undefined) {
-      return
+    if (!isOwner && owner === undefined) {
+      dispatch(fetchOwner(registryId))
     }
-
-    dispatch(fetchOwner(registryId))
   }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
