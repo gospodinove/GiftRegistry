@@ -7,9 +7,11 @@ import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
+  areItemsFetched,
   fetchRegistryItems,
   isFetchingItems,
   itemsSortedByDate,
+  resetFetchStatus,
   toggleRegistryItem
 } from '../redux/registryItemsSlice'
 import {
@@ -28,6 +30,9 @@ const Registry = ({ registryId }) => {
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(state => ownerByRegistryId(state, registryId))
 
+  const shouldPreventFetch = useSelector(state =>
+    areItemsFetched(state, registryId)
+  )
   const isLoadingItems = useSelector(isFetchingItems)
   const isLoadingOwner = useSelector(isFetchingOwner)
 
@@ -41,13 +46,10 @@ const Registry = ({ registryId }) => {
   )
 
   const maybeFetchItems = useCallback(async () => {
-    // TODO: use idle status
-    if (!registryId || items !== undefined) {
-      return
+    if (registryId && !shouldPreventFetch) {
+      dispatch(fetchRegistryItems(registryId))
     }
-
-    dispatch(fetchRegistryItems(registryId))
-  }, [registryId, items, dispatch])
+  }, [registryId, shouldPreventFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
     if (isOwner || owner !== undefined) {
@@ -64,6 +66,10 @@ const Registry = ({ registryId }) => {
   useEffect(() => {
     maybeFetchRegistryOwner()
   }, [maybeFetchRegistryOwner, registryId])
+
+  useEffect(() => {
+    dispatch(resetFetchStatus())
+  }, [registryId, dispatch])
 
   const handleItemToggle = useCallback(
     async id =>

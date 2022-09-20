@@ -19,6 +19,9 @@ export const registryItemsSlice = createSlice({
   name: 'registryItems',
   initialState,
   reducers: {
+    resetFetchStatus: state => {
+      state.fetchStatus = DATA_STATUS.idle
+    },
     resetRegistryItemsSlice: () => initialState
   },
   extraReducers: builder => {
@@ -80,7 +83,8 @@ export const registryItemsSlice = createSlice({
   }
 })
 
-export const { resetRegistryItemsSlice } = registryItemsSlice.actions
+export const { resetFetchStatus, resetRegistryItemsSlice } =
+  registryItemsSlice.actions
 
 export const fetchRegistryItems = createAsyncThunk(
   'registryItems/fetch',
@@ -149,6 +153,11 @@ export const itemsSortedByDate = (state, registryId) => {
     (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
   )
 }
+
+export const areItemsFetched = (state, registryId) =>
+  state.registryItems.data[registryId] !== undefined ||
+  (state.registryItems.fetchStatus !== DATA_STATUS.idle &&
+    state.registryItems.fetchStatus !== DATA_STATUS.loading)
 
 export const isFetchingItems = state =>
   state.registryItems.fetchStatus === DATA_STATUS.loading

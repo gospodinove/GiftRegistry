@@ -140,6 +140,10 @@ export const registriesSortedByDate = state =>
 export const dataByRegistryId = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
 
+export const areRegistriesFetched = state =>
+  state.registries.fetchStatus !== DATA_STATUS.idle &&
+  state.registries.fetchStatus !== DATA_STATUS.loading
+
 export const isFetchingRegistry = state =>
   state.registries.fetchStatus === DATA_STATUS.loading
 

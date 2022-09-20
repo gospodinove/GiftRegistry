@@ -5,6 +5,7 @@ import RegistriesListItem from './RegistriesListItem'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
 import Empty from './Empty'
 import {
+  areRegistriesFetched,
   fetchRegistries,
   isFetchingRegistry,
   registriesSortedByDate
@@ -15,12 +16,15 @@ const RegistriesList = ({ onSelectedChange }) => {
 
   const registries = useSelector(registriesSortedByDate)
   const isLoading = useSelector(isFetchingRegistry)
+  const isDataFetched = useSelector(areRegistriesFetched)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const maybeFetchRegistries = useCallback(async () => {
-    dispatch(fetchRegistries())
-  }, [dispatch])
+    if (!isDataFetched) {
+      dispatch(fetchRegistries())
+    }
+  }, [dispatch, isDataFetched])
 
   useEffect(() => {
     maybeFetchRegistries()
