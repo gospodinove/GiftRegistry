@@ -13,7 +13,7 @@ const Registry = ({ registryId }) => {
   const registryData = useSelector(state =>
     state.registries.data.find(registry => registry.id === registryId)
   )
-  const items = useSelector(state => state.registryItems[registryId])
+  const items = useSelector(state => state.registryItems.items[registryId])
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
 
@@ -53,7 +53,7 @@ const Registry = ({ registryId }) => {
       const response = await api('registries/' + registryId + '/items')
 
       dispatch({
-        type: 'registryItems/set',
+        type: 'registryItems/setItems',
         payload: { registryId, items: response.items }
       })
     } catch (error) {

@@ -119,7 +119,9 @@ function PopulateRegistryItemModal({ open, onClose }) {
         )
 
         dispatch({
-          type: isUpdateVariant ? 'registryItems/update' : 'registryItems/add',
+          type: isUpdateVariant
+            ? 'registryItems/update'
+            : 'registryItems/addItems',
           payload: {
             registryId: initialData.registryId,
             item: response.item

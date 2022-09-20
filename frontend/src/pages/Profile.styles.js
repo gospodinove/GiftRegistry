@@ -1,27 +1,50 @@
 import { COLORS } from '../constants'
 
 export const styles = {
-  profileBox: {
-    background: `linear-gradient(to bottom right, ${COLORS.PROFILE_PRIMARY}, ${COLORS.PROFILE_SECONDARY} )`
+  gridContainerBox: {
+    ml: '24px',
+    mr: '24px'
+  },
+  avatarBox: {
+    borderRight: { sm: '2px solid lightgray' },
+    justifyContent: { xs: 'center', sm: 'end' },
+    pr: { sm: '24px !important' }
   },
   avatar: {
-    height: '120px',
-    width: '120px',
-    position: 'absolute',
-    top: '-60px',
-    boxShadow: `0 0 4px 2px COLORS.WHITE`
+    height: '150px',
+    width: '150px',
+    background: `linear-gradient(to bottom right, ${COLORS.PROFILE_PRIMARY}, ${COLORS.PROFILE_SECONDARY} )`
   },
   gridContainer: {
-    padding: '24px',
-    pb: '68px',
-    pt: '68px',
-    pr: '0px'
+    pt: { xs: '40px' },
+    pb: { xs: '40px' },
+    pl: { xs: '20px' },
+    pr: { xs: '20px' },
+    borderBottom: { xs: '2px solid lightgray' }
   },
   gridItem: {
     display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'nowrap'
+    justifyContent: { xs: 'center', sm: 'start' }
   },
-  tabsBox: { width: '100%', display: 'flex', justifyContent: 'center' },
-  tab: { color: COLORS.PROFILE_PRIMARY }
+  infoBox: {
+    alignItems: { xs: 'center', sm: 'start' },
+    pl: '24px !important'
+  },
+  tabsBox: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    paddingTop: '10px',
+    paddingLeft: '0px',
+    paddingRight: '0px'
+  },
+  tab: { color: COLORS.PROFILE_PRIMARY },
+  numTypography: {
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: 'bold'
+  }
 }

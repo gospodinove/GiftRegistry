@@ -124,4 +124,30 @@ router.delete(
   }
 )
 
+//TODO: better name for withTaker
+
+router.get(
+  '/withTaker/:userId',
+  [isAuthenticated, isRegistrationCompleted],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    if (req.params.userId !== req.session.user.id) {
+      sendErrorResponse(res, 401, 'general', 'Unauthorized access')
+      return
+    }
+
+    try {
+      const items = await db
+        .collection(COLLECTION_NAMES.registryItems)
+        .find({ takenBy: req.params.userId })
+        .toArray()
+
+      res.json({ items: items.map(item => replaceId(item)) })
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not fetch items')
+    }
+  }
+)
+
 module.exports = router

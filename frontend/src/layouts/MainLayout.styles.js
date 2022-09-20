@@ -2,7 +2,14 @@ import { NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
   icons: { pr: 1 },
-  rootBox: { flexGrow: 1, height: '100%' },
+  rootBox: {
+    flexGrow: 1,
+    height: '100%',
+    '& .MuiBox-root': {
+      paddingLeft: '0px',
+      paddingRight: '0px'
+    }
+  },
   appBar: { height: `${NAVBAR_HEIGHT}px` },
   toolbar: { height: `${NAVBAR_HEIGHT}px` },
   typography: {
