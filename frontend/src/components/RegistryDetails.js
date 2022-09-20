@@ -2,6 +2,7 @@ import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { memo, useCallback } from 'react'
 import { COLORS } from '../constants'
 import Button from './Button'
+import { styles } from './RegistryDetails.styles'
 import Icon from './Icon'
 
 const RegistryDetails = ({
@@ -62,7 +63,7 @@ const RegistryDetails = ({
       {maybeRenderOwner()}
 
       {shouldShowActionButtons && (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} sx={styles.stack}>
           <Button
             variant="outlined"
             icon-mode="start"
