@@ -96,4 +96,32 @@ router.put(
   }
 )
 
+router.delete(
+  '/:registryItemId',
+  [
+    isAuthenticated,
+    isRegistrationCompleted,
+    fetchRegistryItem,
+    fetchRegistry,
+    isRegistryOwner
+  ],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    try {
+      try {
+        await db
+          .collection(COLLECTION_NAMES.registryItems)
+          .findOneAndDelete({ _id: ObjectId(req.params.registryItemId) })
+
+        res.send()
+      } catch {
+        sendErrorResponse(res, 500, 'general', 'Could not remove registry item')
+      }
+    } catch (errors) {
+      sendErrorResponse(res, 500, 'field-error', errors)
+    }
+  }
+)
+
 module.exports = router

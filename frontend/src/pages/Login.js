@@ -1,17 +1,23 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { Stack, Typography } from '@mui/material'
-import { api } from '../utils/api'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import Button from '../components/Button'
+import { isLggingIn, login } from '../redux/authSlice'
 
 function Login() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isLoading = useSelector(isLggingIn)
+
+  const reduxErrors = useSelector(state => state.auth.loginErrors)
+
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -43,44 +49,10 @@ function Login() {
   const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
-
-      setIsLoading(true)
-
       setErrors({})
-
-      try {
-        const response = await api('auth/login', 'POST', {
-          email,
-          password
-        })
-
-        dispatch({ type: 'auth/setUser', payload: response.user })
-        navigate('/')
-      } catch (error) {
-        switch (error.type) {
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
-            return
-
-          default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
+      dispatch(login({ email, password }))
     },
-    [email, password, navigate, dispatch]
+    [email, password, dispatch]
   )
 
   return (

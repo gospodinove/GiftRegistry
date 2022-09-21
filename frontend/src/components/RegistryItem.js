@@ -13,14 +13,14 @@ import Button from './Button'
 import Checkbox from './Checkbox'
 import { styles } from './RegistryItem.styles'
 
-// TODO: display the article link
 const RegistryItem = ({
   data,
   onToggle,
   color,
   disabled,
-  isEditEnabled,
-  onEditClick
+  areActionsEnabled,
+  onEditClick,
+  onRemoveClick
 }) => {
   const [isCardExpanded, setIsCardExpanded] = useState(false)
 
@@ -38,6 +38,10 @@ const RegistryItem = ({
   const handleEditClick = useCallback(() => {
     onEditClick(data.id)
   }, [onEditClick, data.id])
+
+  const handleRemoveClick = useCallback(() => {
+    onRemoveClick(data.id)
+  }, [data.id, onRemoveClick])
 
   const handleCardExpandClick = useCallback(() => {
     setIsCardExpanded(!isCardExpanded)
@@ -92,25 +96,33 @@ const RegistryItem = ({
             disabled={disabled}
             onClick={handleCheckboxClick}
           />
-          {isEditEnabled && (
-            <Button
-              icon-mode="icon-only"
-              icon="edit"
-              color={color}
-              onClick={handleEditClick}
-            />
+          {areActionsEnabled && (
+            <>
+              <Button
+                icon-mode="icon-only"
+                icon="edit"
+                color={color}
+                onClick={handleEditClick}
+              />
+              <Button
+                icon-mode="icon-only"
+                icon="delete"
+                color={color}
+                onClick={handleRemoveClick}
+              />
+            </>
           )}
         </Box>
 
         {/* Hidden until a use case is found. (most likely for further information about a product) */}
-
-        {/* <Button
+        <Button
           icon-mode="icon-only"
           icon={!isCardExpanded ? 'expand-more' : 'expand-less'}
           color={color}
           disabled={disabled}
           onClick={handleCardExpandClick}
-        /> */}
+          sx={registryItemStyles.hidden}
+        />
       </CardActions>
       <Collapse in={isCardExpanded} timeout="auto" unmountOnExit>
         <CardContent>

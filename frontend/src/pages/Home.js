@@ -7,41 +7,25 @@ import Registry from '../components/Registry'
 import { styles } from './Home.styles'
 import './Home.css'
 import { useParams } from 'react-router-dom'
-import { api } from '../utils/api'
 import usePrevious from '../hooks/usePrevious'
-import { useReduxEffect } from 'use-redux-effect'
+import { hasUser, loginViaToken } from '../redux/authSlice'
+import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 
 function Home() {
   const dispatch = useDispatch()
   const params = useParams()
 
-  const isAuthenticated = useSelector(state => state.auth.user !== undefined)
+  const isAuthenticated = useSelector(hasUser)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const prev = usePrevious({ isAuthenticated })
 
-  const authenticateWithToken = useCallback(
-    async token => {
-      try {
-        const response = await api('auth/token', 'post', { token })
-
-        dispatch({ type: 'auth/setUser', payload: response.user })
-      } catch (error) {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: error.data }
-        })
-      }
-    },
-    [dispatch]
-  )
-
   useEffect(() => {
     if (params?.token && !isAuthenticated) {
-      authenticateWithToken(params.token)
+      dispatch(loginViaToken(params.token))
     }
-  }, [params, isAuthenticated, authenticateWithToken])
+  }, [params, isAuthenticated, dispatch])
 
   useEffect(() => {
     if (prev?.isAuthenticated !== isAuthenticated) {
@@ -58,8 +42,7 @@ function Home() {
   // )
 
   const handleCreateRegistryButtonClick = useCallback(
-    () =>
-      dispatch({ type: 'modals/show', payload: { name: 'populateRegistry' } }),
+    () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
 
