@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { styles } from './Profile.styles'
 import { COLORS } from '../constants'
 import Icon from '../components/Icon'
-import { api } from '../utils/api'
+import { fetchUserItems } from '../redux/userItemsSlice'
 
 const PROFILE_TAB_VALUES = {
   takenProducts: 'takenProducts',
@@ -17,11 +17,11 @@ const PROFILE_TAB_VALUES = {
 export default function Profile() {
   const dispatch = useDispatch()
 
-  const userItems = useSelector(state => state.registryItems.userItems)
+  const userItems = useSelector(state => state.userItems.data)
 
   const user = useSelector(state => state.auth.user)
 
-  const [tabValue, setTabValue] = useState('1')
+  const [tabValue, setTabValue] = useState(PROFILE_TAB_VALUES.takenProducts)
 
   const handleTabChange = useCallback(
     (_e, newValue) => setTabValue(newValue),
@@ -29,8 +29,7 @@ export default function Profile() {
   )
 
   const fetchTakenRegistryItems = useCallback(async () => {
-    const response = await api('registryItems/pickedBy/' + user.id)
-    dispatch({ type: 'registryItems/setUserItems', payload: response })
+    dispatch(fetchUserItems(user.id))
   }, [dispatch, user.id])
 
   useEffect(() => {
@@ -85,7 +84,7 @@ export default function Profile() {
                   variant="h5"
                   sx={styles.numTypography}
                 >
-                  {userItems?.items?.length}
+                  {userItems.length}
                 </Typography>
 
                 <Typography
@@ -114,17 +113,17 @@ export default function Profile() {
               label="TAKEN PRODUCTS"
               value={PROFILE_TAB_VALUES.takenProducts}
               sx={styles.tab}
-            ></Tab>
+            />
             <Tab
               label="NOTIFICATIONS"
               value={PROFILE_TAB_VALUES.notifications}
               sx={styles.tab}
-            ></Tab>
+            />
             <Tab
               label="Item Three"
               value={PROFILE_TAB_VALUES.other}
               sx={styles.tab}
-            ></Tab>
+            />
           </Tabs>
         </Box>
 

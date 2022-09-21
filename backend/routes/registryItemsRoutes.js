@@ -125,7 +125,7 @@ router.delete(
 )
 
 router.get(
-  '/pickedBy/:userId',
+  '/takenBy/:userId',
   [isAuthenticated, isRegistrationCompleted],
   async (req, res) => {
     const db = req.app.locals.db

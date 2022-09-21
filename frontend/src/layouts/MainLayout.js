@@ -106,14 +106,14 @@ function MainLayout() {
           anchorEl={avatarDropdownAnchorElement}
           onClose={handleAvatarDropdownToggle}
         >
-          <MenuItem onClick={handleLogoutClick}>
-            <Icon type="logout" sx={styles.icons} />
-            Logout
-          </MenuItem>
-
           <MenuItem onClick={handleProfileClick}>
             <Icon type="account-circle" sx={styles.icons} />
             Profile
+          </MenuItem>
+
+          <MenuItem onClick={handleLogoutClick}>
+            <Icon type="logout" sx={styles.icons} />
+            Logout
           </MenuItem>
         </Menu>
       </>

@@ -99,32 +99,7 @@ export const registryItemsSlice = createSlice({
         state.removeErrors = action.payload
       })
   }
-
-export const areItemsFetched = (state, registryId) =>
-  state.registryItems.data[registryId] !== undefined ||
-  (state.registryItems.fetchStatus !== DATA_STATUS.idle &&
-    state.registryItems.fetchStatus !== DATA_STATUS.loading)
-
-export const isFetchingRegistryItems = state =>
-  state.registryItems.fetchStatus === DATA_STATUS.loading
-
-export const isCreatingRegistryItem = state =>
-  state.registryItems.createStatus === DATA_STATUS.loading
-
-export const isUpdatingRegistryItem = state =>
-  state.registryItems.updateStatus === DATA_STATUS.loading
-
-export const isRemovingRegistryItem = state =>
-  state.registryItems.removeStatus === DATA_STATUS.loading
-
-export const isRegistryItemUpdated = state =>
-  state.registryItems.updateStatus === DATA_STATUS.succeeded
-
-export const isRegistryItemCreated = state =>
-  state.registryItems.createStatus === DATA_STATUS.succeeded
-
-export const isRegistryItemRemoved = state =>
-  state.registryItems.removeStatus === DATA_STATUS.succeeded
+})
 
 export const { resetFetchStatus, resetRegistryItemsSlice } =
   registryItemsSlice.actions

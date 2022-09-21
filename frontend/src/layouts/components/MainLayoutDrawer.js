@@ -90,12 +90,6 @@ const MainLayoutDrawer = ({
         </ListItem>
         <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
           <List>
-            <ListItemButton onClick={onLogoutClick} sx={styles.nestedListItem}>
-              <ListItemIcon>
-                <Icon type="logout" />
-              </ListItemIcon>
-              <ListItemText primary="LOG OUT" />
-            </ListItemButton>
             <ListItemButton
               onClick={handleProfileClick}
               sx={styles.nestedListItem}
@@ -105,6 +99,12 @@ const MainLayoutDrawer = ({
               </ListItemIcon>
               <ListItemText primary="PROFILE" />
             </ListItemButton>
+            <ListItemButton onClick={onLogoutClick} sx={styles.nestedListItem}>
+              <ListItemIcon>
+                <Icon type="logout" />
+              </ListItemIcon>
+              <ListItemText primary="LOG OUT" />
+            </ListItemButton>
           </List>
         </Collapse>
       </>
@@ -112,11 +112,11 @@ const MainLayoutDrawer = ({
   }, [
     handleDrawerItemClick,
     handleInnerDrawerToggle,
+    handleProfileClick,
     isAuthenticated,
     isFetchingSession,
     isUserInnerDrawerOpen,
     onLogoutClick,
-    onProfileClick,
     user?.firstName,
     user?.lastName
   ])
