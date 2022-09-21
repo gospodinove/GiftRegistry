@@ -23,3 +23,10 @@ export const AUTH_NAV_ITEMS = [
   { title: 'login', route: 'login', icon: 'login' },
   { title: 'register', route: 'register', icon: 'register' }
 ]
+
+export const DATA_STATUS = {
+  idle: 'idle',
+  loading: 'loading',
+  succeeded: 'succeeded',
+  failed: 'failed'
+}

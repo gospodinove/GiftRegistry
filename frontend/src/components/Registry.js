@@ -1,27 +1,42 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../utils/api'
 import RegistryItem from './RegistryItem'
 import RegistryItemSkeleton from './RegistryItemSkeleton'
 import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
 import { Masonry } from '@mui/lab'
+import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import {
+  areItemsFetched,
+  fetchRegistryItems,
+  isFetchingRegistryItems,
+  itemsSortedByDate,
+  resetFetchStatus,
+  toggleRegistryItem
+} from '../redux/registryItemsSlice'
+import {
+  fetchOwner,
+  isFetchingOwner,
+  ownerByRegistryId
+} from '../redux/registryOwnersSlice'
+import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
+import { registryDataById } from '../redux/registriesSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const registryData = useSelector(state =>
-    state.registries.data.find(registry => registry.id === registryId)
+  const registryData = useSelector(state => registryDataById(state, registryId))
+  const items = useSelector(state => itemsSortedByDate(state, registryId))
+  const user = useSelector(state => state.auth.user)
+  const owner = useSelector(state => ownerByRegistryId(state, registryId))
+
+  const shouldPreventFetch = useSelector(state =>
+    areItemsFetched(state, registryId)
   )
-  const items = useSelector(state => state.registryItems.items[registryId])
+  const isLoadingItems = useSelector(isFetchingRegistryItems)
+  const isLoadingOwner = useSelector(isFetchingOwner)
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
-
-  const user = useSelector(state => state.auth.user)
-
-  const owner = useSelector(
-    state => state.registries.ownerByRegistryId[registryId]
-  )
 
   const isOwner = useMemo(
     () =>
@@ -30,96 +45,35 @@ const Registry = ({ registryId }) => {
     [registryData?.users, user?.email]
   )
 
-  const [isLoadingItems, setIsLoadingItems] = useState(true)
-  const [isLoadingOwner, setIsLoadingOwner] = useState(true)
-
-  const itemsSortedByDate = useMemo(() => {
-    if (!items) {
-      return []
+  const maybeFetchItems = useCallback(async () => {
+    if (registryId && !shouldPreventFetch) {
+      dispatch(fetchRegistryItems(registryId))
     }
-    return [...items].sort(
-      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
-    )
-  }, [items])
-
-  const fetchItems = useCallback(async () => {
-    try {
-      setIsLoadingItems(true)
-
-      if (!registryId || items !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/items')
-
-      dispatch({
-        type: 'registryItems/setItems',
-        payload: { registryId, items: response.items }
-      })
-    } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: {
-          type: 'error',
-          message: error.data
-        }
-      })
-    } finally {
-      setIsLoadingItems(false)
-    }
-  }, [registryId, items, dispatch])
+  }, [registryId, shouldPreventFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    try {
-      setIsLoadingOwner(true)
-
-      if (isOwner || owner !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/owner')
-
-      dispatch({
-        type: 'registries/addOwner',
-        payload: { registryId: registryId, owner: response.owner }
-      })
-    } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: error.data }
-      })
-    } finally {
-      setIsLoadingOwner(false)
+    if (!isOwner && owner === undefined) {
+      dispatch(fetchOwner(registryId))
     }
   }, [owner, registryId, dispatch, isOwner])
 
   useEffect(() => {
-    fetchItems()
-  }, [fetchItems, registryId])
+    maybeFetchItems()
+  }, [maybeFetchItems, registryId])
 
   useEffect(() => {
     maybeFetchRegistryOwner()
   }, [maybeFetchRegistryOwner, registryId])
 
-  const handleItemToggle = useCallback(
-    async id => {
-      try {
-        const response = await api(
-          'registryItems/' + id + '/toggleTaken',
-          'patch'
-        )
+  useEffect(() => {
+    dispatch(resetFetchStatus())
+  }, [registryId, dispatch])
 
-        dispatch({
-          type: 'registryItems/update',
-          payload: { registryId: registryData.id, item: response.item }
-        })
-      } catch (error) {
-        dispatch({
-          type: 'toast/show',
-          payload: { type: 'error', message: error.data }
-        })
-      }
-    },
+  const handleItemToggle = useCallback(
+    async id =>
+      dispatch(
+        toggleRegistryItem({ registryId: registryData?.id, itemId: id })
+      ),
     [dispatch, registryData?.id]
   )
 
@@ -128,18 +82,17 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'populateRegistryItem',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistryItem,
         data: {
           registryId: registryData.id,
           color: registryData.color,
           registryName: registryData.name,
-          variant: 'create'
+          variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.create
         }
-      }
-    })
+      })
+    )
   }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
   const handleShareClick = useCallback(() => {
@@ -147,17 +100,16 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'shareRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.shareRegistry,
         data: {
           registryId: registryData.id,
           users: registryData.users.filter(user => user.role !== 'owner'),
           color: registryData.color
         }
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
 
   const handleEditClick = useCallback(() => {
@@ -165,13 +117,12 @@ const Registry = ({ registryId }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'populateRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistry,
         data: registryData
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
 
   const handleItemEditClick = useCallback(
@@ -180,19 +131,18 @@ const Registry = ({ registryId }) => {
         return
       }
 
-      dispatch({
-        type: 'modals/show',
-        payload: {
-          name: 'populateRegistryItem',
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.populateRegistryItem,
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
             registryId: registryData.id,
             registryName: registryData.name,
-            variant: 'update'
+            variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
           }
-        }
-      })
+        })
+      )
     },
     [dispatch, registryData, items]
   )
@@ -203,18 +153,17 @@ const Registry = ({ registryId }) => {
         return
       }
 
-      dispatch({
-        type: 'modals/show',
-        payload: {
-          name: 'removeRegistryItemConfirmation',
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.removeRegistryItemConfirmation,
           data: {
             item: items.find(item => item.id === id),
             color: registryData.color,
             registryId: registryData.id,
             registryName: registryData.name
           }
-        }
-      })
+        })
+      )
     },
     [dispatch, registryData, items]
   )
@@ -256,7 +205,7 @@ const Registry = ({ registryId }) => {
           columns={masonryConfig.columns}
           spacing={masonryConfig.spacing}
         >
-          {itemsSortedByDate.map(item => (
+          {items.map(item => (
             <RegistryItem
               key={item.id}
               data={item}

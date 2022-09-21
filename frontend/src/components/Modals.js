@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { hideModal, isModalOpen, MODAL_NAMES } from '../redux/modalsSlice'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
 import RemoveRegistryItemConfirmationModal from './modals/RemoveRegistryItemConfirmationModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
@@ -8,44 +9,36 @@ import ShareRegistryModal from './modals/ShareRegistryModal'
 const Modals = () => {
   const dispatch = useDispatch()
 
-  const isPopulateRegistryModalOpen = useSelector(
-    state => state.modals.populateRegistry !== undefined
+  const isPopulateRegistryModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.populateRegistry)
   )
   const handlePopulateRegistryModalClose = useCallback(
-    () =>
-      dispatch({ type: 'modals/hide', payload: { name: 'populateRegistry' } }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
 
-  const isPopulateRegistryItemModalOpen = useSelector(
-    state => state.modals.populateRegistryItem !== undefined
+  const isPopulateRegistryItemModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.populateRegistryItem)
   )
   const handlePopulateRegistryItemModalClose = useCallback(
-    () =>
-      dispatch({
-        type: 'modals/hide',
-        payload: { name: 'populateRegistryItem' }
-      }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.populateRegistryItem })),
     [dispatch]
   )
 
-  const isRemoveRegistryItemConfirmationModalOpen = useSelector(
-    state => state.modals.removeRegistryItemConfirmation !== undefined
+  const isRemoveRegistryItemConfirmationModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.removeRegistryItemConfirmation)
   )
   const handleRemoveRegistryItemConfirmationModalClose = useCallback(
     () =>
-      dispatch({
-        type: 'modals/hide',
-        payload: { name: 'removeRegistryItemConfirmation' }
-      }),
+      dispatch(hideModal({ name: MODAL_NAMES.removeRegistryItemConfirmation })),
     [dispatch]
   )
 
-  const isShareRegistryModalOpen = useSelector(
-    state => state.modals.shareRegistry !== undefined
+  const isShareRegistryModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.shareRegistry)
   )
   const handleShareRegistryModalClose = useCallback(
-    () => dispatch({ type: 'modals/hide', payload: { name: 'shareRegistry' } }),
+    () => dispatch(hideModal({ name: MODAL_NAMES.shareRegistry })),
     [dispatch]
   )
 

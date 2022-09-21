@@ -15,17 +15,15 @@ import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
-import { api } from '../utils/api'
 import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { USER_SESSION_STATE } from '../redux/authSlice'
+import { isFetchingUserSession, logout } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const userSessionState = useSelector(state => state.auth.userSessionState)
-  const isFetchingSession = userSessionState === USER_SESSION_STATE.FETCHING
+  const isFetchingSession = useSelector(isFetchingUserSession)
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
@@ -43,23 +41,7 @@ function MainLayout() {
     setIsAvatarDropdownOpen(false)
     setAvatarDropdownAnchorElement(null)
 
-    try {
-      await api('auth/logout')
-
-      dispatch({ type: 'auth/clear' })
-      dispatch({ type: 'registries/clear' })
-      dispatch({ type: 'registryItems/clear' })
-
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'success', message: 'Logged out!' }
-      })
-    } catch {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: 'Something went wrong' }
-      })
-    }
+    dispatch(logout())
   }, [dispatch])
 
   const container = useMemo(
