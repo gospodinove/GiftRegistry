@@ -5,7 +5,7 @@ import {
   DialogTitle,
   Typography
 } from '@mui/material'
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button'
 import {
@@ -14,6 +14,7 @@ import {
   removeRegistry
 } from '../../redux/registriesSlice'
 import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
+import { styles } from './RemoveRegistryConfirmationModal.styles'
 
 function RemoveRegistryConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -24,6 +25,11 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
   const isLoading = useSelector(isRemovingRegistry)
   const shouldClose = useSelector(isRegistryRemoved)
 
+  const modalStyles = useMemo(
+    () => styles(initialData?.color),
+    [initialData?.color]
+  )
+
   const handleClose = useCallback(() => {
     onClose()
   }, [onClose])
@@ -33,8 +39,6 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
       handleClose()
     }
   }, [shouldClose, handleClose])
-
-  // FIXME: After the registry gets removed an error message appears as fetchRegistry is still looking for the registry id which is no longer available
 
   const handleSubmit = useCallback(
     async e => {
@@ -52,7 +56,7 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
           <Typography
             component="span"
             variant="h6"
-            sx={{ color: initialData?.color }}
+            sx={modalStyles.registryName}
           >
             {initialData?.name}
           </Typography>
@@ -64,7 +68,7 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
           <Typography
             component="span"
             variant="h6"
-            sx={{ color: initialData?.color }}
+            sx={modalStyles.registryName}
           >
             {initialData?.name}
           </Typography>
