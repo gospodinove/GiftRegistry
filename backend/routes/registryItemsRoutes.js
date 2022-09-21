@@ -124,10 +124,8 @@ router.delete(
   }
 )
 
-//TODO: better name for withTaker
-
 router.get(
-  '/withTaker/:userId',
+  '/pickedBy/:userId',
   [isAuthenticated, isRegistrationCompleted],
   async (req, res) => {
     const db = req.app.locals.db

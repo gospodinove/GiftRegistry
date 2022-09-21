@@ -24,7 +24,7 @@ export default function Profile() {
   )
 
   const fetchTakenRegistryItems = useCallback(async () => {
-    const response = await api('registryItems/withTaker/' + user.id)
+    const response = await api('registryItems/pickedBy/' + user.id)
     dispatch({ type: 'registryItems/setUserItems', payload: response })
   }, [dispatch, user.id])
 
