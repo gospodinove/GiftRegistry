@@ -130,18 +130,17 @@ const Registry = ({ registryId, onDelete }) => {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'removeRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.removeRegistryConfirmation,
         data: {
           id: registryData.id,
           name: registryData.name,
           color: registryData.color
         }
-      }
-    })
-  }, [dispatch, registryData?.id, registryData?.name])
+      })
+    )
+  }, [dispatch, registryData?.color, registryData?.id, registryData?.name])
 
   const handleItemEditClick = useCallback(
     id => {

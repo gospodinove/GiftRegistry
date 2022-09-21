@@ -5,73 +5,43 @@ import {
   DialogTitle,
   Typography
 } from '@mui/material'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button'
-import { api } from '../../utils/api'
-import { useState } from 'react'
+import {
+  isRegistryRemoved,
+  isRemovingRegistry,
+  removeRegistry
+} from '../../redux/registriesSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
-function RemoveRegistryModal({ open, onClose }) {
+function RemoveRegistryConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  const initialData = useSelector(state => state.modals.removeRegistry?.data)
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.removeRegistryConfirmation)
+  )
+  const isLoading = useSelector(isRemovingRegistry)
+  const shouldClose = useSelector(isRegistryRemoved)
 
   const handleClose = useCallback(() => {
     onClose()
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldClose) {
+      handleClose()
+    }
+  }, [shouldClose, handleClose])
 
   // FIXME: After the registry gets removed an error message appears as fetchRegistry is still looking for the registry id which is no longer available
 
   const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
-
-      setIsLoading(true)
-
-      try {
-        await api('registries/' + initialData.id, 'delete')
-
-        dispatch({
-          type: 'registries/remove',
-          payload: { id: initialData.id }
-        })
-
-        handleClose()
-      } catch (error) {
-        console.log(error)
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch({
-              type: 'toast/show',
-              payload: {
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              }
-            })
-            break
-
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
-            break
-
-          default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
-            break
-        }
-      } finally {
-        setIsLoading(false)
-      }
+      dispatch(removeRegistry(initialData.id))
     },
-    [dispatch, handleClose, initialData?.id]
+    [dispatch, initialData?.id]
   )
 
   return (
@@ -120,4 +90,4 @@ function RemoveRegistryModal({ open, onClose }) {
   )
 }
 
-export default memo(RemoveRegistryModal)
+export default memo(RemoveRegistryConfirmationModal)
