@@ -21,6 +21,9 @@ export const registryItemsSlice = createSlice({
   name: 'registryItems',
   initialState,
   reducers: {
+    removeItemsForRegistryId: (state, action) => {
+      state.data[action.payload.registryId] = undefined
+    },
     resetFetchStatus: state => {
       state.fetchStatus = DATA_STATUS.idle
     },
@@ -101,8 +104,11 @@ export const registryItemsSlice = createSlice({
   }
 })
 
-export const { resetFetchStatus, resetRegistryItemsSlice } =
-  registryItemsSlice.actions
+export const {
+  removeItemsForRegistryId,
+  resetFetchStatus,
+  resetRegistryItemsSlice
+} = registryItemsSlice.actions
 
 export const fetchRegistryItems = createAsyncThunk(
   'registryItems/fetch',
@@ -172,17 +178,8 @@ export const removeRegistryItem = createAsyncThunk(
 )
 
 // SELECTORS
-export const itemsSortedByDate = (state, registryId) => {
-  const items = state.registryItems.data[registryId]
-
-  if (!items) {
-    return undefined
-  }
-
-  return [...items].sort(
-    (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
-  )
-}
+export const itemsByRegistryId = (state, registryId) =>
+  state.registryItems.data[registryId]
 
 export const areItemsFetched = (state, registryId) =>
   state.registryItems.data[registryId] !== undefined ||

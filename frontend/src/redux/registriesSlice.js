@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
+import { removeItemsForRegistryId } from './registryItemsSlice'
 
 const initialState = {
   data: [],
@@ -135,6 +136,7 @@ export const removeRegistry = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       await api('registries/' + id, 'delete')
+      thunkAPI.dispatch(removeItemsForRegistryId({ registryId: id }))
       return { id }
     } catch (error) {
       return handleErrors(error, thunkAPI)
@@ -155,11 +157,7 @@ export const shareRegistry = createAsyncThunk(
 )
 
 // SELECTORS
-export const registriesSortedByDate = state =>
-  [...state.registries.data].sort(
-    (registryOne, registryTwo) =>
-      new Date(registryTwo.date) - new Date(registryOne.date)
-  )
+export const allRegistries = state => state.registries.data
 
 export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)

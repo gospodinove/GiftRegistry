@@ -10,7 +10,7 @@ import {
   areItemsFetched,
   fetchRegistryItems,
   isFetchingRegistryItems,
-  itemsSortedByDate,
+  itemsByRegistryId,
   resetFetchStatus,
   toggleRegistryItem
 } from '../redux/registryItemsSlice'
@@ -22,21 +22,31 @@ import {
 import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
 import { registryDataById } from '../redux/registriesSlice'
 
-const Registry = ({ registryId, onDelete }) => {
+const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
   const registryData = useSelector(state => registryDataById(state, registryId))
-  const items = useSelector(state => itemsSortedByDate(state, registryId))
+  const items = useSelector(state => itemsByRegistryId(state, registryId))
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(state => ownerByRegistryId(state, registryId))
 
-  const shouldPreventFetch = useSelector(state =>
+  const shouldPreventItemsFetch = useSelector(state =>
     areItemsFetched(state, registryId)
   )
   const isLoadingItems = useSelector(isFetchingRegistryItems)
   const isLoadingOwner = useSelector(isFetchingOwner)
 
   const hasItems = useMemo(() => items?.length > 0, [items?.length])
+
+  const sortedItems = useMemo(() => {
+    if (!items) {
+      return []
+    }
+
+    return [...items].sort(
+      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+    )
+  }, [items])
 
   const isOwner = useMemo(
     () =>
@@ -46,16 +56,18 @@ const Registry = ({ registryId, onDelete }) => {
   )
 
   const maybeFetchItems = useCallback(async () => {
-    if (registryId && !shouldPreventFetch) {
+    if (registryId && registryData && !shouldPreventItemsFetch) {
       dispatch(fetchRegistryItems(registryId))
     }
-  }, [registryId, shouldPreventFetch, dispatch])
+  }, [registryId, registryData, shouldPreventItemsFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    if (!isOwner && owner === undefined) {
-      dispatch(fetchOwner(registryId))
+    if (!registryId || !registryData || isOwner || owner !== undefined) {
+      return
     }
-  }, [owner, registryId, dispatch, isOwner])
+
+    dispatch(fetchOwner(registryId))
+  }, [registryId, registryData, isOwner, owner, dispatch])
 
   useEffect(() => {
     maybeFetchItems()
@@ -223,7 +235,7 @@ const Registry = ({ registryId, onDelete }) => {
           columns={masonryConfig.columns}
           spacing={masonryConfig.spacing}
         >
-          {items.map(item => (
+          {sortedItems.map(item => (
             <RegistryItem
               key={item.id}
               data={item}
