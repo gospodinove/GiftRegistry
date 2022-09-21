@@ -4,10 +4,15 @@ import { Box } from '@mui/system'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { styles } from './Profile.styles'
-import { COLORS, PROFILE_TAB_VALUES } from '../constants'
-
+import { COLORS } from '../constants'
 import Icon from '../components/Icon'
 import { api } from '../utils/api'
+
+const PROFILE_TAB_VALUES = {
+  takenProducts: 'takenProducts',
+  notifications: 'notifications',
+  other: 'other'
+}
 
 export default function Profile() {
   const dispatch = useDispatch()

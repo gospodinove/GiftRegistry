@@ -23,9 +23,3 @@ export const AUTH_NAV_ITEMS = [
   { title: 'login', route: 'login', icon: 'login' },
   { title: 'register', route: 'register', icon: 'register' }
 ]
-
-export const PROFILE_TAB_VALUES = {
-  takenProducts: 'takenProducts',
-  notifications: 'notifications',
-  other: 'other'
-}
