@@ -5,6 +5,7 @@ import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
 import RemoveRegistryItemConfirmationModal from './modals/RemoveRegistryItemConfirmationModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareRegistryModal from './modals/ShareRegistryModal'
+import RemoveRegistryConfirmationModal from './modals/RemoveRegistryConfirmationModal'
 
 const Modals = () => {
   const dispatch = useDispatch()
@@ -42,6 +43,15 @@ const Modals = () => {
     [dispatch]
   )
 
+  const isRemoveRegistryConfirmationModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.removeRegistryConfirmation)
+  )
+
+  const handleRemoveRegistryConfirmationModalClose = useCallback(
+    () => dispatch(hideModal({ name: MODAL_NAMES.removeRegistryConfirmation })),
+    [dispatch]
+  )
+
   return (
     <>
       <PopulateRegistryModal
@@ -62,6 +72,11 @@ const Modals = () => {
       <ShareRegistryModal
         open={isShareRegistryModalOpen}
         onClose={handleShareRegistryModalClose}
+      />
+
+      <RemoveRegistryConfirmationModal
+        open={isRemoveRegistryConfirmationModalOpen}
+        onClose={handleRemoveRegistryConfirmationModalClose}
       />
     </>
   )

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
+import { removeRegistry } from './registriesSlice'
 
 const initialState = {
   // registry id => array of items
@@ -21,6 +22,9 @@ export const registryItemsSlice = createSlice({
   name: 'registryItems',
   initialState,
   reducers: {
+    removeItemsForRegistryId: (state, action) => {
+      state.data[action.payload.registryId] = undefined
+    },
     resetFetchStatus: state => {
       state.fetchStatus = DATA_STATUS.idle
     },
@@ -28,6 +32,10 @@ export const registryItemsSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      // removed registry => remove its items
+      .addCase(removeRegistry.fulfilled, (state, action) => {
+        state.data[action.payload.id] = undefined
+      })
       // FETCH
       .addCase(fetchRegistryItems.pending, state => {
         state.fetchStatus = DATA_STATUS.loading
@@ -82,7 +90,7 @@ export const registryItemsSlice = createSlice({
         state.updateStatus = DATA_STATUS.failed
         state.udpateErrors = action.payload
       })
-      // REMOVE
+      // REMOVE ONE
       .addCase(removeRegistryItem.pending, state => {
         state.removeStatus = DATA_STATUS.loading
       })
@@ -101,8 +109,11 @@ export const registryItemsSlice = createSlice({
   }
 })
 
-export const { resetFetchStatus, resetRegistryItemsSlice } =
-  registryItemsSlice.actions
+export const {
+  removeItemsForRegistryId,
+  resetFetchStatus,
+  resetRegistryItemsSlice
+} = registryItemsSlice.actions
 
 export const fetchRegistryItems = createAsyncThunk(
   'registryItems/fetch',
@@ -171,18 +182,21 @@ export const removeRegistryItem = createAsyncThunk(
   }
 )
 
-// SELECTORS
-export const itemsSortedByDate = (state, registryId) => {
-  const items = state.registryItems.data[registryId]
-
-  if (!items) {
-    return undefined
+export const removeRegistryItemsWithRegistryId = createAsyncThunk(
+  'registryItems/removeWithRegistryId',
+  async (registryId, thunkAPI) => {
+    try {
+      await api('registry/' + registryId + '/items', 'delete')
+      return { registryId }
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
   }
+)
 
-  return [...items].sort(
-    (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
-  )
-}
+// SELECTORS
+export const itemsByRegistryId = (state, registryId) =>
+  state.registryItems.data[registryId]
 
 export const areItemsFetched = (state, registryId) =>
   state.registryItems.data[registryId] !== undefined ||

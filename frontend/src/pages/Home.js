@@ -10,12 +10,17 @@ import { useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser, loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import {
+  isRegistryRemoved,
+  resetRegistryRemoveStatus
+} from '../redux/registriesSlice'
 
 function Home() {
   const dispatch = useDispatch()
   const params = useParams()
 
   const isAuthenticated = useSelector(hasUser)
+  const shouldClearSelectedRegistryId = useSelector(isRegistryRemoved)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
@@ -28,10 +33,17 @@ function Home() {
   }, [params, isAuthenticated, dispatch])
 
   useEffect(() => {
-    if (prev?.isAuthenticated !== isAuthenticated) {
+    if (prev?.isAuthenticated && !isAuthenticated) {
       setSelectedRegistryId(null)
     }
   }, [isAuthenticated, prev?.isAuthenticated])
+
+  useEffect(() => {
+    if (shouldClearSelectedRegistryId) {
+      setSelectedRegistryId(null)
+      dispatch(resetRegistryRemoveStatus())
+    }
+  }, [shouldClearSelectedRegistryId, dispatch])
 
   const handleCreateRegistryButtonClick = useCallback(
     () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),
