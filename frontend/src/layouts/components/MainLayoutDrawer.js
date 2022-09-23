@@ -23,7 +23,8 @@ const MainLayoutDrawer = ({
   user,
   isFetchingSession,
   onToggle,
-  onLogoutClick
+  onLogoutClick,
+  onProfileClick
 }) => {
   const navigate = useNavigate()
 
@@ -42,6 +43,11 @@ const MainLayoutDrawer = ({
     },
     [onToggle, navigate]
   )
+
+  const handleProfileClick = useCallback(() => {
+    onProfileClick()
+    onToggle()
+  }, [onProfileClick, onToggle])
 
   const renderDrawerAuthItems = useCallback(() => {
     if (isFetchingSession) {
@@ -84,6 +90,15 @@ const MainLayoutDrawer = ({
         </ListItem>
         <Collapse in={isUserInnerDrawerOpen} timeout="auto" unmountOnExit>
           <List>
+            <ListItemButton
+              onClick={handleProfileClick}
+              sx={styles.nestedListItem}
+            >
+              <ListItemIcon>
+                <Icon type="account-circle" />
+              </ListItemIcon>
+              <ListItemText primary="PROFILE" />
+            </ListItemButton>
             <ListItemButton onClick={onLogoutClick} sx={styles.nestedListItem}>
               <ListItemIcon>
                 <Icon type="logout" />
@@ -97,6 +112,7 @@ const MainLayoutDrawer = ({
   }, [
     handleDrawerItemClick,
     handleInnerDrawerToggle,
+    handleProfileClick,
     isAuthenticated,
     isFetchingSession,
     isUserInnerDrawerOpen,

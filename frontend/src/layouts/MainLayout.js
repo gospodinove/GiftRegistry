@@ -68,6 +68,8 @@ function MainLayout() {
     [isAvatarDropdownOpen, avatarDropdownAnchorElement]
   )
 
+  const handleProfileClick = useCallback(() => navigate('/profile'), [navigate])
+
   const renderAuthItems = useCallback(() => {
     if (isFetchingSession) {
       return <Skeleton height={30} width={200} sx={styles.skeleton} />
@@ -104,8 +106,13 @@ function MainLayout() {
           anchorEl={avatarDropdownAnchorElement}
           onClose={handleAvatarDropdownToggle}
         >
+          <MenuItem onClick={handleProfileClick}>
+            <Icon type="account-circle" sx={styles.icons} />
+            Profile
+          </MenuItem>
+
           <MenuItem onClick={handleLogoutClick}>
-            <Icon type="logout" sx={styles.logoutIcon} />
+            <Icon type="logout" sx={styles.icons} />
             Logout
           </MenuItem>
         </Menu>
@@ -116,6 +123,7 @@ function MainLayout() {
     handleAuthItemClick,
     handleAvatarDropdownToggle,
     handleLogoutClick,
+    handleProfileClick,
     isAuthenticated,
     isAvatarDropdownOpen,
     isFetchingSession,
@@ -160,6 +168,7 @@ function MainLayout() {
           isFetchingSession={isFetchingSession}
           onToggle={handleDrawerToggle}
           onLogoutClick={handleLogoutClick}
+          onProfileClick={handleProfileClick}
         />
       </Box>
 

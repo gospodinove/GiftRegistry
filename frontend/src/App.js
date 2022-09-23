@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Register from './pages/Register'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
 import { fetchUserSession } from './redux/authSlice'
+import Profile from './pages/Profile'
 
 function App() {
   const dispatch = useDispatch()
@@ -29,6 +30,18 @@ function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="invite/:token" element={<Home />} />
+
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute
+              condition={user !== undefined && user.isRegistrationComplete}
+              fallbackRoute="/login"
+            >
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Auth */}
         <Route
