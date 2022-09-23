@@ -6,7 +6,7 @@ import {
   areItemsFetched,
   fetchRegistryItems,
   isFetchingRegistryItems,
-  itemsSortedByDate,
+  itemsByRegistryId,
   resetFetchStatus,
   toggleRegistryItem
 } from '../redux/registryItemsSlice'
@@ -23,15 +23,25 @@ const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
   const registryData = useSelector(state => registryDataById(state, registryId))
-  const items = useSelector(state => itemsSortedByDate(state, registryId))
+  const items = useSelector(state => itemsByRegistryId(state, registryId))
   const user = useSelector(state => state.auth.user)
   const owner = useSelector(state => ownerByRegistryId(state, registryId))
 
-  const shouldPreventFetch = useSelector(state =>
+  const shouldPreventItemsFetch = useSelector(state =>
     areItemsFetched(state, registryId)
   )
   const isLoadingItems = useSelector(isFetchingRegistryItems)
   const isLoadingOwner = useSelector(isFetchingOwner)
+
+  const sortedItems = useMemo(() => {
+    if (!items) {
+      return []
+    }
+
+    return [...items].sort(
+      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+    )
+  }, [items])
 
   const isOwner = useMemo(
     () =>
@@ -41,16 +51,16 @@ const Registry = ({ registryId }) => {
   )
 
   const maybeFetchItems = useCallback(async () => {
-    if (registryId && !shouldPreventFetch) {
+    if (registryId && registryData && !shouldPreventItemsFetch) {
       dispatch(fetchRegistryItems(registryId))
     }
-  }, [registryId, shouldPreventFetch, dispatch])
+  }, [registryId, registryData, shouldPreventItemsFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    if (!isOwner && owner === undefined) {
+    if (registryId && registryData && !isOwner && owner === undefined) {
       dispatch(fetchOwner(registryId))
     }
-  }, [owner, registryId, dispatch, isOwner])
+  }, [registryId, registryData, isOwner, owner, dispatch])
 
   useEffect(() => {
     maybeFetchItems()
@@ -118,6 +128,23 @@ const Registry = ({ registryId }) => {
     )
   }, [dispatch, registryData])
 
+  const handleRemoveClick = useCallback(() => {
+    if (!registryData?.id) {
+      return
+    }
+
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.removeRegistryConfirmation,
+        data: {
+          id: registryData.id,
+          name: registryData.name,
+          color: registryData.color
+        }
+      })
+    )
+  }, [dispatch, registryData?.color, registryData?.id, registryData?.name])
+
   const handleItemEditClick = useCallback(
     id => {
       if (!registryData) {
@@ -175,13 +202,14 @@ const Registry = ({ registryId }) => {
           }
           isLoadingOwner={isLoadingOwner}
           onEditClick={handleEditClick}
+          onRemoveClick={handleRemoveClick}
           onAddClick={handleAddClick}
           onShareClick={handleShareClick}
         />
       )}
 
       <RegistryItemsMasonry
-        items={items}
+        items={sortedItems}
         onToggle={handleItemToggle}
         onEditClick={handleItemEditClick}
         onRemoveClick={handleItemRemoveClick}

@@ -31,6 +31,7 @@ function Button({ color, ...props }) {
   ) : (
     <LoadingButton
       {...props}
+      disableFocusRipple
       sx={buttonStyles}
       startIcon={startIcon}
       endIcon={endIcon}

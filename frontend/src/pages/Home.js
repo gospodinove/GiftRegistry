@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
@@ -10,6 +10,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser, loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import {
+  isRegistryRemoved,
+  resetRegistryRemoveStatus
+} from '../redux/registriesSlice'
 
 function Home() {
   const dispatch = useDispatch()
@@ -17,6 +21,8 @@ function Home() {
   const params = useParams()
 
   const isAuthenticated = useSelector(hasUser)
+  //TODO: rename
+  const shouldClearSelectedRegistryId = useSelector(isRegistryRemoved)
 
   const prev = usePrevious({ isAuthenticated })
 
@@ -31,6 +37,13 @@ function Home() {
       navigate('/')
     }
   }, [isAuthenticated, prev?.isAuthenticated, navigate])
+
+  useEffect(() => {
+    if (shouldClearSelectedRegistryId) {
+      navigate('/')
+      dispatch(resetRegistryRemoveStatus())
+    }
+  }, [shouldClearSelectedRegistryId, dispatch, navigate])
 
   const handleCreateRegistryButtonClick = useCallback(
     () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),

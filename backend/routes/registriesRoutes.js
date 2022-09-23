@@ -85,6 +85,24 @@ router.get(
   }
 )
 
+router.delete(
+  '/:registryId/items',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    try {
+      await db
+        .collection('registryItems')
+        .deleteMany({ registryId: req.params.registryId })
+
+      res.send()
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not delete registry items')
+    }
+  }
+)
+
 router.post(
   '/:registryId/items',
   [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
@@ -261,6 +279,24 @@ router.put(
       }
     } catch (errors) {
       sendErrorResponse(res, 500, 'field-error', errors)
+    }
+  }
+)
+
+router.delete(
+  '/:registryId',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    try {
+      await db
+        .collection(COLLECTION_NAMES.registries)
+        .findOneAndDelete({ _id: ObjectId(req.params.registryId) })
+
+      res.send()
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not delete registry')
     }
   }
 )

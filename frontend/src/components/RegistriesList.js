@@ -5,7 +5,7 @@ import {
   ListItemText,
   ListSubheader
 } from '@mui/material'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesListItem from './RegistriesListItem'
 import RegistriesListItemSkeleton from './RegistriesListItemSkeleton'
@@ -16,17 +16,26 @@ import {
   areRegistriesFetched,
   fetchRegistries,
   isFetchingRegistry,
-  registriesSortedByDate
+  allRegistries
 } from '../redux/registriesSlice'
 
 const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
   const dispatch = useDispatch()
 
-  const registries = useSelector(registriesSortedByDate)
+  const registries = useSelector(allRegistries)
   const isLoading = useSelector(isFetchingRegistry)
   const isDataFetched = useSelector(areRegistriesFetched)
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
+
+  const sortedRegistries = useMemo(
+    () =>
+      [...registries].sort(
+        (registryOne, registryTwo) =>
+          new Date(registryTwo.date) - new Date(registryOne.date)
+      ),
+    [registries]
+  )
 
   const maybeFetchRegistries = useCallback(async () => {
     if (!isDataFetched) {
@@ -70,7 +79,7 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
           </ListItemButton>
         </ListItem>
       </ListSubheader>
-      {registries.map(registry => (
+      {sortedRegistries.map(registry => (
         <RegistriesListItem
           key={registry.id}
           registry={registry}

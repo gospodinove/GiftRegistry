@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
+import { removeItemsForRegistryId } from './registryItemsSlice'
 
 const initialState = {
   data: [],
@@ -9,6 +10,7 @@ const initialState = {
   fetchStatus: DATA_STATUS.idle,
   createStatus: DATA_STATUS.idle,
   updateStatus: DATA_STATUS.idle,
+  removeStatus: DATA_STATUS.idle,
   shareStatus: DATA_STATUS.idle,
   // ERRORS
   createErrors: undefined,
@@ -20,6 +22,9 @@ export const registriesSlice = createSlice({
   name: 'registries',
   initialState,
   reducers: {
+    resetRegistryRemoveStatus: state => {
+      state.removeStatus = DATA_STATUS.idle
+    },
     resetRegistriesSlice: () => initialState
   },
   extraReducers: builder => {
@@ -60,7 +65,18 @@ export const registriesSlice = createSlice({
       })
       .addCase(updateRegistry.rejected, (state, action) => {
         state.updateStatus = DATA_STATUS.failed
-        state.updateErrors = action.payload.data
+        state.updateErrors = action.payload
+      })
+      // REMOVE
+      .addCase(removeRegistry.pending, state => {
+        state.removeStatus = DATA_STATUS.loading
+      })
+      .addCase(removeRegistry.fulfilled, (state, action) => {
+        state.removeStatus = DATA_STATUS.succeeded
+        state.data = [...state.data.filter(r => r.id !== action.payload.id)]
+      })
+      .addCase(removeRegistry.rejected, (state, action) => {
+        state.removeStatus = DATA_STATUS.failed
       })
       // SHARE
       .addCase(shareRegistry.pending, state => {
@@ -80,7 +96,8 @@ export const registriesSlice = createSlice({
   }
 })
 
-export const { resetRegistriesSlice } = registriesSlice.actions
+export const { resetRegistryRemoveStatus, resetRegistriesSlice } =
+  registriesSlice.actions
 
 export const fetchRegistries = createAsyncThunk(
   'registries/fetch',
@@ -118,6 +135,19 @@ export const updateRegistry = createAsyncThunk(
   }
 )
 
+export const removeRegistry = createAsyncThunk(
+  'registries/remove',
+  async (id, thunkAPI) => {
+    try {
+      await api('registries/' + id, 'delete')
+      thunkAPI.dispatch(removeItemsForRegistryId({ registryId: id }))
+      return { id }
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
 export const shareRegistry = createAsyncThunk(
   'registries/share',
   async ({ id, data }, thunkAPI) => {
@@ -131,11 +161,7 @@ export const shareRegistry = createAsyncThunk(
 )
 
 // SELECTORS
-export const registriesSortedByDate = state =>
-  [...state.registries.data].sort(
-    (registryOne, registryTwo) =>
-      new Date(registryTwo.date) - new Date(registryOne.date)
-  )
+export const allRegistries = state => state.registries.data
 
 export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
@@ -153,6 +179,9 @@ export const isCreatingRegistry = state =>
 export const isUpdatingRegistry = state =>
   state.registries.updateStatus === DATA_STATUS.loading
 
+export const isRemovingRegistry = state =>
+  state.registries.removeStatus === DATA_STATUS.loading
+
 export const isSharingRegistry = state =>
   state.registries.shareStatus === DATA_STATUS.loading
 
@@ -161,6 +190,9 @@ export const isRegistryCreated = state =>
 
 export const isRegistryUpdated = state =>
   state.registries.updateStatus === DATA_STATUS.succeeded
+
+export const isRegistryRemoved = state =>
+  state.registries.removeStatus === DATA_STATUS.succeeded
 
 export const isRegistryShared = state =>
   state.registries.shareStatus === DATA_STATUS.succeeded
