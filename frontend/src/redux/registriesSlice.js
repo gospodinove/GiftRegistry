@@ -22,6 +22,9 @@ export const registriesSlice = createSlice({
   name: 'registries',
   initialState,
   reducers: {
+    resetRegistryRemoveStatus: state => {
+      state.removeStatus = DATA_STATUS.idle
+    },
     resetRegistriesSlice: () => initialState
   },
   extraReducers: builder => {
@@ -93,7 +96,8 @@ export const registriesSlice = createSlice({
   }
 })
 
-export const { resetRegistriesSlice } = registriesSlice.actions
+export const { resetRegistryRemoveStatus, resetRegistriesSlice } =
+  registriesSlice.actions
 
 export const fetchRegistries = createAsyncThunk(
   'registries/fetch',

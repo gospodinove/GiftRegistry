@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
+import { removeRegistry } from './registriesSlice'
 
 const initialState = {
   // registry id => array of items
@@ -31,6 +32,10 @@ export const registryItemsSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      // removed registry => remove its items
+      .addCase(removeRegistry.fulfilled, (state, action) => {
+        state.data[action.payload.id] = undefined
+      })
       // FETCH
       .addCase(fetchRegistryItems.pending, state => {
         state.fetchStatus = DATA_STATUS.loading
@@ -85,7 +90,7 @@ export const registryItemsSlice = createSlice({
         state.updateStatus = DATA_STATUS.failed
         state.udpateErrors = action.payload
       })
-      // REMOVE
+      // REMOVE ONE
       .addCase(removeRegistryItem.pending, state => {
         state.removeStatus = DATA_STATUS.loading
       })
@@ -171,6 +176,18 @@ export const removeRegistryItem = createAsyncThunk(
     try {
       await api('registryItems/' + itemId, 'delete')
       return { registryId, itemId }
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
+export const removeRegistryItemsWithRegistryId = createAsyncThunk(
+  'registryItems/removeWithRegistryId',
+  async (registryId, thunkAPI) => {
+    try {
+      await api('registry/' + registryId + '/items', 'delete')
+      return { registryId }
     } catch (error) {
       return handleErrors(error, thunkAPI)
     }

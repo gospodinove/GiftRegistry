@@ -85,6 +85,29 @@ router.get(
   }
 )
 
+router.delete(
+  '/:registryId/items',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    try {
+      await db
+        .collection('registryItems')
+        .deleteMany({ registryId: req.params.registryId })
+
+      res.send()
+    } catch {
+      sendErrorResponse(
+        res,
+        500,
+        'general',
+        'Could not fetch your registry items'
+      )
+    }
+  }
+)
+
 router.post(
   '/:registryId/items',
   [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],

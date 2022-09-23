@@ -62,11 +62,9 @@ const Registry = ({ registryId }) => {
   }, [registryId, registryData, shouldPreventItemsFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    if (!registryId || !registryData || isOwner || owner !== undefined) {
-      return
+    if (registryId && registryData && !isOwner && owner === undefined) {
+      dispatch(fetchOwner(registryId))
     }
-
-    dispatch(fetchOwner(registryId))
   }, [registryId, registryData, isOwner, owner, dispatch])
 
   useEffect(() => {
