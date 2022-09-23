@@ -153,6 +153,7 @@ export default function Profile() {
             shouldLinkToRegistry
             onLinkClick={handleLinkClick}
             isLoading={isLoadingItems}
+            emptyMessage="No taken items"
           />
         </TabPanel>
         <TabPanel value={PROFILE_TAB_VALUES.notifications} index={2}>

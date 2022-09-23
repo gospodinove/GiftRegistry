@@ -215,6 +215,7 @@ const Registry = ({ registryId }) => {
         onRemoveClick={handleItemRemoveClick}
         areActionsEnabled={isOwner}
         isLoading={isLoadingItems}
+        emptyMessage="No items in this registry"
       />
     </>
   )

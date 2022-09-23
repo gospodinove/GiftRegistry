@@ -21,8 +21,7 @@ function Home() {
   const params = useParams()
 
   const isAuthenticated = useSelector(hasUser)
-  //TODO: rename
-  const shouldClearSelectedRegistryId = useSelector(isRegistryRemoved)
+  const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
 
   const prev = usePrevious({ isAuthenticated })
 
@@ -39,11 +38,11 @@ function Home() {
   }, [isAuthenticated, prev?.isAuthenticated, navigate])
 
   useEffect(() => {
-    if (shouldClearSelectedRegistryId) {
+    if (shouldClearSelectedRegistry) {
       navigate('/')
       dispatch(resetRegistryRemoveStatus())
     }
-  }, [shouldClearSelectedRegistryId, dispatch, navigate])
+  }, [shouldClearSelectedRegistry, dispatch, navigate])
 
   const handleCreateRegistryButtonClick = useCallback(
     () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),

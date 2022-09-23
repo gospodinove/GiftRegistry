@@ -52,7 +52,7 @@ export const registryItemsSlice = createSlice({
       .addCase(toggleRegistryItem.pending, () => {})
       .addCase(toggleRegistryItem.fulfilled, (state, action) => {
         state.data[action.payload.registryId] = [
-          ...state.data[action.payload.registryId].filter(
+          ...(state.data[action.payload.registryId] ?? []).filter(
             item => item.id !== action.payload.item.id
           ),
           action.payload.item
@@ -137,7 +137,7 @@ export const toggleRegistryItem = createAsyncThunk(
         'patch'
       )
 
-      if (response.item.takenBy !== null) {
+      if (response.item.takenBy === null) {
         thunkAPI.dispatch(removeUserItem({ id: itemId }))
       }
 

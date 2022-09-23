@@ -14,7 +14,8 @@ export default function RegistryItemsMasonry({
   areActionsEnabled,
   shouldLinkToRegistry,
   onLinkClick,
-  isLoading
+  isLoading,
+  emptyMessage
 }) {
   const user = useSelector(state => state.auth.user)
 
@@ -38,7 +39,7 @@ export default function RegistryItemsMasonry({
   }
 
   if (!hasItems) {
-    return <Empty text="No products in the registry" />
+    return <Empty text={emptyMessage} />
   }
 
   return (
