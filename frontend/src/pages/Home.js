@@ -14,6 +14,8 @@ import {
   isRegistryRemoved,
   resetRegistryRemoveStatus
 } from '../redux/registriesSlice'
+import { Stack } from '@mui/system'
+import Icon from '../components/Icon'
 
 function Home() {
   const dispatch = useDispatch()
@@ -76,7 +78,10 @@ function Home() {
               alignItems="center"
               height="100%"
             >
-              <Typography variant="h5">No registry selected</Typography>
+              <Stack alignItems="center" spacing={1}>
+                <Icon type="highlight-alt" size={80} />
+                <Typography variant="h5">No registry selected</Typography>
+              </Stack>
             </Box>
           )}
         </Grid>
