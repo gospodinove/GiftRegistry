@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import RegistryItem from './RegistryItem'
 import Empty from '../components/Empty'
+import { styles } from './RegistryItemsMasonry.styles'
 
 export default function RegistryItemsMasonry({
   items,
@@ -30,16 +31,8 @@ export default function RegistryItemsMasonry({
   if (isLoading) {
     return (
       <Masonry columns={masonryConfig.columns} spacing={masonryConfig.spacing}>
-        <Skeleton
-          variant="rectangular"
-          height="120px"
-          sx={{ borderRadius: '5px' }}
-        />
-        <Skeleton
-          variant="rectangular"
-          height="170px"
-          sx={{ borderRadius: '5px' }}
-        />
+        <Skeleton variant="rectangular" height="120px" sx={styles.skeleton} />
+        <Skeleton variant="rectangular" height="170px" sx={styles.skeleton} />
       </Masonry>
     )
   }
@@ -59,7 +52,7 @@ export default function RegistryItemsMasonry({
           onToggle={onToggle}
           onEditClick={onEditClick}
           onRemoveClick={onRemoveClick}
-          onLinkClick={onLinkClick}
+          onRegistryLinkClick={onLinkClick}
           areActionsEnabled={areActionsEnabled}
           shouldLinkToRegistry={shouldLinkToRegistry}
         />

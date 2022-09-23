@@ -22,7 +22,7 @@ const RegistryItem = ({
   areActionsEnabled,
   onEditClick,
   onRemoveClick,
-  onLinkClick,
+  onRegistryLinkClick,
   shouldLinkToRegistry
 }) => {
   const [isCardExpanded, setIsCardExpanded] = useState(false)
@@ -51,8 +51,8 @@ const RegistryItem = ({
   }, [isCardExpanded])
 
   const handleLinkToRegistryClick = useCallback(() => {
-    onLinkClick(data.registryId)
-  }, [data.registryId, onLinkClick])
+    onRegistryLinkClick(data.registryId)
+  }, [data.registryId, onRegistryLinkClick])
 
   return (
     <Card sx={registryItemStyles.cardStyles}>

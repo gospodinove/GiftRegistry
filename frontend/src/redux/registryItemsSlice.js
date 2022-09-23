@@ -126,7 +126,9 @@ export const toggleRegistryItem = createAsyncThunk(
         'patch'
       )
 
-      thunkAPI.dispatch(removeUserItem({ id: itemId }))
+      if (response.item.takenBy) {
+        thunkAPI.dispatch(removeUserItem({ id: itemId }))
+      }
 
       return { registryId, item: response.item }
     } catch (error) {
