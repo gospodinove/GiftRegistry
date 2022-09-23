@@ -6,7 +6,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { styles } from './Profile.styles'
 import { COLORS } from '../constants'
 import Icon from '../components/Icon'
-import { fetchUserItems } from '../redux/userItemsSlice'
+import { fetchUserItems, isFetchingUserItems } from '../redux/userItemsSlice'
+import RegistryItemsMasonry from '../components/RegistryItemsMasonry'
+import { useNavigate } from 'react-router-dom'
+import { toggleRegistryItem } from '../redux/registryItemsSlice'
 
 const PROFILE_TAB_VALUES = {
   takenProducts: 'takenProducts',
@@ -16,6 +19,7 @@ const PROFILE_TAB_VALUES = {
 
 export default function Profile() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const userItems = useSelector(state => state.userItems.data)
 
@@ -23,9 +27,24 @@ export default function Profile() {
 
   const [tabValue, setTabValue] = useState(PROFILE_TAB_VALUES.takenProducts)
 
+  const isLoadingItems = useSelector(isFetchingUserItems)
+
   const handleTabChange = useCallback(
     (_e, newValue) => setTabValue(newValue),
     []
+  )
+
+  const handleLinkClick = useCallback(
+    registryId => {
+      navigate('/registry/' + registryId)
+    },
+    [navigate]
+  )
+
+  const handleItemToggle = useCallback(
+    async (registryId, itemId) =>
+      dispatch(toggleRegistryItem({ registryId, itemId })),
+    [dispatch]
   )
 
   const fetchTakenRegistryItems = useCallback(async () => {
@@ -110,12 +129,12 @@ export default function Profile() {
             allowScrollButtonsMobile
           >
             <Tab
-              label="TAKEN PRODUCTS"
+              label="Taken items"
               value={PROFILE_TAB_VALUES.takenProducts}
               sx={styles.tab}
             />
             <Tab
-              label="NOTIFICATIONS"
+              label="Notifications"
               value={PROFILE_TAB_VALUES.notifications}
               sx={styles.tab}
             />
@@ -128,7 +147,14 @@ export default function Profile() {
         </Box>
 
         <TabPanel value={PROFILE_TAB_VALUES.takenProducts} index={1}>
-          TAKEN PRODUCTS
+          <RegistryItemsMasonry
+            onToggle={handleItemToggle}
+            items={userItems}
+            shouldLinkToRegistry
+            onLinkClick={handleLinkClick}
+            isLoading={isLoadingItems}
+            emptyMessage="No taken items"
+          />
         </TabPanel>
         <TabPanel value={PROFILE_TAB_VALUES.notifications} index={2}>
           NOTIFICATIONS

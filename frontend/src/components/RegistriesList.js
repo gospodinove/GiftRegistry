@@ -49,7 +49,7 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
 
   const handleRegistryClick = useCallback(
     registry => {
-      onSelectedChange(registry)
+      onSelectedChange(registry.id)
       setSelectedRegistryId(registry.id)
     },
     [onSelectedChange]
@@ -64,32 +64,33 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
     )
   }
 
-  return registries.length > 0 ? (
-    <List subheader={<div />}>
-      <ListSubheader disableGutters sx={styles.subheader}>
-        <ListItem component="div" disablePadding>
-          <ListItemButton
-            component="button"
-            className="listItemButton"
-            onClick={onCreateRegistryButtonClick}
-          >
-            <ListItemText primary="Create new registry" />
+  return (
+    <>
+      <List subheader={<div />}>
+        <ListSubheader disableGutters sx={styles.subheader}>
+          <ListItem component="div" disablePadding>
+            <ListItemButton
+              component="button"
+              className="listItemButton"
+              onClick={onCreateRegistryButtonClick}
+            >
+              <ListItemText primary="Create new registry" />
 
-            <Icon type="add" />
-          </ListItemButton>
-        </ListItem>
-      </ListSubheader>
-      {sortedRegistries.map(registry => (
-        <RegistriesListItem
-          key={registry.id}
-          registry={registry}
-          isSelected={selectedRegistryId === registry.id}
-          onClick={handleRegistryClick}
-        />
-      ))}
-    </List>
-  ) : (
-    <Empty text="No registries" />
+              <Icon type="add" />
+            </ListItemButton>
+          </ListItem>
+        </ListSubheader>
+        {sortedRegistries.map(registry => (
+          <RegistriesListItem
+            key={registry.id}
+            registry={registry}
+            isSelected={selectedRegistryId === registry.id}
+            onClick={handleRegistryClick}
+          />
+        ))}
+      </List>
+      {registries.length === 0 && <Empty text="No registries" />}
+    </>
   )
 }
 

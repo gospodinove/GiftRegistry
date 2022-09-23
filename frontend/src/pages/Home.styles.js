@@ -9,11 +9,11 @@ export const styles = {
     pt: NAVBAR_HEIGHT + 'px'
   },
   gridContainer: {
-    height: '100%',
-    pt: 3
+    height: '100%'
   },
   gridItem: {
     height: '100%',
-    overflow: 'auto'
+    overflow: 'auto',
+    pt: 3
   }
 }

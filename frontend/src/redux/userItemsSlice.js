@@ -13,7 +13,10 @@ export const userItemsSlice = createSlice({
   name: 'userItems',
   initialState,
   reducers: {
-    resetUserItemsSlice: () => initialState
+    resetUserItemsSlice: () => initialState,
+    removeUserItem: (state, action) => {
+      state.data = state.data.filter(item => item.id !== action.payload.id)
+    }
   },
   extraReducers: builder => {
     builder
@@ -31,7 +34,7 @@ export const userItemsSlice = createSlice({
   }
 })
 
-export const { resetUserItemsSlice } = userItemsSlice.actions
+export const { resetUserItemsSlice, removeUserItem } = userItemsSlice.actions
 
 export const fetchUserItems = createAsyncThunk(
   'userItems/fetch',
@@ -46,3 +49,5 @@ export const fetchUserItems = createAsyncThunk(
 )
 
 // SELECTORS
+export const isFetchingUserItems = state =>
+  state.userItems.status === DATA_STATUS.loading
