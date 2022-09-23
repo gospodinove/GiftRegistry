@@ -1,10 +1,6 @@
 import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import RegistryItem from './RegistryItem'
-import RegistryItemSkeleton from './RegistryItemSkeleton'
-import Empty from './Empty'
 import RegistryDetails from './RegistryDetails'
-import { Masonry } from '@mui/lab'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
   areItemsFetched,
@@ -21,6 +17,7 @@ import {
 } from '../redux/registryOwnersSlice'
 import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
 import { registryDataById } from '../redux/registriesSlice'
+import RegistryItemsMasonry from './RegistryItemsMasonry'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -35,8 +32,6 @@ const Registry = ({ registryId }) => {
   )
   const isLoadingItems = useSelector(isFetchingRegistryItems)
   const isLoadingOwner = useSelector(isFetchingOwner)
-
-  const hasItems = useMemo(() => items?.length > 0, [items?.length])
 
   const sortedItems = useMemo(() => {
     if (!items) {
@@ -80,11 +75,9 @@ const Registry = ({ registryId }) => {
   }, [registryId, dispatch])
 
   const handleItemToggle = useCallback(
-    async id =>
-      dispatch(
-        toggleRegistryItem({ registryId: registryData?.id, itemId: id })
-      ),
-    [dispatch, registryData?.id]
+    async (registryId, itemId) =>
+      dispatch(toggleRegistryItem({ registryId, itemId })),
+    [dispatch]
   )
 
   const handleAddClick = useCallback(() => {
@@ -195,14 +188,6 @@ const Registry = ({ registryId }) => {
     [dispatch, registryData, items]
   )
 
-  const masonryConfig = useMemo(
-    () => ({
-      columns: { xs: 1, sm: 2, md: 3 },
-      spacing: { xs: 2, sm: 2, md: 3 }
-    }),
-    []
-  )
-
   return (
     <>
       {registryData && (
@@ -223,32 +208,15 @@ const Registry = ({ registryId }) => {
         />
       )}
 
-      {isLoadingItems ? (
-        <>
-          <RegistryItemSkeleton />
-          <RegistryItemSkeleton />
-        </>
-      ) : hasItems ? (
-        <Masonry
-          columns={masonryConfig.columns}
-          spacing={masonryConfig.spacing}
-        >
-          {sortedItems.map(item => (
-            <RegistryItem
-              key={item.id}
-              data={item}
-              disabled={item.takenBy && item.takenBy !== user.id}
-              color={registryData.color}
-              onToggle={handleItemToggle}
-              onEditClick={handleItemEditClick}
-              onRemoveClick={handleItemRemoveClick}
-              areActionsEnabled={isOwner}
-            />
-          ))}
-        </Masonry>
-      ) : (
-        <Empty text="No products in the registry" />
-      )}
+      <RegistryItemsMasonry
+        items={sortedItems}
+        onToggle={handleItemToggle}
+        onEditClick={handleItemEditClick}
+        onRemoveClick={handleItemRemoveClick}
+        areActionsEnabled={isOwner}
+        isLoading={isLoadingItems}
+        emptyMessage="No items in this registry"
+      />
     </>
   )
 }

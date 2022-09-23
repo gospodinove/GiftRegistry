@@ -249,7 +249,7 @@ function PopulateRegistryItemModal({ open, onClose }) {
                 type="number"
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
+                    <InputAdornment position="start">лв.</InputAdornment>
                   )
                 }}
               />

@@ -3,6 +3,7 @@ import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
 import { removeRegistry } from './registriesSlice'
+import { removeUserItem } from './userItemsSlice'
 
 const initialState = {
   // registry id => array of items
@@ -51,7 +52,7 @@ export const registryItemsSlice = createSlice({
       .addCase(toggleRegistryItem.pending, () => {})
       .addCase(toggleRegistryItem.fulfilled, (state, action) => {
         state.data[action.payload.registryId] = [
-          ...state.data[action.payload.registryId].filter(
+          ...(state.data[action.payload.registryId] ?? []).filter(
             item => item.id !== action.payload.item.id
           ),
           action.payload.item
@@ -135,6 +136,11 @@ export const toggleRegistryItem = createAsyncThunk(
         'registryItems/' + itemId + '/toggleTaken',
         'patch'
       )
+
+      if (response.item.takenBy === null) {
+        thunkAPI.dispatch(removeUserItem({ id: itemId }))
+      }
+
       return { registryId, item: response.item }
     } catch (error) {
       return handleErrors(error, thunkAPI)
