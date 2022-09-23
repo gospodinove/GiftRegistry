@@ -98,12 +98,7 @@ router.delete(
 
       res.send()
     } catch {
-      sendErrorResponse(
-        res,
-        500,
-        'general',
-        'Could not fetch your registry items'
-      )
+      sendErrorResponse(res, 500, 'general', 'Could not delete registry items')
     }
   }
 )

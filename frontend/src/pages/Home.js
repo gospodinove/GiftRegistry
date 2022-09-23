@@ -24,7 +24,7 @@ function Home() {
 
   const [selectedRegistryId, setSelectedRegistryId] = useState()
 
-  const prev = usePrevious({ isAuthenticated, selectedRegistryId })
+  const prev = usePrevious({ isAuthenticated })
 
   useEffect(() => {
     if (params?.token && !isAuthenticated) {
