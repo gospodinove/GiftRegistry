@@ -28,6 +28,7 @@ function App() {
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="registry/:registryId" element={<Home />} />
 
         <Route path="invite/:token" element={<Home />} />
 

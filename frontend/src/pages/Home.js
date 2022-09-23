@@ -6,18 +6,17 @@ import RegistriesList from '../components/RegistriesList'
 import Registry from '../components/Registry'
 import { styles } from './Home.styles'
 import './Home.css'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser, loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 
 function Home() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const params = useParams()
 
   const isAuthenticated = useSelector(hasUser)
-
-  const [selectedRegistryId, setSelectedRegistryId] = useState()
 
   const prev = usePrevious({ isAuthenticated })
 
@@ -28,19 +27,19 @@ function Home() {
   }, [params, isAuthenticated, dispatch])
 
   useEffect(() => {
-    if (prev?.isAuthenticated !== isAuthenticated) {
-      setSelectedRegistryId(null)
+    if (prev?.isAuthenticated && !isAuthenticated) {
+      navigate('/')
     }
-  }, [isAuthenticated, prev?.isAuthenticated])
+  }, [isAuthenticated, prev?.isAuthenticated, navigate])
 
   const handleCreateRegistryButtonClick = useCallback(
     () => dispatch(showModal({ name: MODAL_NAMES.populateRegistry })),
     [dispatch]
   )
 
-  const onSelectedChange = useCallback(
-    registry => setSelectedRegistryId(registry.id),
-    [setSelectedRegistryId]
+  const handleSelectedRegistryChange = useCallback(
+    registryId => navigate('/registry/' + registryId),
+    [navigate]
   )
 
   return (
@@ -49,14 +48,14 @@ function Home() {
         <Grid item xs={3} sx={styles.gridItem}>
           {isAuthenticated && (
             <RegistriesList
-              onSelectedChange={onSelectedChange}
+              onSelectedChange={handleSelectedRegistryChange}
               onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
             />
           )}
         </Grid>
         <Grid item xs={9} sx={styles.gridItem}>
-          {selectedRegistryId ? (
-            <Registry registryId={selectedRegistryId} />
+          {params.registryId ? (
+            <Registry registryId={params.registryId} />
           ) : (
             <Box
               display="flex"

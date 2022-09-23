@@ -90,11 +90,13 @@ router.post(
   [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
+    const registry = res.locals.registry
 
     const item = {
       ...req.body,
       registryId: req.params.registryId,
       takenBy: null,
+      color: registry.color,
       date: new Date()
     }
 

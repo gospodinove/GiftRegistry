@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { DATA_STATUS } from '../constants'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
+import { removeUserItem } from './userItemsSlice'
 
 const initialState = {
   // registry id => array of items
@@ -124,6 +125,9 @@ export const toggleRegistryItem = createAsyncThunk(
         'registryItems/' + itemId + '/toggleTaken',
         'patch'
       )
+
+      thunkAPI.dispatch(removeUserItem({ id: itemId }))
+
       return { registryId, item: response.item }
     } catch (error) {
       return handleErrors(error, thunkAPI)

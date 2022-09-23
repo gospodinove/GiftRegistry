@@ -40,7 +40,7 @@ const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
 
   const handleRegistryClick = useCallback(
     registry => {
-      onSelectedChange(registry)
+      onSelectedChange(registry.id)
       setSelectedRegistryId(registry.id)
     },
     [onSelectedChange]

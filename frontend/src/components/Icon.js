@@ -22,6 +22,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EmailIcon from '@mui/icons-material/Email'
+import LaunchIcon from '@mui/icons-material/Launch'
 import { memo } from 'react'
 
 const getIcon = (type, color, sx) => {
@@ -96,6 +97,9 @@ const getIcon = (type, color, sx) => {
 
     case 'email':
       return <EmailIcon sx={styles} />
+
+    case 'launch':
+      return <LaunchIcon sx={styles} />
 
     default:
       return <QuestionMarkIcon sx={styles} />

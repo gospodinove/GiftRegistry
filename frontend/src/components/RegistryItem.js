@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardMedia,
   Collapse,
+  Stack,
   Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
@@ -20,7 +21,9 @@ const RegistryItem = ({
   disabled,
   areActionsEnabled,
   onEditClick,
-  onRemoveClick
+  onRemoveClick,
+  onLinkClick,
+  shouldLinkToRegistry
 }) => {
   const [isCardExpanded, setIsCardExpanded] = useState(false)
 
@@ -30,8 +33,8 @@ const RegistryItem = ({
   )
 
   const handleCheckboxClick = useCallback(() => {
-    onToggle(data.id)
-  }, [onToggle, data.id])
+    onToggle(data.registryId, data.id)
+  }, [onToggle, data?.registryId, data?.id])
 
   const inputProps = useMemo(() => ({ 'aria-labelledby': data.id }), [data.id])
 
@@ -47,24 +50,39 @@ const RegistryItem = ({
     setIsCardExpanded(!isCardExpanded)
   }, [isCardExpanded])
 
+  const handleLinkToRegistryClick = useCallback(() => {
+    onLinkClick(data.registryId)
+  }, [data.registryId, onLinkClick])
+
   return (
     <Card sx={registryItemStyles.cardStyles}>
       <CardHeader
         title={
           <Box display="flex" justifyContent="space-between">
-            <Typography
-              component={data.link ? 'a' : 'div'}
-              href={data.link || null}
-              variant="h5"
-              sx={registryItemStyles.headerTypography}
-              color={data.link ? color : 'inherit'}
-            >
-              {data.name}
-            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography
+                component={data.link ? 'a' : 'div'}
+                href={data.link || null}
+                variant="h5"
+                sx={registryItemStyles.headerTypography}
+                color={data.link ? color : 'inherit'}
+              >
+                {data.name}
+              </Typography>
+
+              {shouldLinkToRegistry && (
+                <Button
+                  onClick={handleLinkToRegistryClick}
+                  icon-mode="icon-only"
+                  icon="launch"
+                  color={color}
+                />
+              )}
+            </Stack>
 
             {data.price && (
               <Typography sx={registryItemStyles.priceTypography}>
-                {data.price}$
+                {data.price}лв.
               </Typography>
             )}
           </Box>
@@ -96,6 +114,7 @@ const RegistryItem = ({
             disabled={disabled}
             onClick={handleCheckboxClick}
           />
+
           {areActionsEnabled && (
             <>
               <Button
