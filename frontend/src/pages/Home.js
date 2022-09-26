@@ -71,7 +71,7 @@ function Home() {
 
   useEffect(() => {
     if (!params?.registryId) {
-      setIsRegistriesDrawerOpen(true)
+      setTimeout(() => setIsRegistriesDrawerOpen(true), 300)
     }
   }, [params?.registryId])
 
