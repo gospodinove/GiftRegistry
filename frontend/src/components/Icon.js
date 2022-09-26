@@ -23,10 +23,12 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EmailIcon from '@mui/icons-material/Email'
 import LaunchIcon from '@mui/icons-material/Launch'
+import HighlightAltIcon from '@mui/icons-material/HighlightAlt'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
 import { memo } from 'react'
 
-const getIcon = (type, color, sx) => {
-  const styles = { ...sx, color }
+const getIcon = (type, color, size, sx) => {
+  const styles = { ...sx, color, width: size, height: size }
 
   switch (type) {
     case 'cake':
@@ -101,13 +103,19 @@ const getIcon = (type, color, sx) => {
     case 'launch':
       return <LaunchIcon sx={styles} />
 
+    case 'highlight-alt':
+      return <HighlightAltIcon sx={styles} />
+
+    case 'list':
+      return <FormatListBulletedIcon sx={styles} />
+
     default:
       return <QuestionMarkIcon sx={styles} />
   }
 }
 
-function Icon({ type, color, sx }) {
-  return getIcon(type, color, sx)
+function Icon({ type, color, size, sx }) {
+  return getIcon(type, color, size, sx)
 }
 
 export default memo(Icon)

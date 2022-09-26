@@ -1,4 +1,4 @@
-import { NAVBAR_HEIGHT } from '../constants'
+import { NAVBAR_HEIGHT, NAVBAR_Z_INDEX } from '../constants'
 
 export const styles = {
   icons: { pr: 1 },
@@ -10,7 +10,7 @@ export const styles = {
       paddingRight: '0px'
     }
   },
-  appBar: { height: `${NAVBAR_HEIGHT}px` },
+  appBar: { height: `${NAVBAR_HEIGHT}px`, zIndex: NAVBAR_Z_INDEX },
   toolbar: { height: `${NAVBAR_HEIGHT}px` },
   typography: {
     flexGrow: 1,
