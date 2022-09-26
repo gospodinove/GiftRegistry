@@ -137,14 +137,17 @@ function Home() {
       </Drawer>
 
       <Box sx={styles.box}>
-        {/* TODO: improve button (icon, layout, background, ...) */}
-        <Button
-          color="black"
-          sx={styles.registriesDrawerToggleButton}
-          onClick={handleOpenRegistriesDrawerButtonClick}
-        >
-          Registries
-        </Button>
+        <Box sx={styles.registriesDrawerToggleButtonContainer}>
+          <Button
+            color="black"
+            icon-mode="start"
+            icon="list"
+            sx={styles.registriesDrawerToggleButton}
+            onClick={handleOpenRegistriesDrawerButtonClick}
+          >
+            Registries
+          </Button>
+        </Box>
         <Grid container sx={styles.gridContainer} columnSpacing={2}>
           <Grid item xs={3} sx={styles.gridItemLeft}>
             {isAuthenticated && renderRegistriesList()}

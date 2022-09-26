@@ -1,4 +1,4 @@
-import { NAVBAR_HEIGHT } from '../constants'
+import { COLORS, NAVBAR_HEIGHT } from '../constants'
 
 export const styles = {
   box: {
@@ -21,15 +21,20 @@ export const styles = {
     height: '100%',
     overflow: 'auto',
     ml: { xs: 2, sm: 0 },
-    mt: { xs: '50px', sm: 0 },
-    pt: { xs: 0, sm: 3 }
+    pt: { xs: '50px', sm: 3 }
   },
   registriesDrawerToggleButton: {
-    display: { xs: 'block', sm: 'none' },
     width: '100%',
     borderRadius: 0,
     height: '50px',
-    position: 'fixed'
+    borderBottom: '1px solid ' + COLORS.LIGHTGRAY
+  },
+  registriesDrawerToggleButtonContainer: {
+    display: { sm: 'none' },
+    width: '100%',
+    position: 'fixed',
+    backgroundColor: COLORS.WHITE,
+    zIndex: 1000
   },
   registriesDrawer: {
     width: '85%',
