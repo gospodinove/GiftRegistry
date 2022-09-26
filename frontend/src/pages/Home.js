@@ -34,7 +34,6 @@ function Home() {
   const isLoadingRegistries = useSelector(isFetchingRegistry)
   const shouldFetchRegistries = useSelector(reduxShouldFetchRegistries)
 
-  // TODO: open by default if no registry is selected
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
   const prev = usePrevious({ isAuthenticated })
@@ -69,6 +68,12 @@ function Home() {
       navigate('/')
     }
   }, [isAuthenticated, prev?.isAuthenticated, navigate])
+
+  useEffect(() => {
+    if (!params?.registryId) {
+      setIsRegistriesDrawerOpen(true)
+    }
+  }, [params?.registryId])
 
   useEffect(() => {
     if (shouldClearSelectedRegistry) {
