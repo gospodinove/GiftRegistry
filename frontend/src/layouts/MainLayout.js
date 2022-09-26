@@ -68,7 +68,11 @@ function MainLayout() {
     [isAvatarDropdownOpen, avatarDropdownAnchorElement]
   )
 
-  const handleProfileClick = useCallback(() => navigate('/profile'), [navigate])
+  const handleProfileClick = useCallback(() => {
+    navigate('/profile')
+    setIsAvatarDropdownOpen(false)
+    setAvatarDropdownAnchorElement(null)
+  }, [navigate])
 
   const renderAuthItems = useCallback(() => {
     if (isFetchingSession) {
