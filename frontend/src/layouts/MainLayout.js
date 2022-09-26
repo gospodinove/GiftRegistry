@@ -37,12 +37,16 @@ function MainLayout() {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
-  const handleLogoutClick = useCallback(async () => {
+  const closeAvatarDropdown = useCallback(() => {
     setIsAvatarDropdownOpen(false)
     setAvatarDropdownAnchorElement(null)
+  }, [])
+
+  const handleLogoutClick = useCallback(async () => {
+    closeAvatarDropdown()
 
     dispatch(logout())
-  }, [dispatch])
+  }, [closeAvatarDropdown, dispatch])
 
   const container = useMemo(
     () => (window !== undefined ? window.document.body : undefined),
@@ -70,9 +74,8 @@ function MainLayout() {
 
   const handleProfileClick = useCallback(() => {
     navigate('/profile')
-    setIsAvatarDropdownOpen(false)
-    setAvatarDropdownAnchorElement(null)
-  }, [navigate])
+    closeAvatarDropdown()
+  }, [closeAvatarDropdown, navigate])
 
   const renderAuthItems = useCallback(() => {
     if (isFetchingSession) {
