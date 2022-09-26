@@ -1,5 +1,5 @@
-import { memo, useEffect } from 'react'
-import { Box, Grid, Typography } from '@mui/material'
+import { memo, useEffect, useState } from 'react'
+import { Box, Drawer, Grid, Toolbar, Typography } from '@mui/material'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistriesList from '../components/RegistriesList'
@@ -25,6 +25,9 @@ function Home() {
 
   const isAuthenticated = useSelector(hasUser)
   const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
+
+  // TODO: open by default if no registry is selected
+  const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
   const prev = usePrevious({ isAuthenticated })
 
@@ -57,40 +60,68 @@ function Home() {
     [navigate]
   )
 
+  const handleOpenRegistriesDrawerButtonClick = useCallback(
+    () => setIsRegistriesDrawerOpen(true),
+    []
+  )
+  const handleRegistriesDrawerClose = useCallback(
+    () => setIsRegistriesDrawerOpen(false),
+    []
+  )
+
   return (
-    <Box sx={styles.box}>
-      {/* TODO: improve button (icon, layout, background, ...) */}
-      <Button color="black" sx={styles.registriesDrawerToggleButton}>
-        Registries
-      </Button>
-      <Grid container sx={styles.gridContainer} columnSpacing={2}>
-        <Grid item xs={3} sx={styles.gridItemLeft}>
-          {isAuthenticated && (
-            <RegistriesList
-              onSelectedChange={handleSelectedRegistryChange}
-              onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
-            />
-          )}
+    <>
+      <Drawer
+        anchor="left"
+        open={isRegistriesDrawerOpen}
+        onClose={handleRegistriesDrawerClose}
+        sx={styles.registriesDrawer}
+      >
+        <Toolbar sx={styles.toolbar} />
+        <RegistriesList
+          onSelectedChange={handleSelectedRegistryChange}
+          onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
+        />
+      </Drawer>
+
+      <Box sx={styles.box}>
+        {/* TODO: improve button (icon, layout, background, ...) */}
+        <Button
+          color="black"
+          sx={styles.registriesDrawerToggleButton}
+          onClick={handleOpenRegistriesDrawerButtonClick}
+        >
+          Registries
+        </Button>
+        <Grid container sx={styles.gridContainer} columnSpacing={2}>
+          <Grid item xs={3} sx={styles.gridItemLeft}>
+            {isAuthenticated && (
+              <RegistriesList
+                onSelectedChange={handleSelectedRegistryChange}
+                onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
+              />
+            )}
+          </Grid>
+          <Grid item xs={12} sm={9} sx={styles.gridItemRight}>
+            {params.registryId ? (
+              <Registry registryId={params.registryId} />
+            ) : (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+              >
+                <Stack alignItems="center" spacing={1}>
+                  <Icon type="highlight-alt" size={80} />
+                  <Typography variant="h5">No registry selected</Typography>
+                </Stack>
+              </Box>
+            )}
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={9} sx={styles.gridItemRight}>
-          {params.registryId ? (
-            <Registry registryId={params.registryId} />
-          ) : (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-            >
-              <Stack alignItems="center" spacing={1}>
-                <Icon type="highlight-alt" size={80} />
-                <Typography variant="h5">No registry selected</Typography>
-              </Stack>
-            </Box>
-          )}
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </>
   )
 }
 

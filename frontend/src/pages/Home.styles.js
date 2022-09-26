@@ -21,7 +21,8 @@ export const styles = {
     height: '100%',
     overflow: 'auto',
     ml: { xs: 2, sm: 0 },
-    mt: { xs: '50px', sm: 0 }
+    mt: { xs: '50px', sm: 0 },
+    pt: { xs: 0, sm: 3 }
   },
   registriesDrawerToggleButton: {
     display: { xs: 'block', sm: 'none' },
@@ -29,5 +30,14 @@ export const styles = {
     borderRadius: 0,
     height: '50px',
     position: 'fixed'
-  }
+  },
+  registriesDrawer: {
+    width: '85%',
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: '85%',
+      boxSizing: 'border-box'
+    }
+  },
+  toolbar: { height: NAVBAR_HEIGHT + 'px' }
 }

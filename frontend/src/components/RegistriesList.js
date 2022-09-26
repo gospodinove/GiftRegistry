@@ -19,6 +19,7 @@ import {
   allRegistries
 } from '../redux/registriesSlice'
 
+// TODO: take registries as prop
 const RegistriesList = ({ onSelectedChange, onCreateRegistryButtonClick }) => {
   const dispatch = useDispatch()
 

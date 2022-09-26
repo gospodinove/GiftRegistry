@@ -1,4 +1,5 @@
 export const NAVBAR_HEIGHT = 64
+export const NAVBAR_Z_INDEX = 9999
 
 export const COLORS = {
   APP: ['#1976D2', '#E32F2F', '#f57c00', '#388e3c', '#ab47bc'],
