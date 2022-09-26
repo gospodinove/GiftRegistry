@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Box, Drawer, Grid, Toolbar, Typography } from '@mui/material'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,8 +11,12 @@ import usePrevious from '../hooks/usePrevious'
 import { hasUser, loginViaToken } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
+  allRegistries,
+  fetchRegistries,
+  isFetchingRegistry,
   isRegistryRemoved,
-  resetRegistryRemoveStatus
+  resetRegistryRemoveStatus,
+  shouldFetchRegistries as reduxShouldFetchRegistries
 } from '../redux/registriesSlice'
 import { Stack } from '@mui/system'
 import Icon from '../components/Icon'
@@ -26,10 +30,33 @@ function Home() {
   const isAuthenticated = useSelector(hasUser)
   const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
 
+  const registries = useSelector(allRegistries)
+  const isLoadingRegistries = useSelector(isFetchingRegistry)
+  const shouldFetchRegistries = useSelector(reduxShouldFetchRegistries)
+
   // TODO: open by default if no registry is selected
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
   const prev = usePrevious({ isAuthenticated })
+
+  const sortedRegistries = useMemo(
+    () =>
+      [...registries].sort(
+        (registryOne, registryTwo) =>
+          new Date(registryTwo.date) - new Date(registryOne.date)
+      ),
+    [registries]
+  )
+
+  const maybeFetchRegistries = useCallback(async () => {
+    if (shouldFetchRegistries) {
+      dispatch(fetchRegistries())
+    }
+  }, [dispatch, shouldFetchRegistries])
+
+  useEffect(() => {
+    maybeFetchRegistries()
+  }, [maybeFetchRegistries])
 
   useEffect(() => {
     if (params?.token && !isAuthenticated) {
@@ -56,7 +83,10 @@ function Home() {
   )
 
   const handleSelectedRegistryChange = useCallback(
-    registryId => navigate('/registry/' + registryId),
+    registryId => {
+      setIsRegistriesDrawerOpen(false)
+      navigate('/registry/' + registryId)
+    },
     [navigate]
   )
 
@@ -64,9 +94,29 @@ function Home() {
     () => setIsRegistriesDrawerOpen(true),
     []
   )
+
   const handleRegistriesDrawerClose = useCallback(
     () => setIsRegistriesDrawerOpen(false),
     []
+  )
+
+  const renderRegistriesList = useCallback(
+    () => (
+      <RegistriesList
+        data={sortedRegistries}
+        isLoading={isLoadingRegistries}
+        selectedRegistryId={params?.registryId}
+        onSelectedChange={handleSelectedRegistryChange}
+        onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
+      />
+    ),
+    [
+      handleCreateRegistryButtonClick,
+      handleSelectedRegistryChange,
+      isLoadingRegistries,
+      params?.registryId,
+      sortedRegistries
+    ]
   )
 
   return (
@@ -78,10 +128,7 @@ function Home() {
         sx={styles.registriesDrawer}
       >
         <Toolbar sx={styles.toolbar} />
-        <RegistriesList
-          onSelectedChange={handleSelectedRegistryChange}
-          onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
-        />
+        {renderRegistriesList()}
       </Drawer>
 
       <Box sx={styles.box}>
@@ -95,12 +142,7 @@ function Home() {
         </Button>
         <Grid container sx={styles.gridContainer} columnSpacing={2}>
           <Grid item xs={3} sx={styles.gridItemLeft}>
-            {isAuthenticated && (
-              <RegistriesList
-                onSelectedChange={handleSelectedRegistryChange}
-                onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
-              />
-            )}
+            {isAuthenticated && renderRegistriesList()}
           </Grid>
           <Grid item xs={12} sm={9} sx={styles.gridItemRight}>
             {params.registryId ? (

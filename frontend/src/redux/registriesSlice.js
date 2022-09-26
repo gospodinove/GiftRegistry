@@ -166,9 +166,8 @@ export const allRegistries = state => state.registries.data
 export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
 
-export const areRegistriesFetched = state =>
-  state.registries.fetchStatus !== DATA_STATUS.idle &&
-  state.registries.fetchStatus !== DATA_STATUS.loading
+export const shouldFetchRegistries = state =>
+  state.registries.fetchStatus === DATA_STATUS.idle
 
 export const isFetchingRegistry = state =>
   state.registries.fetchStatus === DATA_STATUS.loading
