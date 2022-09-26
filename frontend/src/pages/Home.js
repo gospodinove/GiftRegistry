@@ -16,6 +16,7 @@ import {
 } from '../redux/registriesSlice'
 import { Stack } from '@mui/system'
 import Icon from '../components/Icon'
+import Button from '../components/Button'
 
 function Home() {
   const dispatch = useDispatch()
@@ -58,8 +59,12 @@ function Home() {
 
   return (
     <Box sx={styles.box}>
+      {/* TODO: improve button (icon, layout, background, ...) */}
+      <Button color="black" sx={styles.registriesDrawerToggleButton}>
+        Registries
+      </Button>
       <Grid container sx={styles.gridContainer} columnSpacing={2}>
-        <Grid item xs={3} sx={styles.gridItem}>
+        <Grid item xs={3} sx={styles.gridItemLeft}>
           {isAuthenticated && (
             <RegistriesList
               onSelectedChange={handleSelectedRegistryChange}
@@ -67,7 +72,7 @@ function Home() {
             />
           )}
         </Grid>
-        <Grid item xs={9} sx={styles.gridItem}>
+        <Grid item xs={12} sm={9} sx={styles.gridItemRight}>
           {params.registryId ? (
             <Registry registryId={params.registryId} />
           ) : (

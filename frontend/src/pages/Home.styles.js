@@ -11,9 +11,23 @@ export const styles = {
   gridContainer: {
     height: '100%'
   },
-  gridItem: {
+  gridItemLeft: {
+    display: { xs: 'none', sm: 'block' },
     height: '100%',
     overflow: 'auto',
     pt: 3
+  },
+  gridItemRight: {
+    height: '100%',
+    overflow: 'auto',
+    ml: { xs: 2, sm: 0 },
+    mt: { xs: '50px', sm: 0 }
+  },
+  registriesDrawerToggleButton: {
+    display: { xs: 'block', sm: 'none' },
+    width: '100%',
+    borderRadius: 0,
+    height: '50px',
+    position: 'fixed'
   }
 }
