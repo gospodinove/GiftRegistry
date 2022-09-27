@@ -1,235 +1,222 @@
-import { Box, List, Skeleton, Stack, Typography } from '@mui/material'
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../utils/api'
-import RegistryItem from './RegistryItem'
-import Button from './Button'
-import Icon from './Icon'
-import { COLORS } from '../constants'
-import RegistryItemSkeleton from './RegistryItemSkeleton'
-import Empty from './Empty'
+import RegistryDetails from './RegistryDetails'
+import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import {
+  areItemsFetched,
+  fetchRegistryItems,
+  isFetchingRegistryItems,
+  itemsByRegistryId,
+  resetFetchStatus,
+  toggleRegistryItem
+} from '../redux/registryItemsSlice'
+import {
+  fetchOwner,
+  isFetchingOwner,
+  ownerByRegistryId
+} from '../redux/registryOwnersSlice'
+import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
+import { registryDataById } from '../redux/registriesSlice'
+import RegistryItemsMasonry from './RegistryItemsMasonry'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
 
-  const registryData = useSelector(state =>
-    state.registries.data.find(registry => registry.id === registryId)
-  )
-  const items = useSelector(state => state.registryItems[registryId])
-
+  const registryData = useSelector(state => registryDataById(state, registryId))
+  const items = useSelector(state => itemsByRegistryId(state, registryId))
   const user = useSelector(state => state.auth.user)
-  const owner = useSelector(
-    state => state.registries.ownerByRegistryId[registryId]
+  const owner = useSelector(state => ownerByRegistryId(state, registryId))
+
+  const shouldPreventItemsFetch = useSelector(state =>
+    areItemsFetched(state, registryId)
+  )
+  const isLoadingItems = useSelector(isFetchingRegistryItems)
+  const isLoadingOwner = useSelector(isFetchingOwner)
+
+  const sortedItems = useMemo(() => {
+    if (!items) {
+      return []
+    }
+
+    return [...items].sort(
+      (itemOne, itemTwo) => new Date(itemTwo.date) - new Date(itemOne.date)
+    )
+  }, [items])
+
+  const isOwner = useMemo(
+    () =>
+      user?.email ===
+      registryData?.users.find(user => user.role === 'owner')?.email,
+    [registryData?.users, user?.email]
   )
 
-  const [isLoadingItems, setIsLoadingItems] = useState(true)
-  const [isLoadingOwner, setIsLoadingOwner] = useState(true)
-
-  const fetchItems = useCallback(async () => {
-    try {
-      setIsLoadingItems(true)
-
-      if (!registryId || items !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/items')
-
-      dispatch({
-        type: 'registryItems/set',
-        payload: { registryId, items: response.items }
-      })
-    } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: {
-          type: 'error',
-          message: error.data
-        }
-      })
-    } finally {
-      setIsLoadingItems(false)
+  const maybeFetchItems = useCallback(async () => {
+    if (registryId && registryData && !shouldPreventItemsFetch) {
+      dispatch(fetchRegistryItems(registryId))
     }
-  }, [registryId, items, dispatch])
+  }, [registryId, registryData, shouldPreventItemsFetch, dispatch])
 
   const maybeFetchRegistryOwner = useCallback(async () => {
-    try {
-      setIsLoadingOwner(true)
-
-      const registryOwner = registryData.users.find(u => u.role === 'owner')
-
-      if (user.email === registryOwner.email || owner !== undefined) {
-        return
-      }
-
-      const response = await api('registries/' + registryId + '/owner')
-
-      dispatch({
-        type: 'registries/addOwner',
-        payload: { registryId: registryId, owner: response.owner }
-      })
-    } catch (error) {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: error.data }
-      })
-    } finally {
-      setIsLoadingOwner(false)
+    if (registryId && registryData && !isOwner && owner === undefined) {
+      dispatch(fetchOwner(registryId))
     }
-  }, [registryData?.users, owner, user?.email, registryId, dispatch])
+  }, [registryId, registryData, isOwner, owner, dispatch])
 
   useEffect(() => {
-    fetchItems()
-  }, [fetchItems])
+    maybeFetchItems()
+  }, [maybeFetchItems, registryId])
 
   useEffect(() => {
     maybeFetchRegistryOwner()
-  }, [maybeFetchRegistryOwner])
+  }, [maybeFetchRegistryOwner, registryId])
 
-  const maybeRenderOwner = useCallback(() => {
-    const registryOwner = registryData.users.find(u => u.role === 'owner')
+  useEffect(() => {
+    dispatch(resetFetchStatus())
+  }, [registryId, dispatch])
 
-    if (user.email === registryOwner.email) {
-      return null
-    }
+  const handleItemToggle = useCallback(
+    async (registryId, itemId) =>
+      dispatch(toggleRegistryItem({ registryId, itemId })),
+    [dispatch]
+  )
 
-    if (isLoadingOwner) {
-      return (
-        <Typography variant="h6">
-          <Skeleton width="250px" />
-        </Typography>
-      )
-    }
-
-    return (
-      <Stack direction="row" spacing={1}>
-        <Icon type="account-circle" />
-        <Typography variant="h6">
-          {owner.firstName + ' ' + owner.lastName}
-        </Typography>
-      </Stack>
-    )
-  }, [
-    isLoadingOwner,
-    owner?.firstName,
-    owner?.lastName,
-    registryData?.users,
-    user?.email
-  ])
-
-  const handleItemToggle = useCallback(id => {
-    // TODO: update object
-    console.log(id)
-  }, [])
-
-  const handleAddButtonClick = useCallback(() => {
+  const handleAddClick = useCallback(() => {
     if (!registryData?.id) {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'createRegistryItem',
-        data: { registryId: registryData.id, color: registryData.color }
-      }
-    })
-  }, [dispatch, registryData?.id, registryData?.color])
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistryItem,
+        data: {
+          registryId: registryData.id,
+          color: registryData.color,
+          registryName: registryData.name,
+          variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.create
+        }
+      })
+    )
+  }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
-  const handleShareButtonClick = useCallback(() => {
+  const handleShareClick = useCallback(() => {
     if (!registryData) {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'shareRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.shareRegistry,
         data: {
           registryId: registryData.id,
           users: registryData.users.filter(user => user.role !== 'owner'),
           color: registryData.color
         }
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
 
-  const onEditClick = useCallback(async () => {
+  const handleEditClick = useCallback(() => {
     if (!registryData) {
       return
     }
 
-    dispatch({
-      type: 'modals/show',
-      payload: {
-        name: 'createRegistry',
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.populateRegistry,
         data: registryData
-      }
-    })
+      })
+    )
   }, [dispatch, registryData])
+
+  const handleRemoveClick = useCallback(() => {
+    if (!registryData?.id) {
+      return
+    }
+
+    dispatch(
+      showModal({
+        name: MODAL_NAMES.removeRegistryConfirmation,
+        data: {
+          id: registryData.id,
+          name: registryData.name,
+          color: registryData.color
+        }
+      })
+    )
+  }, [dispatch, registryData?.color, registryData?.id, registryData?.name])
+
+  const handleItemEditClick = useCallback(
+    id => {
+      if (!registryData) {
+        return
+      }
+
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.populateRegistryItem,
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            registryName: registryData.name,
+            variant: POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
+          }
+        })
+      )
+    },
+    [dispatch, registryData, items]
+  )
+
+  const handleItemRemoveClick = useCallback(
+    id => {
+      if (!registryData) {
+        return
+      }
+
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.removeRegistryItemConfirmation,
+          data: {
+            item: items.find(item => item.id === id),
+            color: registryData.color,
+            registryId: registryData.id,
+            registryName: registryData.name
+          }
+        })
+      )
+    },
+    [dispatch, registryData, items]
+  )
 
   return (
     <>
-      {registryData ? (
-        /* TODO: Create RegistryDetailsSummary component */
-        <>
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="h4">{registryData.name}</Typography>
-            <Button
-              icon-mode="icon-only"
-              icon="edit"
-              color={COLORS.LIGHTGRAY}
-              component="div"
-              onClick={onEditClick}
-            >
-              edit
-            </Button>
-          </Box>
-
-          {maybeRenderOwner()}
-
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              icon-mode="start"
-              icon="add"
-              onClick={handleAddButtonClick}
-              color={registryData.color}
-            >
-              Add
-            </Button>
-            <Button
-              variant="contained"
-              icon-mode="start"
-              icon="share"
-              onClick={handleShareButtonClick}
-              color={registryData.color}
-            >
-              Share
-            </Button>
-          </Stack>
-        </>
-      ) : null}
-
-      {isLoadingItems ? (
-        <>
-          <RegistryItemSkeleton />
-          <RegistryItemSkeleton />
-        </>
-      ) : items?.length > 0 ? (
-        <List>
-          {items.map(item => (
-            <RegistryItem
-              key={item.id}
-              data={item}
-              color={registryData.color}
-              onToggle={handleItemToggle}
-            />
-          ))}
-        </List>
-      ) : (
-        <Empty text="No products in the registry" />
+      {registryData && (
+        <RegistryDetails
+          shouldShowActionButtons={isOwner}
+          name={registryData.name}
+          color={registryData.color}
+          owner={owner}
+          shouldShowOwner={
+            registryData.users.find(u => u.role === 'owner').email !==
+            user.email
+          }
+          isLoadingOwner={isLoadingOwner}
+          onEditClick={handleEditClick}
+          onRemoveClick={handleRemoveClick}
+          onAddClick={handleAddClick}
+          onShareClick={handleShareClick}
+        />
       )}
+
+      <RegistryItemsMasonry
+        items={sortedItems}
+        onToggle={handleItemToggle}
+        onEditClick={handleItemEditClick}
+        onRemoveClick={handleItemRemoveClick}
+        areActionsEnabled={isOwner}
+        isLoading={isLoadingItems}
+        emptyMessage="No items in this registry"
+      />
     </>
   )
 }

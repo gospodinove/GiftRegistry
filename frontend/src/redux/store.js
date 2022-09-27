@@ -4,13 +4,17 @@ import { registryItemsSlice } from './registryItemsSlice'
 import { registriesSlice } from './registriesSlice'
 import { modalsSlice } from './modalsSlice'
 import { toastSlice } from './toastSlice'
+import { registryOwnersSlice } from './registryOwnersSlice'
+import { userItemsSlice } from './userItemsSlice'
 
 export const slices = {
   auth: authSlice,
   registries: registriesSlice,
   toast: toastSlice,
   registryItems: registryItemsSlice,
-  modals: modalsSlice
+  modals: modalsSlice,
+  registryOwners: registryOwnersSlice,
+  userItems: userItemsSlice
 }
 
 const reducers = Object.values(slices).reduce((acc, slice) => {

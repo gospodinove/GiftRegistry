@@ -57,26 +57,26 @@ function ColorSelector({ onChange, initialColor }) {
             data-color={c}
             color={c}
             key={c}
-            onClick={handleAppColorButtonClick}
             icon={color !== c ? 'circle' : 'camera-rounded'}
+            onClick={handleAppColorButtonClick}
           />
         ))}
         <Button
           icon-mode="icon-only"
           color={COLORS.LIGHTGRAY}
-          onClick={toggleSlider}
           icon={isSliderVisible ? 'add-outlined' : 'add-filled'}
+          onClick={toggleSlider}
         />
       </Box>
-      {isSliderVisible ? (
+      {isSliderVisible && (
         <Box pt="10px" pb="10px">
           <HuePicker
-            onChange={handleSliderColorChange}
             color={sliderColor}
             width="100%"
+            onChange={handleSliderColorChange}
           />
         </Box>
-      ) : null}
+      )}
     </>
   )
 }

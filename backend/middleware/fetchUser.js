@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb')
+const { COLLECTION_NAMES } = require('../constants')
 const { sendErrorResponse, replaceId } = require('../utils')
 
 module.exports = async function fetchRegistry(req, res, next) {
@@ -6,7 +7,7 @@ module.exports = async function fetchRegistry(req, res, next) {
 
   try {
     const user = await db
-      .collection('users')
+      .collection(COLLECTION_NAMES.users)
       .findOne({ _id: ObjectId(req.params.userId) })
 
     if (!user) {

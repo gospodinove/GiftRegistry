@@ -15,17 +15,15 @@ import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
-import { api } from '../utils/api'
 import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
-import { USER_SESSION_STATE } from '../redux/authSlice'
+import { isFetchingUserSession, logout } from '../redux/authSlice'
 
 function MainLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const userSessionState = useSelector(state => state.auth.userSessionState)
-  const isFetchingSession = userSessionState === USER_SESSION_STATE.FETCHING
+  const isFetchingSession = useSelector(isFetchingUserSession)
 
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
@@ -39,28 +37,16 @@ function MainLayout() {
     setIsDrawerOpen(!isDrawerOpen)
   }, [isDrawerOpen, setIsDrawerOpen])
 
-  const handleLogoutClick = useCallback(async () => {
+  const closeAvatarDropdown = useCallback(() => {
     setIsAvatarDropdownOpen(false)
     setAvatarDropdownAnchorElement(null)
+  }, [])
 
-    try {
-      await api('auth/logout')
+  const handleLogoutClick = useCallback(async () => {
+    closeAvatarDropdown()
 
-      dispatch({ type: 'auth/clear' })
-      dispatch({ type: 'registries/clear' })
-      dispatch({ type: 'registryItems/clear' })
-
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'success', message: 'Logged out!' }
-      })
-    } catch {
-      dispatch({
-        type: 'toast/show',
-        payload: { type: 'error', message: 'Something went wrong' }
-      })
-    }
-  }, [dispatch])
+    dispatch(logout())
+  }, [closeAvatarDropdown, dispatch])
 
   const container = useMemo(
     () => (window !== undefined ? window.document.body : undefined),
@@ -85,6 +71,11 @@ function MainLayout() {
     },
     [isAvatarDropdownOpen, avatarDropdownAnchorElement]
   )
+
+  const handleProfileClick = useCallback(() => {
+    navigate('/profile')
+    closeAvatarDropdown()
+  }, [closeAvatarDropdown, navigate])
 
   const renderAuthItems = useCallback(() => {
     if (isFetchingSession) {
@@ -122,8 +113,13 @@ function MainLayout() {
           anchorEl={avatarDropdownAnchorElement}
           onClose={handleAvatarDropdownToggle}
         >
+          <MenuItem onClick={handleProfileClick}>
+            <Icon type="account-circle" sx={styles.icons} />
+            Profile
+          </MenuItem>
+
           <MenuItem onClick={handleLogoutClick}>
-            <Icon type="logout" sx={styles.logoutIcon} />
+            <Icon type="logout" sx={styles.icons} />
             Logout
           </MenuItem>
         </Menu>
@@ -134,6 +130,7 @@ function MainLayout() {
     handleAuthItemClick,
     handleAvatarDropdownToggle,
     handleLogoutClick,
+    handleProfileClick,
     isAuthenticated,
     isAvatarDropdownOpen,
     isFetchingSession,
@@ -162,8 +159,8 @@ function MainLayout() {
             icon-mode="icon-only"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
             sx={styles.iconButton}
+            onClick={handleDrawerToggle}
           >
             <Icon type="menu" />
           </Button>
@@ -178,6 +175,7 @@ function MainLayout() {
           isFetchingSession={isFetchingSession}
           onToggle={handleDrawerToggle}
           onLogoutClick={handleLogoutClick}
+          onProfileClick={handleProfileClick}
         />
       </Box>
 

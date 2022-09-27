@@ -1,6 +1,5 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
@@ -9,16 +8,29 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
 import { styles } from './ShareRegistryModal.styles'
+import {
+  isRegistryShared,
+  isSharingRegistry,
+  shareRegistry
+} from '../../redux/registriesSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
 function ShareRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(state => state.modals.shareRegistry?.data)
-
-  const [isLoading, setIsLoading] = useState(false)
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.shareRegistry)
+  )
+  const isLoading = useSelector(isSharingRegistry)
+  const shouldCloseModal = useSelector(isRegistryShared)
+  const reduxErrors = useSelector(state => state.registries.shareErrors)
 
   const [emails, setEmails] = useState([''])
   const [errors, setErrors] = useState([])
+
+  useEffect(() => {
+    setErrors(reduxErrors ?? [])
+  }, [reduxErrors])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -28,6 +40,12 @@ function ShareRegistryModal({ open, onClose }) {
       setErrors([])
     }, 100)
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldCloseModal) {
+      handleClose()
+    }
+  }, [shouldCloseModal, handleClose])
 
   const handleEmailChange = useCallback(
     e => {
@@ -55,65 +73,19 @@ function ShareRegistryModal({ open, onClose }) {
   )
 
   const handleSendClick = useCallback(
-    async e => {
+    e => {
       e.preventDefault()
 
       if (!initialData?.registryId) {
         return
       }
 
-      setIsLoading(true)
-
       setErrors([])
 
       const data = { emails: emails.filter(e => e !== '') }
-
-      try {
-        const response = await api(
-          'registries/' + initialData.registryId + '/share',
-          'patch',
-          data
-        )
-
-        dispatch({ type: 'registries/update', payload: response.registry })
-
-        handleClose()
-      } catch (error) {
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch({
-              type: 'toast/show',
-              payload: {
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              }
-            })
-            return
-
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
-            return
-
-          default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
-            return
-        }
-      } finally {
-        setIsLoading(false)
-      }
+      dispatch(shareRegistry({ id: initialData.registryId, data }))
     },
-    [emails, initialData?.registryId, dispatch, handleClose]
+    [emails, initialData, dispatch]
   )
 
   const renderTextField = (index, email, isInvited) => (
@@ -123,18 +95,18 @@ function ShareRegistryModal({ open, onClose }) {
       label={isInvited ? 'Invited' : 'Email ' + (index + 1)}
       value={email}
       disabled={isInvited}
-      onChange={handleEmailChange}
       type="email"
       inputProps={{ 'data-index': index }}
       autoFocus={index === emails.length - 1}
       error={isInvited ? undefined : errors['emails.' + index] !== undefined}
       helperText={isInvited ? undefined : errors['emails.' + index]}
       color={initialData?.color}
+      onChange={handleEmailChange}
     />
   )
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+    <Dialog maxWidth="xs" fullWidth open={open} onClose={handleClose}>
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>Share registry</DialogTitle>
         <DialogContent>
@@ -144,19 +116,19 @@ function ShareRegistryModal({ open, onClose }) {
           {emails.map((email, index) => renderTextField(index, email, false))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color={initialData?.color}>
+          <Button color={initialData?.color} onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color={initialData?.color}>
+          <Button color={initialData?.color} onClick={handleSubmit}>
             Add more
           </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
-          <Button type="submit" sx={styles.hiddenButton}></Button>
+          <Button type="submit" sx={styles.hiddenButton} />
           {/* this is used as the real submit button */}
           <Button
-            onClick={handleSendClick}
             color={initialData?.color}
             loading={isLoading}
+            onClick={handleSendClick}
           >
             Send
           </Button>

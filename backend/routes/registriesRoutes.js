@@ -7,6 +7,8 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
+const { COLLECTION_NAMES } = require('../constants')
+const isRegistryOwner = require('../middleware/isRegistryOwner')
 
 const router = express.Router()
 
@@ -30,7 +32,7 @@ router.post(
         registry.users = [{ email: req.session.user.email, role: 'owner' }]
         registry.date = new Date()
 
-        await db.collection('registries').insertOne(registry)
+        await db.collection(COLLECTION_NAMES.registries).insertOne(registry)
 
         replaceId(registry)
 
@@ -49,7 +51,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 
   try {
     const registries = await db
-      .collection('registries')
+      .collection(COLLECTION_NAMES.registries)
       .find({ users: { $elemMatch: { email: req.session.user.email } } })
       .toArray()
 
@@ -83,16 +85,37 @@ router.get(
   }
 )
 
-router.post(
+router.delete(
   '/:registryId/items',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
+
+    try {
+      await db
+        .collection('registryItems')
+        .deleteMany({ registryId: req.params.registryId })
+
+      res.send()
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not delete registry items')
+    }
+  }
+)
+
+router.post(
+  '/:registryId/items',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
+  async (req, res) => {
+    const db = req.app.locals.db
+    const registry = res.locals.registry
 
     const item = {
       ...req.body,
       registryId: req.params.registryId,
-      takenBy: null
+      takenBy: null,
+      color: registry.color,
+      date: new Date()
     }
 
     try {
@@ -112,7 +135,7 @@ router.post(
 
         res.json({ item })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not add product')
+        sendErrorResponse(res, 500, 'general', 'Could not add registry item')
       }
     } catch (errors) {
       sendErrorResponse(res, 500, 'field-error', errors)
@@ -122,7 +145,7 @@ router.post(
 
 router.patch(
   '/:registryId/share',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
     const registry = res.locals.registry
@@ -176,7 +199,7 @@ router.patch(
         ]
 
         const result = await db
-          .collection('registries')
+          .collection(COLLECTION_NAMES.registries)
           .findOneAndUpdate(
             { _id: ObjectId(req.params.registryId) },
             { $addToSet: { users: { $each: userEmailsAndRoles } } },
@@ -225,10 +248,9 @@ router.get(
 
 router.put(
   '/:registryId',
-  [isAuthenticated, isRegistrationCompleted, fetchRegistry],
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
   async (req, res) => {
     const db = req.app.locals.db
-
     const data = req.body
 
     const schema = {
@@ -241,13 +263,15 @@ router.put(
       await validateAll(data, schema, validationMessages)
 
       try {
-        const result = await db.collection('registries').findOneAndUpdate(
-          { _id: ObjectId(req.params.registryId) },
-          {
-            $set: { type: data.type, name: data.name, color: data.color }
-          },
-          { returnDocument: 'after' }
-        )
+        const result = await db
+          .collection(COLLECTION_NAMES.registries)
+          .findOneAndUpdate(
+            { _id: ObjectId(req.params.registryId) },
+            {
+              $set: { type: data.type, name: data.name, color: data.color }
+            },
+            { returnDocument: 'after' }
+          )
 
         res.json({ registry: replaceId(result.value) })
       } catch {
@@ -255,6 +279,24 @@ router.put(
       }
     } catch (errors) {
       sendErrorResponse(res, 500, 'field-error', errors)
+    }
+  }
+)
+
+router.delete(
+  '/:registryId',
+  [isAuthenticated, isRegistrationCompleted, fetchRegistry, isRegistryOwner],
+  async (req, res) => {
+    const db = req.app.locals.db
+
+    try {
+      await db
+        .collection(COLLECTION_NAMES.registries)
+        .findOneAndDelete({ _id: ObjectId(req.params.registryId) })
+
+      res.send()
+    } catch {
+      sendErrorResponse(res, 500, 'general', 'Could not delete registry')
     }
   }
 )

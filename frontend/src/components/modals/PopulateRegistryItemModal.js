@@ -1,6 +1,5 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useState, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../utils/api'
 import Button from '../Button'
 import TextField from '../TextField'
 import Dialog from '@mui/material/Dialog'
@@ -8,22 +7,71 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
-import { Grid, InputAdornment } from '@mui/material'
+import { Grid, InputAdornment, Typography } from '@mui/material'
+import { styles } from './PopulateRegistryItemModal.styles'
+import {
+  createRegistryItem,
+  isCreatingRegistryItem,
+  isRegistryItemCreated,
+  isRegistryItemUpdated,
+  isUpdatingRegistryItem,
+  updateRegistryItem
+} from '../../redux/registryItemsSlice'
+import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
-function CreateRegistryItemModal({ open, onClose }) {
+export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
+  update: 'update',
+  create: 'create'
+}
+
+function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()
 
-  const initialData = useSelector(
-    state => state.modals.createRegistryItem?.data
+  const initialData = useSelector(state =>
+    modalInitialDataForName(state, MODAL_NAMES.populateRegistryItem)
   )
 
-  const [isLoading, setIsLoading] = useState(false)
+  const isUpdateVariant =
+    initialData?.variant === POPULATE_REGISTRY_ITEM_MODAL_VARIANT.update
+
+  const isLoading = useSelector(state =>
+    isUpdateVariant
+      ? isUpdatingRegistryItem(state)
+      : isCreatingRegistryItem(state)
+  )
+
+  const reduxErrors = useSelector(state =>
+    isUpdateVariant
+      ? state.registryItems.updateErrors
+      : state.registryItems.createErrors
+  )
+
+  const shouldCloseModal = useSelector(state =>
+    isUpdateVariant
+      ? isRegistryItemUpdated(state)
+      : isRegistryItemCreated(state)
+  )
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
   const [link, setLink] = useState('')
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    if (initialData && isUpdateVariant) {
+      setName(initialData?.item.name)
+      setPrice(initialData?.item.price ?? '')
+      setDescription(initialData?.item.description ?? '')
+      setLink(initialData?.item.link ?? '')
+    }
+  }, [initialData, isUpdateVariant])
+
+  useEffect(() => {
+    if (reduxErrors !== undefined) {
+      setErrors(reduxErrors)
+    }
+  }, [reduxErrors])
 
   const handleClose = useCallback(() => {
     onClose()
@@ -36,6 +84,12 @@ function CreateRegistryItemModal({ open, onClose }) {
       setDescription('')
     }, 100)
   }, [onClose])
+
+  useEffect(() => {
+    if (shouldCloseModal) {
+      handleClose()
+    }
+  }, [shouldCloseModal, handleClose])
 
   const handleNameChange = useCallback(
     e => {
@@ -83,12 +137,11 @@ function CreateRegistryItemModal({ open, onClose }) {
     [errors]
   )
 
-  const onSubmit = useCallback(
+  const handleSubmit = useCallback(
     async e => {
       e.preventDefault()
 
       setErrors({})
-      setIsLoading(true)
 
       const data = {
         name,
@@ -97,56 +150,24 @@ function CreateRegistryItemModal({ open, onClose }) {
         link
       }
 
-      try {
-        const response = await api(
-          'registries/' + initialData.registryId + '/items',
-          'post',
-          data
-        )
-
-        dispatch({
-          type: 'registryItems/add',
-          payload: {
+      if (isUpdateVariant) {
+        dispatch(
+          updateRegistryItem({
             registryId: initialData.registryId,
-            item: response.item
-          }
-        })
-
-        handleClose()
-      } catch (error) {
-        switch (error.type) {
-          case 'incomplete-registration':
-            dispatch({
-              type: 'toast/show',
-              payload: {
-                type: 'error',
-                message: error.data,
-                navigation: { title: 'Register', target: '/register' }
-              }
-            })
-            return
-
-          case 'field-error':
-            setErrors(error.data)
-            return
-
-          case 'general':
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: error.data }
-            })
-            return
-
-          default:
-            dispatch({
-              type: 'toast/show',
-              payload: { type: 'error', message: 'Something went wrong' }
-            })
-            return
-        }
-      } finally {
-        setIsLoading(false)
+            itemId: initialData.item.id,
+            data
+          })
+        )
+      } else {
+        dispatch(
+          createRegistryItem({
+            registryId: initialData.registryId,
+            data
+          })
+        )
       }
+
+      handleClose()
     },
     [
       name,
@@ -155,14 +176,50 @@ function CreateRegistryItemModal({ open, onClose }) {
       description,
       dispatch,
       handleClose,
-      initialData?.registryId
+      initialData?.registryId,
+      initialData?.item?.id,
+      isUpdateVariant
     ]
+  )
+
+  const componentStyles = useMemo(
+    () => styles(initialData?.color),
+    [initialData?.color]
   )
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <Box component="form" onSubmit={onSubmit}>
-        <DialogTitle>New product to your registry</DialogTitle>
+      <Box component="form" onSubmit={handleSubmit}>
+        <DialogTitle>
+          {isUpdateVariant ? (
+            <>
+              <Typography component="span" variant="h6">
+                Edit{' '}
+              </Typography>
+
+              <Typography
+                component="span"
+                variant="h6"
+                sx={componentStyles.highlightedName}
+              >
+                {initialData?.item.name}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography component="span" variant="h6">
+                New product to{' '}
+              </Typography>
+              <Typography
+                component="span"
+                variant="h6"
+                sx={componentStyles.highlightedName}
+              >
+                {initialData?.registryName}
+              </Typography>
+            </>
+          )}
+        </DialogTitle>
 
         <DialogContent>
           <Grid container spacing={1}>
@@ -192,7 +249,7 @@ function CreateRegistryItemModal({ open, onClose }) {
                 type="number"
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
+                    <InputAdornment position="start">лв.</InputAdornment>
                   )
                 }}
               />
@@ -231,7 +288,7 @@ function CreateRegistryItemModal({ open, onClose }) {
             Cancel
           </Button>
           <Button type="submit" color={initialData?.color} loading={isLoading}>
-            Add product
+            {isUpdateVariant ? 'Save' : 'Add'}
           </Button>
         </DialogActions>
       </Box>
@@ -239,4 +296,4 @@ function CreateRegistryItemModal({ open, onClose }) {
   )
 }
 
-export default memo(CreateRegistryItemModal)
+export default memo(PopulateRegistryItemModal)
