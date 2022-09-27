@@ -28,11 +28,6 @@ function MainLayout() {
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
 
-  const isUserFullyRegistered = useMemo(
-    () => user?.firstName !== undefined && user?.lastName !== undefined,
-    [user?.firstName, user?.lastName]
-  )
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
   const [avatarDropdownAnchorElement, setAvatarDropdownAnchorElement] =
@@ -104,7 +99,7 @@ function MainLayout() {
 
     return (
       <>
-        {isUserFullyRegistered ? (
+        {user.isRegistrationComplete ? (
           <Button
             icon="account-circle"
             color={COLORS.WHITE}
@@ -128,7 +123,7 @@ function MainLayout() {
           onClose={handleAvatarDropdownToggle}
           sx={styles.menu}
         >
-          {isUserFullyRegistered && (
+          {user.isRegistrationComplete && (
             <MenuItem onClick={handleProfileClick}>
               <Icon type="account-circle" sx={styles.icons} />
               Profile
