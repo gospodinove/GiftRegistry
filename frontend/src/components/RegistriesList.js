@@ -1,4 +1,5 @@
 import {
+  Box,
   List,
   ListItem,
   ListItemButton,
@@ -34,7 +35,7 @@ const RegistriesList = ({
   }
 
   return (
-    <>
+    <Box display="flex" flexDirection="column" height="100%">
       <List subheader={<div />}>
         <ListSubheader disableGutters sx={styles.subheader}>
           <ListItem component="div" disablePadding>
@@ -59,7 +60,7 @@ const RegistriesList = ({
         ))}
       </List>
       {data.length === 0 && <Empty text="No registries" />}
-    </>
+    </Box>
   )
 }
 
