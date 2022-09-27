@@ -37,6 +37,7 @@ export const styles = {
     zIndex: 1000
   },
   registriesDrawer: {
+    display: { sm: 'none' },
     width: '85%',
     flexShrink: 0,
     '& .MuiDrawer-paper': {
