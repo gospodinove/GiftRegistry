@@ -23,6 +23,7 @@ export const styles = {
   },
   iconButton: { display: { sm: 'none' } },
   mainBox: { p: 3, pt: 0, pb: 0, height: '100%' },
+  menu: { zIndex: NAVBAR_Z_INDEX + 1 },
   authNavBox: {
     display: { xs: 'none', sm: 'block' }
   },

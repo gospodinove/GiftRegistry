@@ -99,24 +99,36 @@ function MainLayout() {
 
     return (
       <>
-        <Button
-          icon="account-circle"
-          color={COLORS.WHITE}
-          icon-mode="start"
-          onClick={handleAvatarDropdownToggle}
-        >
-          {user?.firstName + ' ' + user?.lastName}
-        </Button>
+        {user.isRegistrationComplete ? (
+          <Button
+            icon="account-circle"
+            color={COLORS.WHITE}
+            icon-mode="start"
+            onClick={handleAvatarDropdownToggle}
+          >
+            {user?.firstName + ' ' + user?.lastName}
+          </Button>
+        ) : (
+          <Button
+            icon="account-circle"
+            color={COLORS.WHITE}
+            icon-mode="icon-only"
+            onClick={handleAvatarDropdownToggle}
+          />
+        )}
 
         <Menu
           open={isAvatarDropdownOpen}
           anchorEl={avatarDropdownAnchorElement}
           onClose={handleAvatarDropdownToggle}
+          sx={styles.menu}
         >
-          <MenuItem onClick={handleProfileClick}>
-            <Icon type="account-circle" sx={styles.icons} />
-            Profile
-          </MenuItem>
+          {user.isRegistrationComplete && (
+            <MenuItem onClick={handleProfileClick}>
+              <Icon type="account-circle" sx={styles.icons} />
+              Profile
+            </MenuItem>
+          )}
 
           <MenuItem onClick={handleLogoutClick}>
             <Icon type="logout" sx={styles.icons} />

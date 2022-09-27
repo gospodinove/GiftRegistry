@@ -13,6 +13,7 @@ const initialState = {
   // STATUS
   userSessionStatus: DATA_STATUS.idle,
   loginStatus: DATA_STATUS.idle,
+  loginWithTokenStatus: DATA_STATUS.idle,
   registerStatus: DATA_STATUS.idle,
   completeRegistrationStatus: DATA_STATUS.idle,
   // ERRORS
@@ -81,11 +82,16 @@ export const authSlice = createSlice({
         state.loginErrors = action.payload
       })
       // LOGIN VIA TOKEN
-      .addCase(loginViaToken.pending, () => {})
+      .addCase(loginViaToken.pending, state => {
+        state.loginWithTokenStatus = DATA_STATUS.loading
+      })
       .addCase(loginViaToken.fulfilled, (state, action) => {
+        state.loginWithTokenStatus = DATA_STATUS.succeeded
         state.user = action.payload
       })
-      .addCase(loginViaToken.rejected, () => {})
+      .addCase(loginViaToken.rejected, state => {
+        state.loginWithTokenStatus = DATA_STATUS.failed
+      })
   }
 })
 
@@ -175,7 +181,7 @@ export const isFetchingUserSession = state =>
 
 export const hasUser = state => state.auth.user !== undefined && state.auth.user
 
-export const isLggingIn = state =>
+export const isLoggingIn = state =>
   state.auth.loginStatus === DATA_STATUS.loading
 
 export const isRegistering = state =>
@@ -183,3 +189,7 @@ export const isRegistering = state =>
 
 export const isCompletingRegistration = state =>
   state.auth.completeRegistrationStatus === DATA_STATUS.loading
+
+export const isLoginWithTokenCompleted = state =>
+  state.auth.loginWithTokenStatus !== DATA_STATUS.idle &&
+  state.auth.loginWithTokenStatus !== DATA_STATUS.loading

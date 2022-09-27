@@ -17,19 +17,19 @@ export const handleErrors = (error, thunkAPI) => {
           navigation: { title: 'Register', target: '/register' }
         })
       )
-      break
+      return thunkAPI.rejectWithValue()
 
     case 'field-error':
       return thunkAPI.rejectWithValue(error.data)
 
     case 'general':
       thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
-      break
+      return thunkAPI.rejectWithValue()
 
     default:
       thunkAPI.dispatch(
         showToast({ type: 'error', message: 'Something went wrong' })
       )
-      break
+      return thunkAPI.rejectWithValue()
   }
 }
