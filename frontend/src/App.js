@@ -30,7 +30,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="registry/:registryId" element={<Home />} />
 
-        <Route path="invite/:token" element={<Home />} />
+        <Route path="invite" element={<Home />} />
 
         <Route
           path="profile"

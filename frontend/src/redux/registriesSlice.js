@@ -50,7 +50,7 @@ export const registriesSlice = createSlice({
       })
       .addCase(createRegistry.rejected, (state, action) => {
         state.createStatus = DATA_STATUS.failed
-        state.createErrors = action.payload.data
+        state.createErrors = action.payload
       })
       // UPDATE
       .addCase(updateRegistry.pending, state => {
