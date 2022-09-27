@@ -28,6 +28,11 @@ function MainLayout() {
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = user !== undefined
 
+  const isUserFullyRegistered = useMemo(
+    () => user?.firstName !== undefined && user?.lastName !== undefined,
+    [user?.firstName, user?.lastName]
+  )
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
   const [avatarDropdownAnchorElement, setAvatarDropdownAnchorElement] =
@@ -99,24 +104,36 @@ function MainLayout() {
 
     return (
       <>
-        <Button
-          icon="account-circle"
-          color={COLORS.WHITE}
-          icon-mode="start"
-          onClick={handleAvatarDropdownToggle}
-        >
-          {user?.firstName + ' ' + user?.lastName}
-        </Button>
+        {isUserFullyRegistered ? (
+          <Button
+            icon="account-circle"
+            color={COLORS.WHITE}
+            icon-mode="start"
+            onClick={handleAvatarDropdownToggle}
+          >
+            {user?.firstName + ' ' + user?.lastName}
+          </Button>
+        ) : (
+          <Button
+            icon="account-circle"
+            color={COLORS.WHITE}
+            icon-mode="icon-only"
+            onClick={handleAvatarDropdownToggle}
+          />
+        )}
 
         <Menu
           open={isAvatarDropdownOpen}
           anchorEl={avatarDropdownAnchorElement}
           onClose={handleAvatarDropdownToggle}
+          sx={styles.menu}
         >
-          <MenuItem onClick={handleProfileClick}>
-            <Icon type="account-circle" sx={styles.icons} />
-            Profile
-          </MenuItem>
+          {isUserFullyRegistered && (
+            <MenuItem onClick={handleProfileClick}>
+              <Icon type="account-circle" sx={styles.icons} />
+              Profile
+            </MenuItem>
+          )}
 
           <MenuItem onClick={handleLogoutClick}>
             <Icon type="logout" sx={styles.icons} />
