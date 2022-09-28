@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const { ERROR_TYPES } = require('./constants')
 
 module.exports.getMongoDBUrl = function (username, password) {
   return `mongodb+srv://${username}:${password}@cluster0.n6kmy75.mongodb.net/?retryWrites=true&w=majority`
@@ -14,7 +15,10 @@ module.exports.sendErrorResponse = function (res, status, type, errors) {
   res.status(status).json({
     code: status,
     type: type,
-    data: type === 'field-error' ? parseValidationErrorMessages(errors) : errors
+    data:
+      type === ERROR_TYPES.fieldErrors
+        ? parseValidationErrorMessages(errors)
+        : errors
   })
 }
 

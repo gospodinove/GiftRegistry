@@ -1,3 +1,4 @@
+const { ERROR_TYPES } = require('../constants')
 const { sendErrorResponse } = require('../utils')
 
 module.exports = async function isRegistryOwner(req, res, next) {
@@ -10,7 +11,7 @@ module.exports = async function isRegistryOwner(req, res, next) {
     sendErrorResponse(
       res,
       500,
-      'general',
+      ERROR_TYPES.general,
       'Only owners can perform this action'
     )
     return

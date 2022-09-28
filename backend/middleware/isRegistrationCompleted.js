@@ -1,3 +1,4 @@
+const { ERROR_TYPES } = require('../constants')
 const { sendErrorResponse } = require('../utils')
 
 module.exports = function (req, res, next) {
@@ -5,7 +6,7 @@ module.exports = function (req, res, next) {
     sendErrorResponse(
       res,
       401,
-      'incomplete-registration',
+      ERROR_TYPES.incompleteRegistration,
       'Complete your registration'
     )
   } else {
