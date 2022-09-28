@@ -10,7 +10,7 @@ const {
   comparePasswords
 } = require('../utils')
 const { passwordValidator, validationMessages } = require('../validation')
-const { COLLECTION_NAMES } = require('../constants')
+const { COLLECTION_NAMES, ERROR_TYPES } = require('../constants')
 
 const router = express.Router()
 
@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
         .findOne({ email: req.body.email })
 
       if (registeredUser) {
-        sendErrorResponse(res, 500, 'field-error', [
+        sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, [
           { field: 'email', message: 'Email is taken' }
         ])
         return
@@ -61,10 +61,15 @@ router.post('/register', async (req, res) => {
 
       res.json({ user })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not register user')
+      sendErrorResponse(
+        res,
+        500,
+        ERROR_TYPES.general,
+        'Could not register user'
+      )
     }
   } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
+    sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
   }
 })
 
@@ -85,7 +90,7 @@ router.post('/login', async (req, res) => {
         .findOne({ email: req.body.email })
 
       if (!user) {
-        sendErrorResponse(res, 500, 'field-error', [
+        sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, [
           { message: 'Email is not registered', field: 'email' }
         ])
         return
@@ -97,7 +102,7 @@ router.post('/login', async (req, res) => {
       )
 
       if (!isPasswordValid) {
-        sendErrorResponse(res, 500, 'field-error', [
+        sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, [
           { field: 'password', message: 'Wrong password' }
         ])
         return
@@ -111,10 +116,10 @@ router.post('/login', async (req, res) => {
 
       res.json({ user })
     } catch (err) {
-      sendErrorResponse(res, 500, 'general', 'Could not login')
+      sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not login')
     }
   } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
+    sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
   }
 })
 
@@ -136,10 +141,10 @@ router.get('/logout', (req, res) => {
         res.send()
       })
     } else {
-      sendErrorResponse(res, 500, 'general', 'Could not logout')
+      sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not logout')
     }
   } catch {
-    sendErrorResponse(res, 500, 'general', 'Could not logout')
+    sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not logout')
   }
 })
 
@@ -155,7 +160,7 @@ router.post('/token', async (req, res) => {
       sendErrorResponse(
         res,
         404,
-        'general',
+        ERROR_TYPES.general,
         'Could not find user with this token'
       )
       return
@@ -167,7 +172,7 @@ router.post('/token', async (req, res) => {
 
     res.json({ user })
   } catch {
-    sendErrorResponse(res, 500, 'general', 'Something went wrong')
+    sendErrorResponse(res, 500, ERROR_TYPES.general, 'Something went wrong')
   }
 })
 

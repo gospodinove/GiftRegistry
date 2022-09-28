@@ -7,7 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
-const { COLLECTION_NAMES } = require('../constants')
+const { COLLECTION_NAMES, ERROR_TYPES, USER_ROLES } = require('../constants')
 const isRegistryOwner = require('../middleware/isRegistryOwner')
 
 const router = express.Router()
@@ -29,7 +29,9 @@ router.post(
       await validateAll(registry, schema, validationMessages)
 
       try {
-        registry.users = [{ email: req.session.user.email, role: 'owner' }]
+        registry.users = [
+          { email: req.session.user.email, role: USER_ROLES.owner }
+        ]
         registry.date = new Date()
 
         await db.collection(COLLECTION_NAMES.registries).insertOne(registry)
@@ -38,10 +40,15 @@ router.post(
 
         res.json({ registry })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not create registry')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not create registry'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -57,7 +64,12 @@ router.get('/', isAuthenticated, async (req, res) => {
 
     res.json({ registries: registries.map(registry => replaceId(registry)) })
   } catch {
-    sendErrorResponse(res, 500, 'general', 'No registries from this user')
+    sendErrorResponse(
+      res,
+      500,
+      ERROR_TYPES.general,
+      'No registries from this user'
+    )
   }
 })
 
@@ -78,7 +90,7 @@ router.get(
       sendErrorResponse(
         res,
         500,
-        'general',
+        ERROR_TYPES.general,
         'Could not fetch your registry items'
       )
     }
@@ -98,7 +110,12 @@ router.delete(
 
       res.send()
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not delete registry items')
+      sendErrorResponse(
+        res,
+        500,
+        ERROR_TYPES.general,
+        'Could not delete registry items'
+      )
     }
   }
 )
@@ -135,10 +152,15 @@ router.post(
 
         res.json({ item })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not add registry item')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not add registry item'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -193,9 +215,12 @@ router.patch(
         const userEmailsAndRoles = [
           ...users.map(user => ({
             email: user.email,
-            role: 'invitee'
+            role: USER_ROLES.invitee
           })),
-          ...registeredEmails.map(email => ({ email, role: 'invitee' }))
+          ...registeredEmails.map(email => ({
+            email,
+            role: USER_ROLES.invitee
+          }))
         ]
 
         const result = await db
@@ -210,10 +235,15 @@ router.patch(
 
         res.json({ registry: replaceId(result.value) })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not send emails')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not send emails'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -227,7 +257,7 @@ router.get(
 
     try {
       const registryOwnerEmail = registry.users.find(
-        u => u.role === 'owner'
+        u => u.role === USER_ROLES.owner
       ).email
 
       const user = await db
@@ -235,13 +265,13 @@ router.get(
         .findOne({ email: registryOwnerEmail })
 
       if (!user) {
-        sendErrorResponse(res, 404, 'general', 'Could not find owner')
+        sendErrorResponse(res, 404, ERROR_TYPES.general, 'Could not find owner')
         return
       }
 
       res.json({ owner: replaceId(user) })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not find owner')
+      sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not find owner')
     }
   }
 )
@@ -275,10 +305,15 @@ router.put(
 
         res.json({ registry: replaceId(result.value) })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not update registry')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not update registry'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -296,7 +331,12 @@ router.delete(
 
       res.send()
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not delete registry')
+      sendErrorResponse(
+        res,
+        500,
+        ERROR_TYPES.general,
+        'Could not delete registry'
+      )
     }
   }
 )

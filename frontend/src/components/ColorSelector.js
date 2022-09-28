@@ -6,15 +6,15 @@ import Button from './Button'
 import { COLORS } from '../constants'
 
 function ColorSelector({ onChange, initialColor }) {
-  const [color, setColor] = useState(COLORS.APP[0])
-  const [sliderColor, setSliderColor] = useState(COLORS.SLIDER_INITIAL)
+  const [color, setColor] = useState(COLORS.app[0])
+  const [sliderColor, setSliderColor] = useState(COLORS.sliderInitial)
   const [isSliderVisible, setIsSliderVisible] = useState(false)
 
   useEffect(() => {
     if (!initialColor) {
       return
     }
-    if (COLORS.APP.includes(initialColor)) {
+    if (COLORS.app.includes(initialColor)) {
       setColor(initialColor)
     } else {
       setColor()
@@ -44,14 +44,14 @@ function ColorSelector({ onChange, initialColor }) {
   const toggleSlider = useCallback(() => {
     setColor()
     setIsSliderVisible(!isSliderVisible)
-    setColor(isSliderVisible ? COLORS.APP[0] : sliderColor)
-    onChange(isSliderVisible ? COLORS.APP[0] : sliderColor)
+    setColor(isSliderVisible ? COLORS.app[0] : sliderColor)
+    onChange(isSliderVisible ? COLORS.app[0] : sliderColor)
   }, [setIsSliderVisible, isSliderVisible, onChange, sliderColor])
 
   return (
     <>
       <Box sx={styles.colorBox}>
-        {COLORS.APP.map(c => (
+        {COLORS.app.map(c => (
           <Button
             icon-mode="icon-only"
             data-color={c}
@@ -63,7 +63,7 @@ function ColorSelector({ onChange, initialColor }) {
         ))}
         <Button
           icon-mode="icon-only"
-          color={COLORS.LIGHTGRAY}
+          color={COLORS.lightgray}
           icon={isSliderVisible ? 'add-outlined' : 'add-filled'}
           onClick={toggleSlider}
         />

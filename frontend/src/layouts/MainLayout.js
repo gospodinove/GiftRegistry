@@ -86,7 +86,7 @@ function MainLayout() {
       return AUTH_NAV_ITEMS.map(item => (
         <Button
           key={item.title}
-          color={COLORS.WHITE}
+          color={COLORS.white}
           data-route={item.route}
           onClick={handleAuthItemClick}
           icon={item.icon}
@@ -102,7 +102,7 @@ function MainLayout() {
         {user.isRegistrationComplete ? (
           <Button
             icon="account-circle"
-            color={COLORS.WHITE}
+            color={COLORS.white}
             icon-mode="start"
             onClick={handleAvatarDropdownToggle}
           >
@@ -111,7 +111,7 @@ function MainLayout() {
         ) : (
           <Button
             icon="account-circle"
-            color={COLORS.WHITE}
+            color={COLORS.white}
             icon-mode="icon-only"
             onClick={handleAvatarDropdownToggle}
           />
@@ -167,7 +167,7 @@ function MainLayout() {
           <Box sx={styles.authNavBox}>{renderAuthItems()}</Box>
 
           <Button
-            color={COLORS.WHITE}
+            color={COLORS.white}
             icon="menu"
             icon-mode="icon-only"
             aria-label="open drawer"

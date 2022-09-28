@@ -3,9 +3,9 @@ import { COLORS } from '../constants'
 
 export const styles = {
   subheader: {
-    color: COLORS.BLACK,
+    color: COLORS.black,
     '&:hover': {
-      backgroundColor: tinycolor(COLORS.BLACK).lighten(90).toString()
+      backgroundColor: tinycolor(COLORS.black).lighten(90).toString()
     }
   }
 }

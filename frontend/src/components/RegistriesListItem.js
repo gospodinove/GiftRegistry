@@ -26,7 +26,7 @@ function RegistriesListItem({ registry, isSelected, onClick }) {
   const handleClick = useCallback(() => onClick(registry), [registry, onClick])
 
   const componentStyles = useMemo(
-    () => styles(registry.color ?? COLORS.ICON_DEFAULT, isSelected),
+    () => styles(registry.color ?? COLORS.iconDefault, isSelected),
     [registry.color, isSelected]
   )
 

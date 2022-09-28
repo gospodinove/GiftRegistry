@@ -6,7 +6,7 @@ const { passwordValidator, validationMessages } = require('../validation')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const fetchUser = require('../middleware/fetchUser')
 const { ObjectId } = require('mongodb')
-const { COLLECTION_NAMES } = require('../constants')
+const { COLLECTION_NAMES, ERROR_TYPES } = require('../constants')
 
 const router = express.Router()
 
@@ -46,10 +46,10 @@ router.put('/:userId', [isAuthenticated, fetchUser], async (req, res) => {
 
       res.json({ user })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not update user')
+      sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not update user')
     }
   } catch (errors) {
-    sendErrorResponse(res, 500, 'field-error', errors)
+    sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
   }
 })
 

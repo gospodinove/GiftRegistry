@@ -19,6 +19,7 @@ import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryI
 import { registryDataById } from '../redux/registriesSlice'
 import RegistryItemsMasonry from './RegistryItemsMasonry'
 import { Box } from '@mui/material'
+import { USER_ROLES } from '../constants'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -47,7 +48,7 @@ const Registry = ({ registryId }) => {
   const isOwner = useMemo(
     () =>
       user?.email ===
-      registryData?.users.find(user => user.role === 'owner')?.email,
+      registryData?.users.find(user => user.role === USER_ROLES.owner)?.email,
     [registryData?.users, user?.email]
   )
 
@@ -109,7 +110,9 @@ const Registry = ({ registryId }) => {
         name: MODAL_NAMES.shareRegistry,
         data: {
           registryId: registryData.id,
-          users: registryData.users.filter(user => user.role !== 'owner'),
+          users: registryData.users.filter(
+            user => user.role !== USER_ROLES.owner
+          ),
           color: registryData.color
         }
       })
@@ -198,7 +201,7 @@ const Registry = ({ registryId }) => {
           color={registryData.color}
           owner={owner}
           shouldShowOwner={
-            registryData.users.find(u => u.role === 'owner').email !==
+            registryData.users.find(u => u.role === USER_ROLES.owner).email !==
             user.email
           }
           isLoadingOwner={isLoadingOwner}

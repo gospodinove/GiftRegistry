@@ -3,7 +3,7 @@ const { replaceId, sendErrorResponse, hashPassword } = require('../utils')
 const isAuthenticated = require('../middleware/isAuthenticated')
 const { ObjectId } = require('mongodb')
 const fetchRegistryItem = require('../middleware/fetchRegistryItem')
-const { COLLECTION_NAMES } = require('../constants')
+const { COLLECTION_NAMES, ERROR_TYPES } = require('../constants')
 const fetchRegistry = require('../middleware/fetchRegistry')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const isRegistryOwner = require('../middleware/isRegistryOwner')
@@ -22,12 +22,17 @@ router.patch(
     const registryUserEmails = res.locals.registry.users.map(u => u.email)
 
     if (!registryUserEmails.includes(req.session.user.email)) {
-      sendErrorResponse(res, 401, 'general', 'Unauthorized action')
+      sendErrorResponse(res, 401, ERROR_TYPES.general, 'Unauthorized action')
       return
     }
 
     if (item.takenBy && item.takenBy !== req.session.user.id) {
-      sendErrorResponse(res, 401, 'general', 'This item is not taken by you')
+      sendErrorResponse(
+        res,
+        401,
+        ERROR_TYPES.general,
+        'This item is not taken by you'
+      )
       return
     }
 
@@ -42,7 +47,12 @@ router.patch(
 
       res.json({ item: replaceId(result.value) })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not update registry item')
+      sendErrorResponse(
+        res,
+        500,
+        ERROR_TYPES.general,
+        'Could not update registry item'
+      )
     }
   }
 )
@@ -88,10 +98,15 @@ router.put(
 
         res.json({ item: replaceId(result.value) })
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not update registry item')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not update registry item'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -116,10 +131,15 @@ router.delete(
 
         res.send()
       } catch {
-        sendErrorResponse(res, 500, 'general', 'Could not remove registry item')
+        sendErrorResponse(
+          res,
+          500,
+          ERROR_TYPES.general,
+          'Could not remove registry item'
+        )
       }
     } catch (errors) {
-      sendErrorResponse(res, 500, 'field-error', errors)
+      sendErrorResponse(res, 500, ERROR_TYPES.fieldErrors, errors)
     }
   }
 )
@@ -131,7 +151,7 @@ router.get(
     const db = req.app.locals.db
 
     if (req.params.userId !== req.session.user.id) {
-      sendErrorResponse(res, 401, 'general', 'Unauthorized access')
+      sendErrorResponse(res, 401, ERROR_TYPES.general, 'Unauthorized access')
       return
     }
 
@@ -143,7 +163,7 @@ router.get(
 
       res.json({ items: items.map(item => replaceId(item)) })
     } catch {
-      sendErrorResponse(res, 500, 'general', 'Could not fetch items')
+      sendErrorResponse(res, 500, ERROR_TYPES.general, 'Could not fetch items')
     }
   }
 )

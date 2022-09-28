@@ -1,3 +1,4 @@
+import { ERROR_TYPES } from '../constants'
 import { showToast } from '../redux/toastSlice'
 
 export const handleErrors = (error, thunkAPI) => {
@@ -9,7 +10,11 @@ export const handleErrors = (error, thunkAPI) => {
   }
 
   switch (error.type) {
-    case 'incomplete-registration':
+    case ERROR_TYPES.unauthorized:
+      thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+      return thunkAPI.rejectWithValue()
+
+    case ERROR_TYPES.incompleteRegistration:
       thunkAPI.dispatch(
         showToast({
           type: 'error',
@@ -19,10 +24,10 @@ export const handleErrors = (error, thunkAPI) => {
       )
       return thunkAPI.rejectWithValue()
 
-    case 'field-error':
+    case ERROR_TYPES.fieldErrors:
       return thunkAPI.rejectWithValue(error.data)
 
-    case 'general':
+    case ERROR_TYPES.general:
       thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
       return thunkAPI.rejectWithValue()
 
