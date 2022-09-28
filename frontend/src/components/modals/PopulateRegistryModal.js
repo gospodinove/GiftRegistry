@@ -48,7 +48,7 @@ function PopulateRegistryModal({ open, onClose }) {
     isModalInUpdateMode ? isRegistryUpdated(state) : isRegistryCreated(state)
   )
 
-  const [color, setColor] = useState(COLORS.APP[0])
+  const [color, setColor] = useState(COLORS.app[0])
   const [type, setType] = useState('Birthday')
   const [name, setName] = useState('')
   const [errors, setErrors] = useState({})
@@ -78,7 +78,7 @@ function PopulateRegistryModal({ open, onClose }) {
     setTimeout(() => {
       setName('')
       setType('Birthday')
-      setColor(COLORS.APP[0])
+      setColor(COLORS.app[0])
     }, 100)
   }, [onClose])
 

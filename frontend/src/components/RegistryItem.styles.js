@@ -4,10 +4,10 @@ import { COLORS } from '../constants'
 export const styles = (color, disabled) => ({
   cardStyles: {
     backgroundColor:
-      disabled && tinycolor(COLORS.LIGHTGRAY).setAlpha(0.2).toString()
+      disabled && tinycolor(COLORS.lightgray).setAlpha(0.2).toString()
   },
   priceTypography: {
-    backgroundColor: tinycolor(!disabled ? color : COLORS.LIGHTGRAY)
+    backgroundColor: tinycolor(!disabled ? color : COLORS.lightgray)
       .setAlpha(0.2)
       .toString(),
     borderRadius: '10px 60px 60px 10px',

@@ -27,13 +27,13 @@ export const styles = {
     width: '100%',
     borderRadius: 0,
     height: '50px',
-    borderBottom: '1px solid ' + COLORS.LIGHTGRAY
+    borderBottom: '1px solid ' + COLORS.lightgray
   },
   registriesDrawerToggleButtonContainer: {
     display: { sm: 'none' },
     width: '100%',
     position: 'fixed',
-    backgroundColor: COLORS.WHITE,
+    backgroundColor: COLORS.white,
     zIndex: 1000
   },
   registriesDrawer: {

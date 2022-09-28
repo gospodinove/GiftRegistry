@@ -57,13 +57,13 @@ const RegistryDetails = ({
             <Button
               icon-mode="icon-only"
               icon="edit"
-              color={COLORS.LIGHTGRAY}
+              color={COLORS.lightgray}
               onClick={handleEditClick}
             />
             <Button
               icon-mode="icon-only"
               icon="delete"
-              color={COLORS.LIGHTGRAY}
+              color={COLORS.lightgray}
               onClick={handleRemoveClick}
             />
           </Box>

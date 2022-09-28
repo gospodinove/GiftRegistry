@@ -2,14 +2,14 @@ export const NAVBAR_HEIGHT = 64
 export const NAVBAR_Z_INDEX = 9999
 
 export const COLORS = {
-  APP: ['#1976D2', '#E32F2F', '#f57c00', '#388e3c', '#ab47bc'],
-  PROFILE_PRIMARY: '#1976D2',
-  PROFILE_SECONDARY: '#283e51',
-  LIGHTGRAY: '#a9a9a9',
-  SLIDER_INITIAL: '#ff0300',
-  ICON_DEFAULT: '#000000',
-  BLACK: '#000000',
-  WHITE: '#ffffff'
+  app: ['#1976D2', '#E32F2F', '#f57c00', '#388e3c', '#ab47bc'],
+  profilePrimary: '#1976D2',
+  profileSecondary: '#283e51',
+  lightgray: '#a9a9a9',
+  sliderInitial: '#ff0300',
+  iconDefault: '#000000',
+  black: '#000000',
+  white: '#ffffff'
 }
 
 export const REGISTRY_TYPES = [

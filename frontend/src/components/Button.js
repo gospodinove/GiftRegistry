@@ -10,7 +10,7 @@ function Button({ color, ...props }) {
   const buttonStyles = useMemo(
     () => ({
       ...props.sx,
-      ...styles(color ?? COLORS.APP[0])[props.variant ?? 'text']
+      ...styles(color ?? COLORS.app[0])[props.variant ?? 'text']
     }),
     [color, props.sx, props.variant]
   )
