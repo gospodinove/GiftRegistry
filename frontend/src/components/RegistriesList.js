@@ -35,7 +35,7 @@ const RegistriesList = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column" height="100%">
+    <Box display="flex" flexDirection="column" height="100%" overflow="auto">
       <List subheader={<div />}>
         <ListSubheader disableGutters sx={styles.subheader}>
           <ListItem component="div" disablePadding>
