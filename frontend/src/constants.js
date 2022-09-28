@@ -38,3 +38,8 @@ export const ERROR_TYPES = {
   incompleteRegistration: 'incomplete-registration',
   fieldErrors: 'field-errors'
 }
+
+export const USER_ROLES = {
+  owner: 'owner',
+  invitee: 'invitee'
+}
