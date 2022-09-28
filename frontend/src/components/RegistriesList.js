@@ -17,6 +17,7 @@ const RegistriesList = ({
   data,
   isLoading,
   selectedRegistryId,
+  isCreateRegistryButtonVisible,
   onSelectedChange,
   onCreateRegistryButtonClick
 }) => {
@@ -37,19 +38,21 @@ const RegistriesList = ({
   return (
     <Box display="flex" flexDirection="column" height="100%" overflow="auto">
       <List subheader={<div />}>
-        <ListSubheader disableGutters sx={styles.subheader}>
-          <ListItem component="div" disablePadding>
-            <ListItemButton
-              component="button"
-              className="listItemButton"
-              onClick={onCreateRegistryButtonClick}
-            >
-              <ListItemText primary="Create new registry" />
+        {isCreateRegistryButtonVisible && (
+          <ListSubheader disableGutters sx={styles.subheader}>
+            <ListItem component="div" disablePadding>
+              <ListItemButton
+                component="button"
+                className="listItemButton"
+                onClick={onCreateRegistryButtonClick}
+              >
+                <ListItemText primary="Create new registry" />
 
-              <Icon type="add" />
-            </ListItemButton>
-          </ListItem>
-        </ListSubheader>
+                <Icon type="add" />
+              </ListItemButton>
+            </ListItem>
+          </ListSubheader>
+        )}
         {data.map(registry => (
           <RegistriesListItem
             key={registry.id}

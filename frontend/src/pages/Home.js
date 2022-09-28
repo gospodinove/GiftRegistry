@@ -125,11 +125,12 @@ function Home() {
   )
 
   const renderRegistriesList = useCallback(
-    () => (
+    isCreateRegistryButtonVisible => (
       <RegistriesList
         data={sortedRegistries}
         isLoading={isLoadingRegistries}
         selectedRegistryId={params?.registryId}
+        isCreateRegistryButtonVisible={isCreateRegistryButtonVisible}
         onSelectedChange={handleSelectedRegistryChange}
         onCreateRegistryButtonClick={handleCreateRegistryButtonClick}
       />
@@ -152,7 +153,7 @@ function Home() {
         sx={styles.registriesDrawer}
       >
         <Toolbar sx={styles.toolbar} />
-        {renderRegistriesList()}
+        {renderRegistriesList(isAuthenticated)}
       </Drawer>
 
       <Box sx={styles.box}>
@@ -167,9 +168,10 @@ function Home() {
             Registries
           </Button>
         </Box>
+
         <Grid container sx={styles.gridContainer} columnSpacing={2}>
           <Grid item xs={3} sx={styles.gridItemLeft}>
-            {isAuthenticated && renderRegistriesList()}
+            {renderRegistriesList(isAuthenticated)}
           </Grid>
           <Grid item xs={12} sm={9} sx={styles.gridItemRight}>
             {params.registryId ? (
