@@ -22,7 +22,6 @@ import {
   resetRegistryRemoveStatus,
   shouldFetchRegistries as reduxShouldFetchRegistries
 } from '../redux/registriesSlice'
-import { useQuery } from '../hooks/useQuery'
 import { Stack } from '@mui/system'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
@@ -31,7 +30,6 @@ function Home() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const params = useParams()
-  const query = useQuery()
 
   const isAuthenticated = useSelector(hasUser)
   const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
@@ -44,12 +42,6 @@ function Home() {
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
   const prev = usePrevious({ isAuthenticated })
-
-  const token = useMemo(() => query.get('token'), [query])
-
-  const shouldNavigateAfterLoginWithToken = useSelector(
-    isLoginWithTokenCompleted
-  )
 
   const sortedRegistries = useMemo(
     () =>
@@ -69,18 +61,6 @@ function Home() {
   useEffect(() => {
     maybeFetchRegistries()
   }, [maybeFetchRegistries])
-
-  useEffect(() => {
-    if (shouldNavigateAfterLoginWithToken) {
-      navigate('/')
-    }
-  }, [navigate, shouldNavigateAfterLoginWithToken])
-
-  useEffect(() => {
-    if (token) {
-      dispatch(loginViaToken(token))
-    }
-  }, [isAuthenticated, dispatch, token])
 
   useEffect(() => {
     if (prev?.isAuthenticated && !isAuthenticated) {
