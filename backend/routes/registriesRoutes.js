@@ -7,7 +7,7 @@ const { ObjectId } = require('mongodb')
 const { sendRegistryInvites } = require('../mail')
 const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
-const { COLLECTION_NAMES, ERROR_TYPES } = require('../constants')
+const { COLLECTION_NAMES, ERROR_TYPES, USER_ROLES } = require('../constants')
 const isRegistryOwner = require('../middleware/isRegistryOwner')
 
 const router = express.Router()
@@ -29,7 +29,9 @@ router.post(
       await validateAll(registry, schema, validationMessages)
 
       try {
-        registry.users = [{ email: req.session.user.email, role: 'owner' }]
+        registry.users = [
+          { email: req.session.user.email, role: USER_ROLES.owner }
+        ]
         registry.date = new Date()
 
         await db.collection(COLLECTION_NAMES.registries).insertOne(registry)
@@ -213,9 +215,12 @@ router.patch(
         const userEmailsAndRoles = [
           ...users.map(user => ({
             email: user.email,
-            role: 'invitee'
+            role: USER_ROLES.invitee
           })),
-          ...registeredEmails.map(email => ({ email, role: 'invitee' }))
+          ...registeredEmails.map(email => ({
+            email,
+            role: USER_ROLES.invitee
+          }))
         ]
 
         const result = await db
@@ -252,7 +257,7 @@ router.get(
 
     try {
       const registryOwnerEmail = registry.users.find(
-        u => u.role === 'owner'
+        u => u.role === USER_ROLES.owner
       ).email
 
       const user = await db

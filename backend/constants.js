@@ -12,3 +12,8 @@ module.exports.ERROR_TYPES = {
   incompleteRegistration: 'incomplete-registration',
   fieldErrors: 'field-errors'
 }
+
+module.exports.USER_ROLES = {
+  owner: 'owner',
+  invitee: 'invitee'
+}
