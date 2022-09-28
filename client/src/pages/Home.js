@@ -8,11 +8,7 @@ import { styles } from './Home.styles'
 import './Home.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
-import {
-  hasUser,
-  isLoginWithTokenCompleted,
-  loginViaToken
-} from '../redux/authSlice'
+import { hasUser } from '../redux/authSlice'
 import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
 import {
   allRegistries,
