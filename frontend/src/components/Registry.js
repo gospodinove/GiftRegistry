@@ -18,6 +18,7 @@ import {
 import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
 import { registryDataById } from '../redux/registriesSlice'
 import RegistryItemsMasonry from './RegistryItemsMasonry'
+import { Box } from '@mui/material'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -189,7 +190,7 @@ const Registry = ({ registryId }) => {
   )
 
   return (
-    <>
+    <Box display="flex" flexDirection="column" height="100%">
       {registryData && (
         <RegistryDetails
           shouldShowActionButtons={isOwner}
@@ -217,7 +218,7 @@ const Registry = ({ registryId }) => {
         isLoading={isLoadingItems}
         emptyMessage="No items in this registry"
       />
-    </>
+    </Box>
   )
 }
 

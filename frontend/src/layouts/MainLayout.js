@@ -147,7 +147,8 @@ function MainLayout() {
     isAvatarDropdownOpen,
     isFetchingSession,
     user?.firstName,
-    user?.lastName
+    user?.lastName,
+    user?.isRegistrationComplete
   ])
 
   return (
