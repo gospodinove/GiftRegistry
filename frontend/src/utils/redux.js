@@ -9,6 +9,10 @@ export const handleErrors = (error, thunkAPI) => {
   }
 
   switch (error.type) {
+    case 'unauthorized':
+      thunkAPI.dispatch(showToast({ type: 'error', message: error.data }))
+      return thunkAPI.rejectWithValue()
+
     case 'incomplete-registration':
       thunkAPI.dispatch(
         showToast({
