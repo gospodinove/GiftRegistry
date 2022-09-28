@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
 import { fetchUserSession } from './redux/authSlice'
 import Profile from './pages/Profile'
+import InviteLogin from './pages/InviteLogin'
 
 function App() {
   const dispatch = useDispatch()
@@ -30,7 +31,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="registry/:registryId" element={<Home />} />
 
-        <Route path="invite" element={<Home />} />
+        <Route path="invite" element={<InviteLogin />} />
 
         <Route
           path="profile"
