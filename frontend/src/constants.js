@@ -31,3 +31,10 @@ export const DATA_STATUS = {
   succeeded: 'succeeded',
   failed: 'failed'
 }
+
+export const ERROR_TYPES = {
+  general: 'general',
+  unauthorized: 'unauthorized',
+  incompleteRegistration: 'incomplete-registration',
+  fieldErrors: 'field-errors'
+}
