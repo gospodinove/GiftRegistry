@@ -3,7 +3,7 @@ import { Skeleton } from '@mui/material'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import RegistryItem from './RegistryItem'
-import Empty from '../components/Empty'
+import Empty from './Empty'
 import { styles } from './RegistryItemsMasonry.styles'
 
 export default function RegistryItemsMasonry({

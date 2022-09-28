@@ -2,12 +2,25 @@
   "name": "gift-registry",
   "version": "0.1.0",
   "private": true,
+  "dependencies": {
+    "bcrypt": "5.0.1",
+    "connect-mongo": "4.6.0",
+    "cors": "2.8.5",
+    "dotenv": "16.0.1",
+    "express": "4.18.1",
+    "express-session": "1.17.3",
+    "indicative": "7.4.4",
+    "mongodb": "4.7.0",
+    "morgan": "1.10.0",
+    "nodemailer": "6.7.7"
+  },
   "scripts": {
-    "start:frontend": "cd frontend; npm run start",
-    "start:backend": "cd backend; npm run start",
+    "start:frontend": "cd client; npm run start",
+    "start:backend": "nodemon server.js",
     "prepare": "husky install"
   },
   "devDependencies": {
-    "husky": "8.0.1"
+    "husky": "8.0.1",
+    "nodemon": "2.0.16"
   }
 }
