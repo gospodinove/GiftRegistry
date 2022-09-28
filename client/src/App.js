@@ -9,7 +9,7 @@ import Register from './pages/Register'
 import ProtectedRoute from './components/navigation/ProtectedRoute'
 import { fetchUserSession } from './redux/authSlice'
 import Profile from './pages/Profile'
-import InviteLogin from './components/InviteLogin'
+import InviteLogin from './pages/InviteLogin'
 
 function App() {
   const dispatch = useDispatch()

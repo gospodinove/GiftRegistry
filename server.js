@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes')
 const registriesRoutes = require('./routes/registriesRoutes')
 const usersRoutes = require('./routes/usersRoutes')
 const registryItemsRoutes = require('./routes/registryItemsRoutes')
+const path = require('path')
 const { FRONT_END_BASE_URL } = require('./constants')
 
 dotenv.config()
@@ -28,6 +29,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(logger('dev'))
+
+// serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 MongoClient.connect(
   getMongoDBUrl(process.env.MONGO_DB_USER, process.env.MONGO_DB_PASSWORD)
@@ -56,8 +60,12 @@ MongoClient.connect(
     apiRouter.use('/users', usersRoutes)
     apiRouter.use('/registryItems', registryItemsRoutes)
 
-    app.listen(8080, () =>
-      console.log('API is running on http://localhost:8080')
-    )
+    // The "catchall" handler: for any request that doesn't
+    // match one above, send back React's index.html file
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname + '/client/build/index.html'))
+    })
+
+    app.listen(process.env.PORT || 8080, () => console.log('API is running'))
   })
   .catch(console.error)
