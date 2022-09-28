@@ -231,7 +231,7 @@ router.patch(
             { returnDocument: 'after' }
           )
 
-        sendRegistryInvites([...users, ...registeredUsers])
+        sendRegistryInvites([...users, ...registeredUsers], req.session.user)
 
         res.json({ registry: replaceId(result.value) })
       } catch {
