@@ -38,7 +38,8 @@ function Home() {
 
   const registries = useSelector(allRegistries)
   const isLoadingRegistries = useSelector(isFetchingRegistry)
-  const shouldFetchRegistries = useSelector(reduxShouldFetchRegistries)
+  const shouldFetchRegistries =
+    useSelector(reduxShouldFetchRegistries) && isAuthenticated
 
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
