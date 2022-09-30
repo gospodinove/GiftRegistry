@@ -6,7 +6,7 @@ export const handleErrors = (error, thunkAPI) => {
     thunkAPI.dispatch(
       showToast({ type: 'error', message: 'Something went wrong' })
     )
-    return
+    return thunkAPI.rejectWithValue()
   }
 
   switch (error.type) {

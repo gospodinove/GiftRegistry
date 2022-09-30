@@ -91,7 +91,7 @@ export const registriesSlice = createSlice({
       })
       .addCase(shareRegistry.rejected, (state, action) => {
         state.shareStatus = DATA_STATUS.failed
-        state.shareErrors = action.payload.data
+        state.shareErrors = action.payload
       })
   }
 })
