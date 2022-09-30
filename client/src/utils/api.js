@@ -1,11 +1,12 @@
-const baseUrl = 'http://localhost:8080'
+const isGetMethod = method => method === 'get' || method === 'GET'
 
 export const api = async (endPoint, method = 'GET', data) => {
-  const url = new URL(baseUrl + '/api/' + endPoint)
-
-  if (method === 'GET' && data !== undefined) {
-    Object.keys(data).forEach(key => url.searchParams.append(key, data[key]))
-  }
+  const url =
+    '/api/' +
+    endPoint +
+    (isGetMethod(method) && data !== undefined
+      ? '?' + new URLSearchParams(data)
+      : '')
 
   const response = await fetch(url, {
     method: method.toUpperCase(),
