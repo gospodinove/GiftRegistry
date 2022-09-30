@@ -122,7 +122,13 @@ function Register() {
   )
 
   return (
-    <Box display="flex" justifyContent="center" minHeight="100vh">
+    <Box
+      display="flex"
+      justifyContent="center"
+      minHeight="100vh"
+      ml="4px"
+      mr="4px"
+    >
       <Box
         component="form"
         autoComplete="off"

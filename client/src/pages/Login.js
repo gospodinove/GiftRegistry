@@ -56,7 +56,7 @@ function Login() {
   )
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center" ml="4px" mr="4px">
       <Box
         component="form"
         autoComplete="off"
