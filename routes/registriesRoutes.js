@@ -231,7 +231,7 @@ router.patch(
             { returnDocument: 'after' }
           )
 
-        sendRegistryInvites(
+        await sendRegistryInvites(
           [...users, ...registeredUsers],
           req.session.user,
           registry

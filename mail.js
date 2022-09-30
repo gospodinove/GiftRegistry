@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-module.exports.sendRegistryInvites = (users, sender, registry) =>
-  users.forEach(user =>
-    transporter.sendMail({
+module.exports.sendRegistryInvites = async (users, sender, registry) => {
+  for (const user of users) {
+    await transporter.sendMail({
       from: process.env.MAIL_USER,
       to: user.email,
       subject: 'Gift Registry Invite',
@@ -29,4 +29,5 @@ module.exports.sendRegistryInvites = (users, sender, registry) =>
         registry.name
       )
     })
-  )
+  }
+}
