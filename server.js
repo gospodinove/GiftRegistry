@@ -1,5 +1,4 @@
 const express = require('express')
-const cors = require('cors')
 const MongoClient = require('mongodb').MongoClient
 const session = require('express-session')
 const dotenv = require('dotenv')
@@ -16,13 +15,6 @@ dotenv.config()
 
 const app = express()
 const apiRouter = express.Router()
-
-app.use(
-  cors({
-    origin: process.env.FRONT_END_BASE_URL,
-    credentials: true
-  })
-)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
