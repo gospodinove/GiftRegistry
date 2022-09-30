@@ -60,7 +60,7 @@ const MainLayoutDrawer = ({
 
     if (!isAuthenticated) {
       return AUTH_NAV_ITEMS.map(item => (
-        <ListItem key={item.title} disablePadding>
+        <ListItem key={item.title}>
           <ListItemButton onClick={() => handleDrawerItemClick(item.route)}>
             <ListItemIcon>
               <Icon type={item.icon} />
