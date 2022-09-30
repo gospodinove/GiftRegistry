@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 const dotenv = require('dotenv')
-const { FRONT_END_BASE_URL } = require('./constants')
+const { inviteTemplate } = require('./mailTemplates/invite')
 
 dotenv.config()
 
@@ -12,22 +12,21 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-module.exports.sendRegistryInvites = (users, sender) =>
+module.exports.sendRegistryInvites = (users, sender, registry) =>
   users.forEach(user =>
     transporter.sendMail({
       from: process.env.MAIL_USER,
       to: user.email,
       subject: 'Gift Registry Invite',
-      text:
-        'Check out this link -> ' +
-        FRONT_END_BASE_URL +
-        '/invite?token=' +
-        user.token,
-      html: `<h1>Hi there,</h1>
-      <h2>${sender.firstName} invited you to his gift registry.<h2>
-      <p><a href='${
-        FRONT_END_BASE_URL + '/invite?token=' + user.token
-      }'>Click here<a> to check it out<p>
-      <p>Best regards,<br><b>The GiftRegistry Team</b><p>`
+      html: inviteTemplate(
+        process.env.FRONT_END_BASE_URL +
+          '/invite?token=' +
+          user.token +
+          '&redirect=' +
+          registry.id,
+        sender.firstName,
+        registry.color,
+        registry.name
+      )
     })
   )

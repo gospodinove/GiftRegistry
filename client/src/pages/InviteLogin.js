@@ -17,11 +17,13 @@ export default function InviteLogin() {
 
   const token = useMemo(() => query.get('token'), [query])
 
+  const redirect = useMemo(() => query.get('redirect'), [query])
+
   useEffect(() => {
     if (shouldNavigateAfterLoginWithToken) {
-      navigate('/')
+      navigate(redirect ? '/registry/' + redirect : '/')
     }
-  }, [navigate, shouldNavigateAfterLoginWithToken])
+  }, [navigate, redirect, shouldNavigateAfterLoginWithToken])
 
   useEffect(() => {
     if (token) {
