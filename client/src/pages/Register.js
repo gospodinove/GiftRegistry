@@ -115,7 +115,7 @@ function Register() {
       if (user === undefined) {
         dispatch(register(data))
       } else {
-        dispatch(completeRegistration(data))
+        dispatch(completeRegistration({ userId: user.id, data }))
       }
     },
     [dispatch, email, firstName, lastName, password, user]

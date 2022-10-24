@@ -1,5 +1,5 @@
-import { Box, Skeleton, Stack, Typography } from '@mui/material'
-import { memo, useCallback } from 'react'
+import { Box, Menu, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
+import { memo, useCallback, useState } from 'react'
 import { COLORS } from '../constants'
 import Button from './Button'
 import { styles } from './RegistryDetails.styles'
@@ -17,13 +17,26 @@ const RegistryDetails = ({
   onAddClick,
   onShareClick
 }) => {
+  const [isShareDropdownOpen, setIsShareDropdownOpen] = useState(false)
+  const [shareDropdownAnchorElement, setShareDropdownAnchorElement] =
+    useState(null)
+
   const handleEditClick = useCallback(() => onEditClick(), [onEditClick])
 
   const handleRemoveClick = useCallback(() => onRemoveClick(), [onRemoveClick])
 
   const handleAddClick = useCallback(() => onAddClick(), [onAddClick])
 
-  const handleShareClick = useCallback(() => onShareClick(), [onShareClick])
+  const handleShareClick = useCallback(
+    event => {
+      setIsShareDropdownOpen(!isShareDropdownOpen)
+
+      setShareDropdownAnchorElement(
+        shareDropdownAnchorElement ? null : event.currentTarget
+      )
+    },
+    [isShareDropdownOpen, shareDropdownAnchorElement]
+  )
 
   const maybeRenderOwner = useCallback(() => {
     if (!owner || !shouldShowOwner) {
@@ -92,6 +105,25 @@ const RegistryDetails = ({
           >
             Share
           </Button>
+
+          <Menu
+            open={isShareDropdownOpen}
+            anchorEl={shareDropdownAnchorElement}
+            onClose={handleShareClick}
+            sx={styles.menu}
+          >
+            {/* onClick = handleShareViaLinkClick */}
+            <MenuItem>
+              <Icon type="link" sx={styles.icons} />
+              Via link
+            </MenuItem>
+
+            {/* onClick={handleShareViaEmailClick} */}
+            <MenuItem>
+              <Icon type="mail-outline" sx={styles.icons} />
+              Via email
+            </MenuItem>
+          </Menu>
         </Stack>
       )}
     </>

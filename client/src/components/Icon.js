@@ -25,6 +25,8 @@ import EmailIcon from '@mui/icons-material/Email'
 import LaunchIcon from '@mui/icons-material/Launch'
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt'
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import LinkIcon from '@mui/icons-material/Link'
+import MailOutlineIcon from '@mui/icons-material/MailOutline'
 import { memo } from 'react'
 
 const getIcon = (type, color, size, sx) => {
@@ -108,6 +110,12 @@ const getIcon = (type, color, size, sx) => {
 
     case 'list':
       return <FormatListBulletedIcon sx={styles} />
+
+    case 'link':
+      return <LinkIcon sx={styles} />
+
+    case 'mail-outline':
+      return <MailOutlineIcon sx={styles} />
 
     default:
       return <QuestionMarkIcon sx={styles} />
