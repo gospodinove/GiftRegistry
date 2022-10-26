@@ -1,4 +1,4 @@
-import { NAVBAR_HEIGHT, NAVBAR_Z_INDEX } from '../constants'
+import { NAVBAR_HEIGHT, NAVBAR_Z_INDEX } from '../constants/navbar'
 
 export const styles = {
   icons: { pr: 1 },

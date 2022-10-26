@@ -1,19 +1,3 @@
-export const BASE_URL = 'localhost:3000'
-
-export const NAVBAR_HEIGHT = 64
-export const NAVBAR_Z_INDEX = 9999
-
-export const COLORS = {
-  app: ['#1976D2', '#E32F2F', '#f57c00', '#388e3c', '#ab47bc'],
-  profilePrimary: '#1976D2',
-  profileSecondary: '#283e51',
-  lightgray: '#a9a9a9',
-  sliderInitial: '#ff0300',
-  iconDefault: '#000000',
-  black: '#000000',
-  white: '#ffffff'
-}
-
 export const REGISTRY_TYPES = [
   'Birthday',
   'Wedding',
@@ -44,4 +28,18 @@ export const ERROR_TYPES = {
 export const USER_ROLES = {
   owner: 'owner',
   invitee: 'invitee'
+}
+
+export const MODAL_NAMES = {
+  populateRegistryItem: 'populateRegistryItem',
+  shareViaEmail: 'shareViaEmail',
+  populateRegistry: 'populateRegistry',
+  removeRegistryConfirmation: 'removeRegistryConfirmation',
+  removeRegistryItemConfirmation: 'removeRegistryItemConfirmation',
+  shareViaLinkConfirmation: 'shareViaLinkConfirmation'
+}
+
+export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
+  update: 'update',
+  create: 'create'
 }

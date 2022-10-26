@@ -13,8 +13,9 @@ import {
   isRemovingRegistry,
   removeRegistry
 } from '../../redux/registriesSlice'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
+import { modalInitialDataForName } from '../../redux/modalsSlice'
 import { styles } from './RemoveRegistryConfirmationModal.styles'
+import { MODAL_NAMES } from '../../constants/types'
 
 function RemoveRegistryConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()

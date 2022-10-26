@@ -13,9 +13,10 @@ import {
   isUpdatingRegistry,
   togglePublicRegistry
 } from '../../redux/registriesSlice'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
-import { BASE_URL } from '../../constants'
+import { modalInitialDataForName } from '../../redux/modalsSlice'
 import { styles } from './ShareViaLinkConfirmationModal.styles'
+import { generateShareURL } from '../../constants/urls'
+import { MODAL_NAMES } from '../../constants/types'
 
 function ShareViaLinkConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -42,7 +43,7 @@ function ShareViaLinkConfirmationModal({ open, onClose }) {
   }, [shouldClose, handleClose])
 
   const handleConfirmClick = useCallback(async () => {
-    navigator.clipboard.writeText(BASE_URL + '/registry/' + initialData.id)
+    navigator.clipboard.writeText(generateShareURL(initialData.id))
     dispatch(togglePublicRegistry(initialData.id))
     onClose()
   }, [dispatch, initialData?.id, onClose])

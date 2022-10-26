@@ -14,7 +14,8 @@ import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button'
 import Icon from '../../components/Icon'
-import { AUTH_NAV_ITEMS, NAVBAR_HEIGHT } from '../../constants'
+import { NAVBAR_HEIGHT } from '../../constants/navbar'
+import { AUTH_NAV_ITEMS } from '../../constants/types'
 import { styles } from './MainLayoutDrawer.styles'
 
 const MainLayoutDrawer = ({

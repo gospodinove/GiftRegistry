@@ -1,5 +1,5 @@
 import tinycolor from 'tinycolor2'
-import { COLORS } from '../constants'
+import { COLORS } from '../constants/colors'
 
 export const styles = (color, disabled) => ({
   cardStyles: {

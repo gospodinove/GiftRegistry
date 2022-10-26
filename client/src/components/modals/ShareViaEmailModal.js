@@ -13,7 +13,8 @@ import {
   isSharingRegistry,
   shareViaEmail
 } from '../../redux/registriesSlice'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
+import { modalInitialDataForName } from '../../redux/modalsSlice'
+import { MODAL_NAMES } from '../../constants/types'
 
 function ShareViaEmailModal({ open, onClose }) {
   const dispatch = useDispatch()

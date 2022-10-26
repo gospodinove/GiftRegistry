@@ -1,4 +1,4 @@
-import { ERROR_TYPES } from '../constants'
+import { ERROR_TYPES } from '../constants/types'
 import { showToast } from '../redux/toastSlice'
 
 export const handleErrors = (error, thunkAPI) => {

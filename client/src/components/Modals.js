@@ -1,12 +1,13 @@
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { hideModal, isModalOpen, MODAL_NAMES } from '../redux/modalsSlice'
+import { hideModal, isModalOpen } from '../redux/modalsSlice'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
 import RemoveRegistryItemConfirmationModal from './modals/RemoveRegistryItemConfirmationModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
 import ShareViaEmailModal from './modals/ShareViaEmailModal'
 import RemoveRegistryConfirmationModal from './modals/RemoveRegistryConfirmationModal'
 import ShareViaLinkConfirmationModal from './modals/ShareViaLinkConfirmationModal'
+import { MODAL_NAMES } from '../constants/types'
 
 const Modals = () => {
   const dispatch = useDispatch()

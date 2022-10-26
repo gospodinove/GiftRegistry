@@ -9,7 +9,7 @@ import './Home.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser } from '../redux/authSlice'
-import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import { showModal } from '../redux/modalsSlice'
 import {
   allRegistries,
   fetchRegistries,
@@ -21,6 +21,7 @@ import {
 import { Stack } from '@mui/system'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
+import { MODAL_NAMES } from '../constants/types'
 
 function Home() {
   const dispatch = useDispatch()

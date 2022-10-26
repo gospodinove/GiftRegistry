@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import RegistryDetails from './RegistryDetails'
-import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import { showModal } from '../redux/modalsSlice'
 import {
   areItemsFetched,
   fetchRegistryItems,
@@ -15,12 +15,16 @@ import {
   isFetchingOwner,
   ownerByRegistryId
 } from '../redux/registryOwnersSlice'
-import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryItemModal'
 import { registryDataById } from '../redux/registriesSlice'
 import RegistryItemsMasonry from './RegistryItemsMasonry'
 import { Box } from '@mui/material'
-import { USER_ROLES, BASE_URL } from '../constants'
 import { showToast } from '../redux/toastSlice'
+import {
+  MODAL_NAMES,
+  POPULATE_REGISTRY_ITEM_MODAL_VARIANT,
+  USER_ROLES
+} from '../constants/types'
+import { generateShareURL } from '../constants/urls'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -126,7 +130,7 @@ const Registry = ({ registryId }) => {
     }
 
     if (registryData.public) {
-      navigator.clipboard.writeText(BASE_URL + '/registry/' + registryData.id)
+      navigator.clipboard.writeText(generateShareURL(registryData.id))
       dispatch(
         showToast({ type: 'success', message: 'Link copied to clipboard' })
       )

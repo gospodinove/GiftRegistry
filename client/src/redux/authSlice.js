@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { DATA_STATUS } from '../constants'
+import { DATA_STATUS } from '../constants/types'
 import { api } from '../utils/api'
 import { isEmptyObject } from '../utils/objects'
 import { handleErrors } from '../utils/redux'

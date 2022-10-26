@@ -25,6 +25,8 @@ function App() {
     checkUserSession()
   }, [checkUserSession])
 
+  console.log(process.env.FRONT_END_BASE_URL)
+
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>

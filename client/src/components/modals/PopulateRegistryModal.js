@@ -9,7 +9,6 @@ import DialogTitle from '@mui/material/DialogTitle'
 import MenuItem from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import ColorSelector from '../ColorSelector'
-import { COLORS, REGISTRY_TYPES } from '../../constants'
 import { Typography } from '@mui/material'
 import { styles } from './PopulateRegistryModal.styles'
 import {
@@ -20,7 +19,9 @@ import {
   isUpdatingRegistry,
   updateRegistry
 } from '../../redux/registriesSlice'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
+import { modalInitialDataForName } from '../../redux/modalsSlice'
+import { COLORS } from '../../constants/colors'
+import { MODAL_NAMES, REGISTRY_TYPES } from '../../constants/types'
 
 function PopulateRegistryModal({ open, onClose }) {
   const dispatch = useDispatch()

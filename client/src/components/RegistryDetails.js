@@ -1,6 +1,6 @@
 import { Box, Menu, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
 import { memo, useCallback, useState } from 'react'
-import { COLORS } from '../constants'
+import { COLORS } from '../constants/colors'
 import Button from './Button'
 import { styles } from './RegistryDetails.styles'
 import Icon from './Icon'
