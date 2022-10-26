@@ -11,15 +11,15 @@ import { styles } from './ShareRegistryModal.styles'
 import {
   isRegistryShared,
   isSharingRegistry,
-  shareRegistry
+  shareViaEmail
 } from '../../redux/registriesSlice'
 import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
 
-function ShareRegistryModal({ open, onClose }) {
+function ShareViaEmailModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const initialData = useSelector(state =>
-    modalInitialDataForName(state, MODAL_NAMES.shareRegistry)
+    modalInitialDataForName(state, MODAL_NAMES.shareViaEmail)
   )
   const isLoading = useSelector(isSharingRegistry)
   const shouldCloseModal = useSelector(isRegistryShared)
@@ -83,7 +83,7 @@ function ShareRegistryModal({ open, onClose }) {
       setErrors([])
 
       const data = { emails: emails.filter(e => e !== '') }
-      dispatch(shareRegistry({ id: initialData.registryId, data }))
+      dispatch(shareViaEmail({ id: initialData.registryId, data }))
     },
     [emails, initialData, dispatch]
   )
@@ -138,4 +138,4 @@ function ShareRegistryModal({ open, onClose }) {
   )
 }
 
-export default memo(ShareRegistryModal)
+export default memo(ShareViaEmailModal)

@@ -15,7 +15,8 @@ const RegistryDetails = ({
   onEditClick,
   onRemoveClick,
   onAddClick,
-  onShareClick
+  onShareViaEmailClick,
+  onShareViaLinkClick
 }) => {
   const [isShareDropdownOpen, setIsShareDropdownOpen] = useState(false)
   const [shareDropdownAnchorElement, setShareDropdownAnchorElement] =
@@ -36,6 +37,22 @@ const RegistryDetails = ({
       )
     },
     [isShareDropdownOpen, shareDropdownAnchorElement]
+  )
+
+  const handleShareViaEmailClick = useCallback(
+    () => onShareViaEmailClick(),
+    [onShareViaEmailClick]
+  )
+
+  const handleShareViaLinkClick = useCallback(
+    event => {
+      setIsShareDropdownOpen(!isShareDropdownOpen)
+      setShareDropdownAnchorElement(
+        shareDropdownAnchorElement ? null : event.currentTarget
+      )
+      onShareViaLinkClick()
+    },
+    [isShareDropdownOpen, onShareViaLinkClick, shareDropdownAnchorElement]
   )
 
   const maybeRenderOwner = useCallback(() => {
@@ -112,16 +129,14 @@ const RegistryDetails = ({
             onClose={handleShareClick}
             sx={styles.menu}
           >
-            {/* onClick = handleShareViaLinkClick */}
-            <MenuItem>
+            <MenuItem onClick={handleShareViaLinkClick}>
               <Icon type="link" sx={styles.icons} />
-              Via link
+              Copy link
             </MenuItem>
 
-            {/* onClick={handleShareViaEmailClick} */}
-            <MenuItem>
+            <MenuItem onClick={handleShareViaEmailClick}>
               <Icon type="mail-outline" sx={styles.icons} />
-              Via email
+              Share via email
             </MenuItem>
           </Menu>
         </Stack>

@@ -134,7 +134,8 @@ function PopulateRegistryModal({ open, onClose }) {
       const data = {
         type: type === 'Custom' ? customType : type,
         name,
-        color
+        color,
+        public: false
       }
 
       if (isModalInUpdateMode) {

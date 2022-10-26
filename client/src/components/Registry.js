@@ -19,7 +19,8 @@ import { POPULATE_REGISTRY_ITEM_MODAL_VARIANT } from './modals/PopulateRegistryI
 import { registryDataById } from '../redux/registriesSlice'
 import RegistryItemsMasonry from './RegistryItemsMasonry'
 import { Box } from '@mui/material'
-import { USER_ROLES } from '../constants'
+import { USER_ROLES, BASE_URL } from '../constants'
+import { showToast } from '../redux/toastSlice'
 
 const Registry = ({ registryId }) => {
   const dispatch = useDispatch()
@@ -100,14 +101,14 @@ const Registry = ({ registryId }) => {
     )
   }, [registryData?.id, registryData?.color, registryData?.name, dispatch])
 
-  const handleShareClick = useCallback(() => {
+  const handleShareViaEmailClick = useCallback(() => {
     if (!registryData) {
       return
     }
 
     dispatch(
       showModal({
-        name: MODAL_NAMES.shareRegistry,
+        name: MODAL_NAMES.shareViaEmail,
         data: {
           registryId: registryData.id,
           users: registryData.users.filter(
@@ -117,6 +118,26 @@ const Registry = ({ registryId }) => {
         }
       })
     )
+  }, [dispatch, registryData])
+
+  const handleShareViaLinkClick = useCallback(() => {
+    if (!registryData) {
+      return
+    }
+
+    if (registryData.public) {
+      navigator.clipboard.writeText(BASE_URL + '/registry/' + registryData.id)
+      dispatch(
+        showToast({ type: 'success', message: 'Link copied to clipboard' })
+      )
+    } else {
+      dispatch(
+        showModal({
+          name: MODAL_NAMES.shareViaLinkConfirmation,
+          data: registryData
+        })
+      )
+    }
   }, [dispatch, registryData])
 
   const handleEditClick = useCallback(() => {
@@ -208,7 +229,8 @@ const Registry = ({ registryId }) => {
           onEditClick={handleEditClick}
           onRemoveClick={handleRemoveClick}
           onAddClick={handleAddClick}
-          onShareClick={handleShareClick}
+          onShareViaEmailClick={handleShareViaEmailClick}
+          onShareViaLinkClick={handleShareViaLinkClick}
         />
       )}
 

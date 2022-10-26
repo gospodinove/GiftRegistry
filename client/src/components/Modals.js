@@ -4,8 +4,9 @@ import { hideModal, isModalOpen, MODAL_NAMES } from '../redux/modalsSlice'
 import PopulateRegistryItemModal from './modals/PopulateRegistryItemModal'
 import RemoveRegistryItemConfirmationModal from './modals/RemoveRegistryItemConfirmationModal'
 import PopulateRegistryModal from './modals/PopulateRegistryModal'
-import ShareRegistryModal from './modals/ShareRegistryModal'
+import ShareViaEmailModal from './modals/ShareViaEmailModal'
 import RemoveRegistryConfirmationModal from './modals/RemoveRegistryConfirmationModal'
+import ShareViaLinkConfirmationModal from './modals/ShareViaLinkConfirmationModal'
 
 const Modals = () => {
   const dispatch = useDispatch()
@@ -35,11 +36,11 @@ const Modals = () => {
     [dispatch]
   )
 
-  const isShareRegistryModalOpen = useSelector(state =>
-    isModalOpen(state, MODAL_NAMES.shareRegistry)
+  const isShareViaEmailModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.shareViaEmail)
   )
-  const handleShareRegistryModalClose = useCallback(
-    () => dispatch(hideModal({ name: MODAL_NAMES.shareRegistry })),
+  const handleShareViaEmailModalClose = useCallback(
+    () => dispatch(hideModal({ name: MODAL_NAMES.shareViaEmail })),
     [dispatch]
   )
 
@@ -49,6 +50,15 @@ const Modals = () => {
 
   const handleRemoveRegistryConfirmationModalClose = useCallback(
     () => dispatch(hideModal({ name: MODAL_NAMES.removeRegistryConfirmation })),
+    [dispatch]
+  )
+
+  const isShareViaLinkConfirmationModalOpen = useSelector(state =>
+    isModalOpen(state, MODAL_NAMES.shareViaLinkConfirmation)
+  )
+
+  const handleShareViaLinkConfirmationModalClose = useCallback(
+    () => dispatch(hideModal({ name: MODAL_NAMES.shareViaLinkConfirmation })),
     [dispatch]
   )
 
@@ -69,14 +79,19 @@ const Modals = () => {
         onClose={handleRemoveRegistryItemConfirmationModalClose}
       />
 
-      <ShareRegistryModal
-        open={isShareRegistryModalOpen}
-        onClose={handleShareRegistryModalClose}
+      <ShareViaEmailModal
+        open={isShareViaEmailModalOpen}
+        onClose={handleShareViaEmailModalClose}
       />
 
       <RemoveRegistryConfirmationModal
         open={isRemoveRegistryConfirmationModalOpen}
         onClose={handleRemoveRegistryConfirmationModalClose}
+      />
+
+      <ShareViaLinkConfirmationModal
+        open={isShareViaLinkConfirmationModalOpen}
+        onClose={handleShareViaLinkConfirmationModalClose}
       />
     </>
   )

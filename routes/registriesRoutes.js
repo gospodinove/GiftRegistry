@@ -302,7 +302,12 @@ router.put(
           .findOneAndUpdate(
             { _id: ObjectId(req.params.registryId) },
             {
-              $set: { type: data.type, name: data.name, color: data.color }
+              $set: {
+                type: data.type,
+                name: data.name,
+                color: data.color,
+                public: data.public
+              }
             },
             { returnDocument: 'after' }
           )
