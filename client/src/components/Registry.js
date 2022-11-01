@@ -114,6 +114,7 @@ const Registry = ({ registryId }) => {
       showModal({
         name: MODAL_NAMES.shareViaEmail,
         data: {
+          name: registryData.name,
           registryId: registryData.id,
           users: registryData.users.filter(
             user => user.role !== USER_ROLES.owner
@@ -227,7 +228,7 @@ const Registry = ({ registryId }) => {
           owner={owner}
           shouldShowOwner={
             registryData.users.find(u => u.role === USER_ROLES.owner).email !==
-            user.email
+            user?.email
           }
           isLoadingOwner={isLoadingOwner}
           onEditClick={handleEditClick}

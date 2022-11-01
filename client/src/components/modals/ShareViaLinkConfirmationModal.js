@@ -52,7 +52,7 @@ function ShareViaLinkConfirmationModal({ open, onClose }) {
     <>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
-          Share registry{' '}
+          Share{' '}
           <Typography
             component="span"
             variant="h6"

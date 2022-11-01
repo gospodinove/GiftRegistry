@@ -13,8 +13,10 @@ import { showModal } from '../redux/modalsSlice'
 import {
   allRegistries,
   fetchRegistries,
-  isFetchingRegistry,
+  fetchSharedRegistry,
+  isFetchingRegistries,
   isRegistryRemoved,
+  areRegistriesSuccessfullyFetched as reduxAreRegistriesSuccessfullyFetched,
   resetRegistryRemoveStatus,
   shouldFetchRegistries as reduxShouldFetchRegistries
 } from '../redux/registriesSlice'
@@ -32,9 +34,42 @@ function Home() {
   const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
 
   const registries = useSelector(allRegistries)
-  const isLoadingRegistries = useSelector(isFetchingRegistry)
+  const isLoadingRegistries = useSelector(isFetchingRegistries)
   const shouldFetchRegistries =
     useSelector(reduxShouldFetchRegistries) && isAuthenticated
+
+  const areRegistriesSuccessfullyFetched = useSelector(
+    reduxAreRegistriesSuccessfullyFetched
+  )
+
+  // const areSuccessfullyFetched = useMemo(
+  //   () => (isAuthenticated ? areRegistriesSuccessfullyFetched : true),
+  //   [areRegistriesSuccessfullyFetched, isAuthenticated]
+  // )
+
+  const reduxHasRegistry = useMemo(
+    () => registries.some(r => r.id === params.registryId),
+    [params.registryId, registries]
+  )
+
+  const maybeFetchRegistryById = useCallback(() => {
+    if (
+      params.registryId &&
+      areRegistriesSuccessfullyFetched &&
+      !reduxHasRegistry
+    ) {
+      dispatch(fetchSharedRegistry(params.registryId))
+    }
+  }, [
+    areRegistriesSuccessfullyFetched,
+    dispatch,
+    params.registryId,
+    reduxHasRegistry
+  ])
+
+  useEffect(() => {
+    maybeFetchRegistryById()
+  }, [maybeFetchRegistryById])
 
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 

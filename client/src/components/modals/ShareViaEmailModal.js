@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button'
 import TextField from '../TextField'
@@ -7,7 +7,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Box from '@mui/material/Box'
-import { styles } from './ShareRegistryModal.styles'
+import { styles } from './ShareViaEmailModal.styles'
 import {
   isRegistryShared,
   isSharingRegistry,
@@ -15,6 +15,7 @@ import {
 } from '../../redux/registriesSlice'
 import { modalInitialDataForName } from '../../redux/modalsSlice'
 import { MODAL_NAMES } from '../../constants/types'
+import { Typography } from '@mui/material'
 
 function ShareViaEmailModal({ open, onClose }) {
   const dispatch = useDispatch()
@@ -25,6 +26,11 @@ function ShareViaEmailModal({ open, onClose }) {
   const isLoading = useSelector(isSharingRegistry)
   const shouldCloseModal = useSelector(isRegistryShared)
   const reduxErrors = useSelector(state => state.registries.shareErrors)
+
+  const modalStyles = useMemo(
+    () => styles(initialData?.color),
+    [initialData?.color]
+  )
 
   const [emails, setEmails] = useState([''])
   const [errors, setErrors] = useState([])
@@ -109,7 +115,16 @@ function ShareViaEmailModal({ open, onClose }) {
   return (
     <Dialog maxWidth="xs" fullWidth open={open} onClose={handleClose}>
       <Box component="form" onSubmit={handleSubmit}>
-        <DialogTitle>Share registry</DialogTitle>
+        <DialogTitle>
+          Share{' '}
+          <Typography
+            component="span"
+            variant="h6"
+            sx={modalStyles.registryName}
+          >
+            {initialData?.name}
+          </Typography>
+        </DialogTitle>
         <DialogContent>
           {initialData?.users.map((user, index) =>
             renderTextField(index, user.email, true)
@@ -124,7 +139,7 @@ function ShareViaEmailModal({ open, onClose }) {
             Add more
           </Button>
           {/* hidden because it is needed to trigger the submit action of the form by pressing ENTER */}
-          <Button type="submit" sx={styles.hiddenButton} />
+          <Button type="submit" sx={modalStyles.hiddenButton} />
           {/* this is used as the real submit button */}
           <Button
             color={initialData?.color}

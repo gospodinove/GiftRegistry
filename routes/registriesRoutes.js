@@ -9,6 +9,7 @@ const isRegistrationCompleted = require('../middleware/isRegistrationCompleted')
 const fetchRegistry = require('../middleware/fetchRegistry')
 const { COLLECTION_NAMES, ERROR_TYPES, USER_ROLES } = require('../constants')
 const isRegistryOwner = require('../middleware/isRegistryOwner')
+const isPublic = require('../middleware/isPublic')
 
 const router = express.Router()
 
@@ -63,6 +64,31 @@ router.get('/', isAuthenticated, async (req, res) => {
       .toArray()
 
     res.json({ registries: registries.map(registry => replaceId(registry)) })
+  } catch {
+    sendErrorResponse(
+      res,
+      500,
+      ERROR_TYPES.general,
+      'No registries from this user'
+    )
+  }
+})
+
+// if user is logged in => add this user id to the registry(update registry) and select the registry
+// if user is not logged in => show only this registry and when the user tries to do something ask for email/registration
+
+router.get('/:registryId', [fetchRegistry, isPublic], async (req, res) => {
+  const db = req.app.locals.db
+  const registry = res.locals.registry
+  const registryId = req.params.registryId
+  const user = req.session.user
+
+  try {
+    const registry = await db
+      .collection(COLLECTION_NAMES.registries)
+      .findOne({ _id: ObjectId(registryId) })
+
+    res.json({ registry: replaceId(registry) })
   } catch {
     sendErrorResponse(
       res,

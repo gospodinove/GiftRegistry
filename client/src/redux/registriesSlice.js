@@ -41,6 +41,17 @@ export const registriesSlice = createSlice({
       .addCase(fetchRegistries.rejected, state => {
         state.fetchStatus = DATA_STATUS.failed
       })
+      // FETCH SHARED
+      .addCase(fetchSharedRegistry.pending, state => {
+        state.fetchStatus = DATA_STATUS.loading
+      })
+      .addCase(fetchSharedRegistry.fulfilled, (state, action) => {
+        state.fetchStatus = DATA_STATUS.succeeded
+        state.data = [...state.data, action.payload]
+      })
+      .addCase(fetchSharedRegistry.rejected, state => {
+        state.fetchStatus = DATA_STATUS.failed
+      })
       // CREATE
       .addCase(createRegistry.pending, state => {
         state.createStatus = DATA_STATUS.loading
@@ -115,6 +126,19 @@ export const fetchRegistries = createAsyncThunk(
     try {
       const response = await api('registries')
       return response.registries
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
+export const fetchSharedRegistry = createAsyncThunk(
+  'registries/fetchShared',
+  async (id, thunkAPI) => {
+    try {
+      const response = await api('registries/' + id)
+      console.log(response.registry)
+      return response.registry
     } catch (error) {
       return handleErrors(error, thunkAPI)
     }
@@ -200,10 +224,15 @@ export const allRegistries = state => state.registries.data
 export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
 
+export const areRegistriesSuccessfullyFetched = state =>
+  state.registries.fetchStatus !== DATA_STATUS.idle &&
+  state.registries.fetchStatus !== DATA_STATUS.loading &&
+  state.registries.fetchStatus !== DATA_STATUS.failed
+
 export const shouldFetchRegistries = state =>
   state.registries.fetchStatus === DATA_STATUS.idle
 
-export const isFetchingRegistry = state =>
+export const isFetchingRegistries = state =>
   state.registries.fetchStatus === DATA_STATUS.loading
 
 export const isCreatingRegistry = state =>
