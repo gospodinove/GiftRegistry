@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 const dotenv = require('dotenv')
 const { inviteTemplate } = require('./mailTemplates/invite')
 
-dotenv.config()
+dotenv.config({})
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
