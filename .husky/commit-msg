@@ -12,11 +12,26 @@ fi
 
 BRANCH_NAME=$(git branch --show-current)
 
-ISSUE_NUMBER=$(echo $BRANCH_NAME | cut -d '-' -f1 )
+# tells the script if the issues have project prefixes before their IDs
+# GitHub issue links need only the issue ID - #[issue ID]
+# YouTrack issue links need the project prefix - #[project ID]-[issue ID]
+HAS_PROJECT_PREFIX=true
+
+if $HAS_PROJECT_PREFIX
+then
+  PROJECT_PREFIX=$(echo $BRANCH_NAME | cut -d '-' -f1 )
+  ISSUE_NUMBER=$(echo $BRANCH_NAME | cut -d '-' -f2 )
+
+  COMMIT_MESSAGE_PREFIX="[#$PROJECT_PREFIX-$ISSUE_NUMBER]"
+else
+  ISSUE_NUMBER=$(echo $BRANCH_NAME | cut -d '-' -f2 )
+
+  COMMIT_MESSAGE_PREFIX="[#$ISSUE_NUMBER]"
+fi
 
 if ! [[ $ISSUE_NUMBER =~ ^[0-9] ]]; then
   echo "Skipping commit message prefixing. The current branch is not related to an issue."
   exit 0
 fi
 
-echo "[#$ISSUE_NUMBER] - $COMMIT_MESSAGE" > $COMMIT_MESSAGE_FILE
+echo "$COMMIT_MESSAGE_PREFIX - $COMMIT_MESSAGE" > $COMMIT_MESSAGE_FILE
