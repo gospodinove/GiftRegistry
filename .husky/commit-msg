@@ -12,7 +12,9 @@ fi
 
 BRANCH_NAME=$(git branch --show-current)
 
-# tells the script if the issues have project prefixes before their IDs 
+# tells the script if the issues have project prefixes before their IDs
+# GitHub issue links need only the issue ID - #[issue ID]
+# YouTrack issue links need the project prefix - #[project ID]-[issue ID]
 HAS_PROJECT_PREFIX=true
 
 if $HAS_PROJECT_PREFIX
