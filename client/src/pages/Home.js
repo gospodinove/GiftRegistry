@@ -54,11 +54,11 @@ function Home() {
 
   const maybeFetchRegistryById = useCallback(() => {
     if (
-      params.registryId &&
       areRegistriesSuccessfullyFetched &&
-      !reduxHasRegistry
+      !reduxHasRegistry &&
+      params?.registryId
     ) {
-      dispatch(fetchSharedRegistry(params.registryId))
+      dispatch(fetchSharedRegistry(params?.registryId))
     }
   }, [
     areRegistriesSuccessfullyFetched,
@@ -141,7 +141,7 @@ function Home() {
       <RegistriesList
         data={sortedRegistries}
         isLoading={isLoadingRegistries}
-        selectedRegistryId={params?.registryId}
+        selectedRegistryId={params.registryId}
         isCreateRegistryButtonVisible={isCreateRegistryButtonVisible}
         onSelectedChange={handleSelectedRegistryChange}
         onCreateRegistryButtonClick={handleCreateRegistryButtonClick}

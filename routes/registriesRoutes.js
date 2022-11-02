@@ -83,12 +83,34 @@ router.get('/:registryId', [fetchRegistry, isPublic], async (req, res) => {
   const registryId = req.params.registryId
   const user = req.session.user
 
-  try {
-    const registry = await db
-      .collection(COLLECTION_NAMES.registries)
-      .findOne({ _id: ObjectId(registryId) })
+  const isUserRegistryOwner =
+    user &&
+    registry.users.some(
+      u => u.email === user.email && u.role === USER_ROLES.owner
+    )
 
-    res.json({ registry: replaceId(registry) })
+  try {
+    if (user && !isUserRegistryOwner) {
+      const registry = await db
+        .collection(COLLECTION_NAMES.registries)
+        .findOneAndUpdate(
+          { _id: ObjectId(registryId) },
+          {
+            $addToSet: {
+              users: { email: user.email, role: USER_ROLES.invitee }
+            }
+          },
+          { returnDocument: 'after' }
+        )
+
+      res.json({ registry: replaceId(registry.value) })
+    } else {
+      const registry = await db
+        .collection(COLLECTION_NAMES.registries)
+        .findOne({ _id: ObjectId(registryId) })
+
+      res.json({ registry: replaceId(registry) })
+    }
   } catch {
     sendErrorResponse(
       res,

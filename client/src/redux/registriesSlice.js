@@ -137,7 +137,6 @@ export const fetchSharedRegistry = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await api('registries/' + id)
-      console.log(response.registry)
       return response.registry
     } catch (error) {
       return handleErrors(error, thunkAPI)
@@ -229,6 +228,9 @@ export const areRegistriesSuccessfullyFetched = state =>
   state.registries.fetchStatus !== DATA_STATUS.loading &&
   state.registries.fetchStatus !== DATA_STATUS.failed
 
+export const isFetchingRegistry = state =>
+  state.registries.fetchStatus === DATA_STATUS.loading
+
 export const shouldFetchRegistries = state =>
   state.registries.fetchStatus === DATA_STATUS.idle
 
@@ -257,4 +259,7 @@ export const isRegistryRemoved = state =>
   state.registries.removeStatus === DATA_STATUS.succeeded
 
 export const isRegistryShared = state =>
+  state.registries.shareStatus === DATA_STATUS.succeeded
+
+export const isRegistryFetched = state =>
   state.registries.shareStatus === DATA_STATUS.succeeded
