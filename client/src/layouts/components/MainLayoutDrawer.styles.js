@@ -1,4 +1,4 @@
-import { NAVBAR_Z_INDEX } from '../../constants'
+import { NAVBAR_Z_INDEX } from '../../constants/navbar'
 
 export const styles = {
   drawerBox: { textAlign: 'center' },

@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react'
 import { LoadingButton } from '@mui/lab'
 import { styles } from './Button.styles'
 import { IconButton } from '@mui/material'
-import { COLORS } from '../constants'
+import { COLORS } from '../constants/colors'
 import Icon from './Icon'
 
 function Button({ color, ...props }) {

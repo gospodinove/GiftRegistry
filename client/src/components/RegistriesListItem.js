@@ -4,7 +4,7 @@ import ListItemText from '@mui/material/ListItemText'
 import { ListItem } from '@mui/material'
 import { styles } from './RegistriesListItem.styles'
 import Icon from './Icon'
-import { COLORS } from '../constants'
+import { COLORS } from '../constants/colors'
 
 const getIconType = registryType => {
   switch (registryType) {

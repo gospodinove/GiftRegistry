@@ -1,13 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const MODAL_NAMES = {
-  populateRegistryItem: 'populateRegistryItem',
-  shareRegistry: 'shareRegistry',
-  populateRegistry: 'populateRegistry',
-  removeRegistryConfirmation: 'removeRegistryConfirmation',
-  removeRegistryItemConfirmation: 'removeRegistryItemConfirmation'
-}
-
 // modal name => data
 const initialState = {}
 

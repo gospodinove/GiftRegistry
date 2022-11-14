@@ -9,22 +9,23 @@ import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button'
 import {
-  isRegistryRemoved,
-  isRemovingRegistry,
-  removeRegistry
+  isRegistryUpdated,
+  isUpdatingRegistry,
+  togglePublicRegistry
 } from '../../redux/registriesSlice'
 import { modalInitialDataForName } from '../../redux/modalsSlice'
-import { styles } from './RemoveRegistryConfirmationModal.styles'
+import { styles } from './ShareViaLinkConfirmationModal.styles'
+import { generateShareURL } from '../../constants/urls'
 import { MODAL_NAMES } from '../../constants/types'
 
-function RemoveRegistryConfirmationModal({ open, onClose }) {
+function ShareViaLinkConfirmationModal({ open, onClose }) {
   const dispatch = useDispatch()
 
   const initialData = useSelector(state =>
-    modalInitialDataForName(state, MODAL_NAMES.removeRegistryConfirmation)
+    modalInitialDataForName(state, MODAL_NAMES.shareViaLinkConfirmation)
   )
-  const isLoading = useSelector(isRemovingRegistry)
-  const shouldClose = useSelector(isRegistryRemoved)
+  const isLoading = useSelector(isUpdatingRegistry)
+  const shouldClose = useSelector(isRegistryUpdated)
 
   const modalStyles = useMemo(
     () => styles(initialData?.color),
@@ -41,19 +42,17 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
     }
   }, [shouldClose, handleClose])
 
-  const handleSubmit = useCallback(
-    async e => {
-      e.preventDefault()
-      dispatch(removeRegistry(initialData.id))
-    },
-    [dispatch, initialData?.id]
-  )
+  const handleConfirmClick = useCallback(async () => {
+    navigator.clipboard.writeText(generateShareURL(initialData.id))
+    dispatch(togglePublicRegistry(initialData.id))
+    onClose()
+  }, [dispatch, initialData?.id, onClose])
 
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
-          Delete{' '}
+          Share{' '}
           <Typography
             component="span"
             variant="h6"
@@ -64,17 +63,7 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
         </DialogTitle>
         <DialogContent>
           <Typography component="span" variant="h6">
-            Are you sure you wish to proceed with deleting{' '}
-          </Typography>
-          <Typography
-            component="span"
-            variant="h6"
-            sx={modalStyles.registryName}
-          >
-            {initialData?.name}
-          </Typography>
-          <Typography component="span" variant="h6">
-            ?
+            Everybody with the link will have access to your registry{' '}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -82,7 +71,7 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
             Cancel
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={handleConfirmClick}
             color={initialData?.color}
             loading={isLoading}
             autoFocus
@@ -95,4 +84,4 @@ function RemoveRegistryConfirmationModal({ open, onClose }) {
   )
 }
 
-export default memo(RemoveRegistryConfirmationModal)
+export default memo(ShareViaLinkConfirmationModal)

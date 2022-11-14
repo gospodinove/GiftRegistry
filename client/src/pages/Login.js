@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Button from '../components/Button'
 import { isLoggingIn, login } from '../redux/authSlice'
 
+// TODO: reset registries state after login
 function Login() {
   const dispatch = useDispatch()
 

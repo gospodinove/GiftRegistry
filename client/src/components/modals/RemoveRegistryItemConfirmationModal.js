@@ -8,7 +8,8 @@ import {
 import { useEffect, useMemo } from 'react'
 import { memo, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
+import { MODAL_NAMES } from '../../constants/types'
+import { modalInitialDataForName } from '../../redux/modalsSlice'
 import {
   isRegistryItemRemoved,
   isRemovingRegistryItem,

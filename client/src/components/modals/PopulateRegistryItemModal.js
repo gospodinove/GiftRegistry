@@ -17,12 +17,11 @@ import {
   isUpdatingRegistryItem,
   updateRegistryItem
 } from '../../redux/registryItemsSlice'
-import { modalInitialDataForName, MODAL_NAMES } from '../../redux/modalsSlice'
-
-export const POPULATE_REGISTRY_ITEM_MODAL_VARIANT = {
-  update: 'update',
-  create: 'create'
-}
+import { modalInitialDataForName } from '../../redux/modalsSlice'
+import {
+  MODAL_NAMES,
+  POPULATE_REGISTRY_ITEM_MODAL_VARIANT
+} from '../../constants/types'
 
 function PopulateRegistryItemModal({ open, onClose }) {
   const dispatch = useDispatch()

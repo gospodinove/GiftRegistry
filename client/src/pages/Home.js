@@ -9,18 +9,21 @@ import './Home.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import usePrevious from '../hooks/usePrevious'
 import { hasUser } from '../redux/authSlice'
-import { MODAL_NAMES, showModal } from '../redux/modalsSlice'
+import { showModal } from '../redux/modalsSlice'
 import {
   allRegistries,
   fetchRegistries,
-  isFetchingRegistry,
+  fetchSharedRegistry,
+  isFetchingRegistries,
   isRegistryRemoved,
+  areRegistriesSuccessfullyFetched as reduxAreRegistriesSuccessfullyFetched,
   resetRegistryRemoveStatus,
   shouldFetchRegistries as reduxShouldFetchRegistries
 } from '../redux/registriesSlice'
 import { Stack } from '@mui/system'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
+import { MODAL_NAMES } from '../constants/types'
 
 function Home() {
   const dispatch = useDispatch()
@@ -31,9 +34,42 @@ function Home() {
   const shouldClearSelectedRegistry = useSelector(isRegistryRemoved)
 
   const registries = useSelector(allRegistries)
-  const isLoadingRegistries = useSelector(isFetchingRegistry)
+  const isLoadingRegistries = useSelector(isFetchingRegistries)
   const shouldFetchRegistries =
     useSelector(reduxShouldFetchRegistries) && isAuthenticated
+
+  const areRegistriesSuccessfullyFetched = useSelector(
+    reduxAreRegistriesSuccessfullyFetched
+  )
+
+  // const areSuccessfullyFetched = useMemo(
+  //   () => (isAuthenticated ? areRegistriesSuccessfullyFetched : true),
+  //   [areRegistriesSuccessfullyFetched, isAuthenticated]
+  // )
+
+  const reduxHasRegistry = useMemo(
+    () => registries.some(r => r.id === params.registryId),
+    [params.registryId, registries]
+  )
+
+  const maybeFetchRegistryById = useCallback(() => {
+    if (
+      areRegistriesSuccessfullyFetched &&
+      !reduxHasRegistry &&
+      params?.registryId
+    ) {
+      dispatch(fetchSharedRegistry(params?.registryId))
+    }
+  }, [
+    areRegistriesSuccessfullyFetched,
+    dispatch,
+    params.registryId,
+    reduxHasRegistry
+  ])
+
+  useEffect(() => {
+    maybeFetchRegistryById()
+  }, [maybeFetchRegistryById])
 
   const [isRegistriesDrawerOpen, setIsRegistriesDrawerOpen] = useState(false)
 
@@ -105,7 +141,7 @@ function Home() {
       <RegistriesList
         data={sortedRegistries}
         isLoading={isLoadingRegistries}
-        selectedRegistryId={params?.registryId}
+        selectedRegistryId={params.registryId}
         isCreateRegistryButtonVisible={isCreateRegistryButtonVisible}
         onSelectedChange={handleSelectedRegistryChange}
         onCreateRegistryButtonClick={handleCreateRegistryButtonClick}

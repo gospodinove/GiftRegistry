@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import { styles } from './ColorSelector.styles'
 import { HuePicker } from 'react-color'
 import Button from './Button'
-import { COLORS } from '../constants'
+import { COLORS } from '../constants/colors'
 
 function ColorSelector({ onChange, initialColor }) {
   const [color, setColor] = useState(COLORS.app[0])

@@ -1,4 +1,5 @@
-import { COLORS, NAVBAR_HEIGHT } from '../constants'
+import { COLORS } from '../constants/colors'
+import { NAVBAR_HEIGHT } from '../constants/navbar'
 
 export const styles = {
   box: {

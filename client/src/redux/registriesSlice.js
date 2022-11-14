@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { DATA_STATUS } from '../constants'
+import { DATA_STATUS } from '../constants/types'
 import { api } from '../utils/api'
 import { handleErrors } from '../utils/redux'
 import { removeItemsForRegistryId } from './registryItemsSlice'
+import { showToast } from './toastSlice'
 
 const initialState = {
   data: [],
@@ -38,6 +39,17 @@ export const registriesSlice = createSlice({
         state.data = action.payload
       })
       .addCase(fetchRegistries.rejected, state => {
+        state.fetchStatus = DATA_STATUS.failed
+      })
+      // FETCH SHARED
+      .addCase(fetchSharedRegistry.pending, state => {
+        state.fetchStatus = DATA_STATUS.loading
+      })
+      .addCase(fetchSharedRegistry.fulfilled, (state, action) => {
+        state.fetchStatus = DATA_STATUS.succeeded
+        state.data = [...state.data, action.payload]
+      })
+      .addCase(fetchSharedRegistry.rejected, state => {
         state.fetchStatus = DATA_STATUS.failed
       })
       // CREATE
@@ -79,20 +91,29 @@ export const registriesSlice = createSlice({
         state.removeStatus = DATA_STATUS.failed
       })
       // SHARE
-      .addCase(shareRegistry.pending, state => {
+      .addCase(shareViaEmail.pending, state => {
         state.shareStatus = DATA_STATUS.loading
       })
-      .addCase(shareRegistry.fulfilled, (state, action) => {
+      .addCase(shareViaEmail.fulfilled, (state, action) => {
         state.shareStatus = DATA_STATUS.succeeded
         state.data = [
           ...state.data.filter(r => r.id !== action.payload.id),
           action.payload
         ]
       })
-      .addCase(shareRegistry.rejected, (state, action) => {
+      .addCase(shareViaEmail.rejected, (state, action) => {
         state.shareStatus = DATA_STATUS.failed
         state.shareErrors = action.payload
       })
+      // SHARE VIA LINK
+      .addCase(togglePublicRegistry.pending, () => {})
+      .addCase(togglePublicRegistry.fulfilled, (state, action) => {
+        state.data = [
+          ...state.data.filter(r => r.id !== action.payload.id),
+          action.payload
+        ]
+      })
+      .addCase(togglePublicRegistry.rejected, () => {})
   }
 })
 
@@ -105,6 +126,18 @@ export const fetchRegistries = createAsyncThunk(
     try {
       const response = await api('registries')
       return response.registries
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
+export const fetchSharedRegistry = createAsyncThunk(
+  'registries/fetchShared',
+  async (id, thunkAPI) => {
+    try {
+      const response = await api('registries/' + id)
+      return response.registry
     } catch (error) {
       return handleErrors(error, thunkAPI)
     }
@@ -135,6 +168,30 @@ export const updateRegistry = createAsyncThunk(
   }
 )
 
+export const togglePublicRegistry = createAsyncThunk(
+  'registries/togglePublic',
+  async (id, thunkAPI) => {
+    try {
+      const registry = thunkAPI
+        .getState()
+        .registries.data.find(r => r.id === id)
+
+      const response = await api('registries/' + id, 'put', {
+        ...registry,
+        public: !registry.public
+      })
+
+      thunkAPI.dispatch(
+        showToast({ type: 'success', message: 'Link copied to clipboard' })
+      )
+
+      return response.registry
+    } catch (error) {
+      return handleErrors(error, thunkAPI)
+    }
+  }
+)
+
 export const removeRegistry = createAsyncThunk(
   'registries/remove',
   async (id, thunkAPI) => {
@@ -148,8 +205,8 @@ export const removeRegistry = createAsyncThunk(
   }
 )
 
-export const shareRegistry = createAsyncThunk(
-  'registries/share',
+export const shareViaEmail = createAsyncThunk(
+  'registries/shareViaEmail',
   async ({ id, data }, thunkAPI) => {
     try {
       const response = await api('registries/' + id + '/share', 'patch', data)
@@ -166,10 +223,18 @@ export const allRegistries = state => state.registries.data
 export const registryDataById = (state, registryId) =>
   state.registries.data.find(registry => registry.id === registryId)
 
+export const areRegistriesSuccessfullyFetched = state =>
+  state.registries.fetchStatus !== DATA_STATUS.idle &&
+  state.registries.fetchStatus !== DATA_STATUS.loading &&
+  state.registries.fetchStatus !== DATA_STATUS.failed
+
+export const isFetchingRegistry = state =>
+  state.registries.fetchStatus === DATA_STATUS.loading
+
 export const shouldFetchRegistries = state =>
   state.registries.fetchStatus === DATA_STATUS.idle
 
-export const isFetchingRegistry = state =>
+export const isFetchingRegistries = state =>
   state.registries.fetchStatus === DATA_STATUS.loading
 
 export const isCreatingRegistry = state =>
@@ -194,4 +259,7 @@ export const isRegistryRemoved = state =>
   state.registries.removeStatus === DATA_STATUS.succeeded
 
 export const isRegistryShared = state =>
+  state.registries.shareStatus === DATA_STATUS.succeeded
+
+export const isRegistryFetched = state =>
   state.registries.shareStatus === DATA_STATUS.succeeded

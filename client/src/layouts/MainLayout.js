@@ -15,9 +15,10 @@ import Icon from '../components/Icon'
 import Toast from '../components/Toast'
 import Modals from '../components/Modals'
 import { styles } from './MainLayout.styles'
-import { AUTH_NAV_ITEMS, COLORS } from '../constants'
 import MainLayoutDrawer from './components/MainLayoutDrawer'
 import { isFetchingUserSession, logout } from '../redux/authSlice'
+import { AUTH_NAV_ITEMS } from '../constants/types'
+import { COLORS } from '../constants/colors'
 
 function MainLayout() {
   const navigate = useNavigate()

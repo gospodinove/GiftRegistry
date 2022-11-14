@@ -1,6 +1,6 @@
-import { Box, Skeleton, Stack, Typography } from '@mui/material'
-import { memo, useCallback } from 'react'
-import { COLORS } from '../constants'
+import { Box, Menu, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
+import { memo, useCallback, useState } from 'react'
+import { COLORS } from '../constants/colors'
 import Button from './Button'
 import { styles } from './RegistryDetails.styles'
 import Icon from './Icon'
@@ -15,15 +15,45 @@ const RegistryDetails = ({
   onEditClick,
   onRemoveClick,
   onAddClick,
-  onShareClick
+  onShareViaEmailClick,
+  onShareViaLinkClick
 }) => {
+  const [isShareDropdownOpen, setIsShareDropdownOpen] = useState(false)
+  const [shareDropdownAnchorElement, setShareDropdownAnchorElement] =
+    useState(null)
+
   const handleEditClick = useCallback(() => onEditClick(), [onEditClick])
 
   const handleRemoveClick = useCallback(() => onRemoveClick(), [onRemoveClick])
 
   const handleAddClick = useCallback(() => onAddClick(), [onAddClick])
 
-  const handleShareClick = useCallback(() => onShareClick(), [onShareClick])
+  const handleShareClick = useCallback(
+    event => {
+      setIsShareDropdownOpen(!isShareDropdownOpen)
+
+      setShareDropdownAnchorElement(
+        shareDropdownAnchorElement ? null : event.currentTarget
+      )
+    },
+    [isShareDropdownOpen, shareDropdownAnchorElement]
+  )
+
+  const handleShareViaEmailClick = useCallback(
+    () => onShareViaEmailClick(),
+    [onShareViaEmailClick]
+  )
+
+  const handleShareViaLinkClick = useCallback(
+    event => {
+      setIsShareDropdownOpen(!isShareDropdownOpen)
+      setShareDropdownAnchorElement(
+        shareDropdownAnchorElement ? null : event.currentTarget
+      )
+      onShareViaLinkClick()
+    },
+    [isShareDropdownOpen, onShareViaLinkClick, shareDropdownAnchorElement]
+  )
 
   const maybeRenderOwner = useCallback(() => {
     if (!owner || !shouldShowOwner) {
@@ -92,6 +122,23 @@ const RegistryDetails = ({
           >
             Share
           </Button>
+
+          <Menu
+            open={isShareDropdownOpen}
+            anchorEl={shareDropdownAnchorElement}
+            onClose={handleShareClick}
+            sx={styles.menu}
+          >
+            <MenuItem onClick={handleShareViaLinkClick}>
+              <Icon type="link" sx={styles.icons} />
+              Copy link
+            </MenuItem>
+
+            <MenuItem onClick={handleShareViaEmailClick}>
+              <Icon type="mail-outline" sx={styles.icons} />
+              Share via email
+            </MenuItem>
+          </Menu>
         </Stack>
       )}
     </>
